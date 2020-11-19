@@ -4,7 +4,7 @@ from http import HTTPStatus
 from json import loads
 from sys import stderr
 from time import sleep, time
-from aiohttp import ClientSession
+from aiohttp import ClientError, ClientSession
 
 ENCODING = 'UTF-8'
 SECS = 15
@@ -39,7 +39,7 @@ async def fetch_chunk(titles: list, start: int) -> list:
                 for i in range(start, min(start + STEP, len(titles))):
                     tasks.append(ensure_future(fetch(session, titles[i])))
                 return await gather(*tasks)
-        except OSError as error:
+        except (OSError, ClientError) as error:
             print(error, file=stderr)
 
 

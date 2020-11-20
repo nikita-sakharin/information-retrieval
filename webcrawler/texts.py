@@ -4,7 +4,7 @@ from http import HTTPStatus
 from json import loads
 from sys import stderr
 from time import sleep, time
-from aiohttp import ClientError, ClientSession
+from aiohttp import ClientError, ClientPayloadError, ClientSession
 
 ENCODING = 'UTF-8'
 SECS = 15
@@ -21,7 +21,7 @@ def get_article_texts(titles: list):
         loop.run_until_complete(task)
         result = task.result()
         for i in range(len(result)):
-            page = next(iter(loads(result[i])['query']['pages'].values()))
+            page = next(iter(result[i]['query']['pages'].values()))
             if 'extract' in page:
                 assert titles[start + i] == page['title'], \
                     F"{titles[start + i]} != {page['title']}"
@@ -51,8 +51,11 @@ async def fetch(session: ClientSession, title: str) -> str:
         'prop': 'extracts',
         'explaintext': 1
     }
-    while True:
-        async with session.get(URL, params=params) as response:
-            if response.status == HTTPStatus.OK:
-                return await response.text(encoding=ENCODING)
-            print(response, file=stderr)
+    try:
+        while True:
+            async with session.get(URL, params=params) as response:
+                if response.status == HTTPStatus.OK:
+                    return await response.json(encoding=ENCODING)
+                print(response, file=stderr)
+    except ClientPayloadError:
+        return {'query': {'pages': {'': {'title': title}}}}

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from asyncio import ensure_future, gather, get_event_loop
+from asyncio import TimeoutError, ensure_future, gather, get_event_loop
 from http import HTTPStatus
 from json import loads
 from sys import stderr
@@ -39,7 +39,7 @@ async def fetch_chunk(titles: list, start: int) -> list:
                 for i in range(start, min(start + STEP, len(titles))):
                     tasks.append(ensure_future(fetch(session, titles[i])))
                 return await gather(*tasks)
-        except (OSError, ClientError) as error:
+        except (OSError, TimeoutError, ClientError) as error:
             print(error, file=stderr)
 
 

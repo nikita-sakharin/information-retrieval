@@ -1,1 +1,2 @@
-Wikipedia-API==0.5.4
+aiohttp==3.6.3
+wikipedia-api==0.5.4

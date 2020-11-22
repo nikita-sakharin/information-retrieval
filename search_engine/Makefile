@@ -8,6 +8,7 @@ CXXFLAGS=-std=c++17 -fexceptions -m64 -Wall -Werror -Weffc++ -Wextra -pedantic \
 LDFLAGS=-m64
 LDLIBS=-lm
 SOURCES=main.cpp
+HEADERS=header.hpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=main
 
@@ -22,7 +23,7 @@ release: $(SOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(LDFLAGS) $(OBJECTS) $(LDLIBS) -o $@
 
-.cpp.o:
+%.o: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:

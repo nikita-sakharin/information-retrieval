@@ -1,4 +1,5 @@
 CXX=g++
+RM=rm -frd
 CXXFLAGS=-std=c++17 -fexceptions -m64 -Wall -Werror -Weffc++ -Wextra -pedantic \
     -Wfatal-errors -pedantic-errors -Winit-self \
     -Wzero-as-null-pointer-constant -Wnon-virtual-dtor -Winline \
@@ -27,4 +28,4 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -frd $(OBJECTS) $(EXECUTABLE)
+	$(RM) $(OBJECTS) $(EXECUTABLE)

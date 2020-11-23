@@ -19,11 +19,13 @@
 #include <string>
 /*
 #include "../algorithm.hpp"
-#include "../header.hpp"
 #include "../set.hpp"
 */
+#include <search_engine/header.hpp>
+
 int main()
 {
+/*
     static constexpr size_t SIZE = 3LL * 1ULL << 31;
     vector<char> buffer(SIZE, '\0');
     ifstream file(argv[1], ios::binary | ios::in);
@@ -53,4 +55,6 @@ int main()
         cout << dec << '[' << i << "] = " << buffer[i] << " = " <<
             hex << static_cast<uint>(static_cast<uchar>(buffer[i])) << '\n';
     }
+*/
+    return 0;
 }

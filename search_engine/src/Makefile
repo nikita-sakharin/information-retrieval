@@ -8,8 +8,8 @@ CXXFLAGS=-std=c++17 -fexceptions -m64 -Wall -Werror -Weffc++ -Wextra -pedantic \
     -Wswitch-default -Wswitch-enum
 LDFLAGS=-m64
 LDLIBS=-lm
-SOURCES=main.cpp
-HEADERS=header.hpp
+SOURCES=$(wildcard *.cpp)
+HEADERS=$(wildcard ../include/search_engine/*.hpp)
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=main
 
@@ -25,7 +25,7 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(LDFLAGS) $(OBJECTS) $(LDLIBS) -o $@
 
 %.o: %.cpp $(HEADERS)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -I../include -o $@
 
 clean:
 	$(RM) $(OBJECTS) $(EXECUTABLE)

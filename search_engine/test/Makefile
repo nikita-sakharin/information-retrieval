@@ -9,7 +9,7 @@ CXXFLAGS=-fexceptions -m64 -pedantic-errors -std=c++17 -Wall -Wcast-align \
 LDFLAGS=-m64
 LDLIBS=-lm
 SOURCES=$(filter-out ../src/main.cpp, $(wildcard ../src/*.cpp))
-TEST_SOURCES=$(wildcard *.cpp)
+TEST_SOURCES=$(wildcard *.test.cpp)
 HEADERS=$(wildcard ../include/search_engine/*.hpp)
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=main

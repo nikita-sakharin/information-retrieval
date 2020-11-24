@@ -15,10 +15,10 @@ EXECUTABLE=main
 
 all: $(SOURCES) $(EXECUTABLE)
 
-debug: CXXFLAGS+=-g -Og
+debug: CXXFLAGS+=-Og -g
 debug: all
-release: CXXFLAGS+=-fexpensive-optimizations -flto -fomit-frame-pointer -O3
-release: LDFLAGS+=-flto -O3 -s
+release: CXXFLAGS+=-O3 -fexpensive-optimizations -flto -fomit-frame-pointer
+release: LDFLAGS+=-O3 -flto -s
 release: all
 
 $(EXECUTABLE): $(OBJECTS)

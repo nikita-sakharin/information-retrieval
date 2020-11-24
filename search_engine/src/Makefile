@@ -17,7 +17,7 @@ all: $(SOURCES) $(EXECUTABLE)
 
 debug: CXXFLAGS+=-Og -g
 debug: all
-release: CXXFLAGS+=-fomit-frame-pointer -fexpensive-optimizations -flto -O3
+release: CXXFLAGS+=-fexpensive-optimizations -flto -fomit-frame-pointer -O3
 release: LDFLAGS+=-O3 -flto -s
 release: all
 

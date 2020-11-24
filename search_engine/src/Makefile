@@ -3,7 +3,7 @@ RM=rm -frd
 CXXFLAGS=-fexceptions -m64 -pedantic-errors -std=c++17 -Wall -Wcast-align \
     -Wdouble-promotion -Weffc++ -Werror -Wextra -Wfatal-errors -Wfloat-equal \
     -Winit-self -Winline -Wmain -Wmissing-declarations -Wmissing-include-dirs \
-    -Wnon-virtual-dtor -Wnull-dereference -Wpadded -Wpedantic \
+    -Wnested-externs -Wnon-virtual-dtor -Wnull-dereference -Wpadded -Wpedantic \
     -Wredundant-decls -Wshadow -Wswitch-default -Wswitch-enum -Wundef \
     -Wunreachable-code -Wzero-as-null-pointer-constant
 LDFLAGS=-m64

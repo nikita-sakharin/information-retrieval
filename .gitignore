@@ -1,5 +1,11 @@
+*.a
+*.dll
 *.exe
 *.o
+*.out
+*.so
 
 *.py[cod]
 __pycache__
+
+build

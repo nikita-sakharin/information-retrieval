@@ -13,4 +13,6 @@ typedef float flt;
 typedef double dbl;
 typedef long double ldbl;
 
+wchar_t wchar_to_char(char) noexcept;
+
 #endif

@@ -17,14 +17,10 @@
 #include <ostream>
 #include <streambuf>
 #include <string>
-/*
-#include "../algorithm.hpp"
-#include "../set.hpp"
-*/
+
 #include <search_engine/header.hpp>
 
-int main()
-{
+int main() {
 /*
     static constexpr size_t SIZE = 3LL * 1ULL << 31;
     vector<char> buffer(SIZE, '\0');

@@ -1,11 +1,14 @@
+build
+
 *.a
+*.app
 *.dll
+*.dylib
 *.exe
+*.lib
 *.o
 *.out
 *.so
 
 *.py[cod]
 __pycache__
-
-build

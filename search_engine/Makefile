@@ -30,3 +30,11 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	$(RM) $(OBJECTS) $(EXECUTABLE)
+
+# -fexceptions -pedantic-errors \
+#    -std=c++17 -Wall -Wcast-qual -Wcast-align=strict -Wdisabled-optimization -Wdouble-promotion \
+#    -Weffc++ -Werror -Wextra -Wfatal-errors -Wfloat-equal -Winline -Winvalid-pch \
+#    -Wmissing-declarations -Wmissing-include-dirs \
+#    -Wnested-externs -Wnull-dereference -Wpadded -Wpedantic -Wredundant-decls -Wshadow \
+#    -Wswitch-default -Wswitch-enum -Wundef -Wunreachable-code \
+#    -Wzero-as-null-pointer-constant -Wstack-protector

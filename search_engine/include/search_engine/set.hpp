@@ -556,5 +556,51 @@ inline static void rotate_right(register RBTreeNode * restrict node_ptr, registe
     node_ptr->parent = temp;
     temp->right = node_ptr;
 }
+    constexpr node *post_order(const node *current) const noexcept
+    {
+        const node * const parent = current->parent;
+        if (!parent || parent->right == current) //|| !parent->left)
+            return parent;
+
+        current = parent;
+        while (current->left || current->right)
+            if (current->left)
+                current = current->left;
+            else
+                current = current->right;
+
+        for (parent->right == current; current = parent;) {
+            if (parent->left == current)
+                parent->left = nullptr;
+            else
+                parent->right = nullptr;
+        }
+    }
+
+    constexpr void clear() noexcept {
+        for (node *current = root, *parent; current; current = parent) {
+            if (parent = current->parent; parent) {
+                if (parent->left == current)
+                    parent->left = nullptr;
+                else
+                    parent->right = nullptr;
+            }
+
+            if (parent = current->parent; parent)
+            {
+                if (parent->left == current)
+                    while (current->left || current->right)
+                        if (current->left)
+                            current = current->left;
+                        else
+                            current = current->right;
+                else
+                    parent->right = nullptr;
+            }
+            delete current;
+        }
+        root = nullptr;
+        count = 0;
+    }
 */
 #endif

@@ -10,9 +10,6 @@ if (UNIX)
     add_compile_options(-Wall -Werror -Wextra -Wpedantic -pedantic-errors)
 endif()
 
-include_directories(include)
-
-add_executable(main main.cpp header.hpp)
-# add_subdirectory(subLibrary subLibrary/build)
-# add_subdirectory(# test)
-# add_subdirectory(test)
+add_subdirectory(lib/googletest)
+add_subdirectory(src)
+add_subdirectory(test)

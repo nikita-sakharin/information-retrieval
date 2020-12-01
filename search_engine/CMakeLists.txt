@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.14.0)
 
 project(search_engine VERSION 1.0.0 LANGUAGES CXX)
 
+if (CYGWIN)
+    set(CMAKE_AR "/usr/bin/gcc-ar.exe")
+endif()
+
 add_subdirectory(lib/googletest)
 
 set(CMAKE_CXX_STANDARD 17)

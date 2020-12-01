@@ -1,5 +1,5 @@
-#ifndef ALGORITHM_HPP
-#define ALGORITHM_HPP
+#ifndef SEARCH_ENGINE_ALGORITHM_HPP
+#define SEARCH_ENGINE_ALGORITHM_HPP
 
 #include <cstddef>
 

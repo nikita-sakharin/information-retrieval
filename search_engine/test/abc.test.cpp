@@ -6,6 +6,7 @@
 
 #include <search_engine/header.hpp>
 
-TEST(TokenizatorTest, WcharToChar) {
-    ASSERT_EQ(wchar_to_char('Q'), L'q');
+TEST(TokenizatorTest, Abc) {
+    ASSERT_EQ(2 + 2, 4);
+    ASSERT_EQ("a" + "b" + "c", "abc");
 }

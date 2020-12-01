@@ -1,5 +1,5 @@
-#ifndef SET_HPP
-#define SET_HPP
+#ifndef SEARCH_ENGINE_SET_HPP
+#define SEARCH_ENGINE_SET_HPP
 
 #include <functional>
 

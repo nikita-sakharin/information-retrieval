@@ -6,16 +6,16 @@ if (CYGWIN)
     set(CMAKE_AR "/usr/bin/gcc-ar.exe")
 endif()
 
-add_subdirectory(lib/googletest)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-include_directories("${PROJECT_SOURCE_DIR}/include")
 if (UNIX)
     add_compile_options(-Wall -Werror -Wextra -Wpedantic -pedantic-errors)
 endif()
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_subdirectory(lib/googletest)
 add_subdirectory(src)
 add_subdirectory(test)
+
+enable_testing()
+add_test(NAME test COMMAND ${PROJECT_NAME}_test)

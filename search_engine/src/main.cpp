@@ -21,6 +21,10 @@
 #include <search_engine/header.hpp>
 
 int main() {
+    std::cout
+        << "wchar_to_char('Q') = "
+        << static_cast<llong>(wchar_to_char(L'Q'))
+        << '\n';
 /*
     static constexpr size_t SIZE = 3LL * 1ULL << 31;
     vector<char> buffer(SIZE, '\0');

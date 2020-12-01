@@ -6,7 +6,8 @@
 
 #include <search_engine/header.hpp>
 
-TEST(TokenizatorTest, Abc) {
+TEST(AbcTest, Abc) {
+    std::cout << "AbcTest, Abc" << std::endl;
     ASSERT_EQ(2 + 2, 4);
-    ASSERT_EQ("a" + "b" + "c", "abc");
+    ASSERT_EQ(std::string("a") + "b" + "c", "abc");
 }

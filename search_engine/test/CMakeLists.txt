@@ -1,8 +1,14 @@
 include_directories(include)
 
-add_executable(test tokenizator.test.cpp abc.test.cpp)
+set(BINARY ${PROJECT_NAME}_test)
 
-target_include_directories(test PRIVATE
-    "${PROJECT_SOURCE_DIR}/lib/googletest/googletest/include"
+add_executable(${BINARY}
+    ${PROJECT_SOURCE_DIR}/src/tokenizator.cpp
+    tokenizator.test.cpp
+    abc.test.cpp
 )
-target_link_libraries(test gtest gtest_main)
+target_include_directories(${BINARY} PRIVATE
+    "${PROJECT_SOURCE_DIR}/lib/googletest/googletest/include"
+    "${PROJECT_SOURCE_DIR}/include"
+)
+target_link_libraries(${BINARY} gtest_main)

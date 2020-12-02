@@ -7,7 +7,15 @@ if (CYGWIN)
 endif()
 
 if (UNIX)
-    add_compile_options(-Wall -Werror -Wextra -Wpedantic -pedantic-errors)
+    add_compile_options(-Wall -Wcast-align -Wcast-qual -Wdouble-promotion
+        -Weffc++ -Werror -Wextra -Wfatal-errors -Wfloat-equal -Wformat=2
+        -Wformat-overflow=2 -Wformat-signedness -Wformat-truncation=2
+        -Wimplicit-fallthrough=5 -Winit-self -Winline -Wmain -Wmissing-braces
+        -Wmissing-declarations -Wmissing-include-dirs -Wnull-dereference
+        -Wpadded -Wpedantic -Wredundant-decls -Wshadow=global -Wswitch-default
+        -Wswitch-enum -Wundef -Wunreachable-code -Wunused-const-variable=2
+        -Wunused-macros -Wzero-as-null-pointer-constant -pedantic-errors
+    )
 endif()
 
 set(CMAKE_CXX_STANDARD 17)

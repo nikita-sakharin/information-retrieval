@@ -1,5 +1,3 @@
-include_directories(include)
-
 set(BINARY ${PROJECT_NAME}_test)
 
 add_executable(${BINARY}

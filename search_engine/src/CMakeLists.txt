@@ -1,6 +1,10 @@
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if (CMAKE_CXX_COMPILER_ID EQUAL GNU)
+if (CMAKE_BUILD_TYPE STREQUAL RELEASE)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+endif()
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL GNU)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
         -Wcast-align -Wcast-qual -Wdouble-promotion -Weffc++ -Wfloat-equal \
         -Wformat=2 -Wformat-overflow=2 -Wformat-signedness \

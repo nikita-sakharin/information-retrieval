@@ -8,6 +8,7 @@
 #include <cwchar>
 #include <cwctype>
 
+#include <exception>
 #include <fstream>
 #include <iomanip>
 #include <ios>
@@ -20,11 +21,17 @@
 
 #include <search_engine/header.hpp>
 
-int main() {
-    std::cout
-        << "wchar_to_char('Q') = "
-        << static_cast<llong>(wchar_to_char(L'Q'))
-        << '\n';
+int main(const int argc, char *argv[]) {
+    using namespace std;
+
+    try {
+        cout << argc << argv[0]
+            << "wchar_to_char('Q') = "
+            << static_cast<llong>(wchar_to_char(L'Q'))
+            << '\n';
+    } catch (const exception &except) {
+        cerr << except.what() << endl;
+    }
 /*
     static constexpr size_t SIZE = 3LL * 1ULL << 31;
     vector<char> buffer(SIZE, '\0');

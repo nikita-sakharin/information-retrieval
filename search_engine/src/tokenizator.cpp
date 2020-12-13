@@ -17,16 +17,6 @@ public:
     ~tokenizator() noexcept = delete;
 
     static void index_file(const char * const filename, index_ctor &index) {
-        const int fildes = open();
-        off_t off = 0;
-        for ( ; ; ) {
-            const void *addr = mmap(NULL, len, (prot), (flags), fildes, off);
-            try {
-                ;
-            } catch (exception &except) {
-                ;
-            }
-        }
 
         if (const int errnum = close(fildes); errnum != 0)
             throw system_error(errnum);

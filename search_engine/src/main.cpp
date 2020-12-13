@@ -65,3 +65,6 @@ int main(const int argc, char *argv[]) {
 */
     return 0;
 }
+/*
+/cygdrive/c/Users/nikit/Desktop/Nikita/Learning/IR/webcrawler/texts.json
+*/

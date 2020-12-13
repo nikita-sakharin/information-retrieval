@@ -1,27 +1,38 @@
 #include <cctype>
 
+#include <fcntl.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
 
 #include <search_engine/header.hpp>
 // #include <search_engine/tokenizator.hpp> ???
-/*
-class tokenizator {
-    static constexpr size_t len = ;
 
-    const void *addr;
-    off_t off;
+class tokenizator {
 public:
     constexpr tokenizator() noexcept = delete;
     constexpr tokenizator(const tokenizator &) noexcept = delete;
-    constexpr tokenizator(tokenizator &&) noexcept = default;
-    tokenizator &operator =(const tokenizator &) noexcept = default;
-    tokenizator &operator =(tokenizator &&) noexcept = default;
-    ~tokenizator() noexcept = default;
+    constexpr tokenizator(tokenizator &&) noexcept = delete;
+    tokenizator &operator =(const tokenizator &) noexcept = delete;
+    tokenizator &operator =(tokenizator &&) noexcept = delete;
+    ~tokenizator() noexcept = delete;
 
-    tokenizator(const char *) noexcept = delete;
-    constexpr tokenizator(tokenizator) noexcept = delete;
+    static void index_file(const char * const filename, index_ctor &index) {
+        const int fildes = open();
+        off_t off = 0;
+        for ( ; ; ) {
+            const void *addr = mmap(NULL, len, (prot), (flags), fildes, off);
+            try {
+                ;
+            } catch (exception &except) {
+                ;
+            }
+        }
+
+        if (const int errnum = close(fildes); errnum != 0)
+            throw system_error(errnum);
+    }
 }
-*/
+
 wchar_t wchar_to_char(const char ch) noexcept {
     return std::tolower(ch);
 }

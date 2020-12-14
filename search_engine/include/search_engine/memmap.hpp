@@ -22,7 +22,9 @@ public:
     const char *data() const noexcept;
     bool is_open() const noexcept;
     void open(const char *);
+    // seek() const noexcept;
     size_t size() const noexcept;
+    off_t tell() const noexcept;
 };
 
 #endif

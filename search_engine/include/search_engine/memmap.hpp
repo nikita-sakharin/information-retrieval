@@ -3,10 +3,11 @@
 
 class memmap final {
     off_t off;
+    off_t len;
     const void *addr;
     int fildes;
 
-    static constexpr size_t len = 1ULL << 31;
+    static constexpr size_t max_len = 1ULL << 31;
 public:
 
     constexpr memmap() noexcept;
@@ -19,7 +20,6 @@ public:
 
     void close() noexcept;
     const char *data() const noexcept;
-    bool eof() const;
     bool is_open() const noexcept;
     void open(const char *);
     size_t size() const noexcept;

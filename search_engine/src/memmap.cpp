@@ -43,10 +43,6 @@ const char *memmap::data() const noexcept {
     return addr == MAP_FAILED ? nullptr : static_cast<const char *>(addr);
 }
 
-bool memmap::eof() const {
-    ;
-}
-
 bool memmap::is_open() const noexcept {
     // assert();
     return addr != MAP_FAILED;
@@ -60,15 +56,34 @@ void memmap::open(const char * const filename) {
     if (fildes == -1)
         throw system_error(errno, generic_category(), "memmap::open");
 
-    addr = mmap(NULL, len, PROT_READ, MAP_PRIVATE, fildes, off);
+    if (stat buf; fstat(fildes, &buf) != -1) {
+        len = min(max_len, buf.st_size);
+        addr = mmap(NULL, len, PROT_READ, MAP_PRIVATE, fildes, off);
+    }
+
     if (addr == MAP_FAILED) {
         system_error error(errno, generic_category(), "memmap::open");
         close(fildes);
         fildes = -1;
         throw error;
     }
-    off_t off = 0;
+    off = 0;
     // TODO file empty
+}
+
+void memmap::open(const int fildes, const off_t off) {
+    if (stat buf; fstat(fildes, &buf) != -1) {
+        len = min(max_len, buf.st_size);
+        addr = mmap(NULL, len, PROT_READ, MAP_PRIVATE, fildes, off);
+    }
+
+    if (addr == MAP_FAILED) {
+        system_error error(errno, generic_category(), "memmap::open");
+        close(fildes);
+        fildes = -1;
+        throw error;
+    }
+    this->off = 0;
 }
 
 size_t memmap::size() const noexcept {

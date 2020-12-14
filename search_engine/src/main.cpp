@@ -9,14 +9,6 @@
 #include <cwctype>
 
 #include <exception>
-#include <fstream>
-#include <iomanip>
-#include <ios>
-#include <iosfwd>
-#include <iostream>
-#include <istream>
-#include <ostream>
-#include <streambuf>
 #include <string>
 
 #include <search_engine/header.hpp>
@@ -27,12 +19,11 @@
 
 int main(const int argc, char *argv[]) {
     using namespace std;
+    static_cast<void>(argc);
+    static_cast<void>(argv);
 
     try {
-        cout << argc << argv[0]
-            << "wchar_to_char('Q') = "
-            << static_cast<llong>(wchar_to_char(L'Q'))
-            << '\n';
+        cout << argc << argv[0];
     } catch (const exception &except) {
         cerr << except.what() << endl;
     }

@@ -1,9 +1,11 @@
 #ifndef SEARCH_ENGINE_MEMMAP_HPP
 #define SEARCH_ENGINE_MEMMAP_HPP
 
+#include <sys/types.h>
+
 class memmap final {
     off_t off;
-    off_t len;
+    off_t size;
     const void *addr;
     int fildes;
 
@@ -21,8 +23,9 @@ public:
     void close() noexcept;
     const char *data() const noexcept;
     bool is_open() const noexcept;
+    size_t length() const noexcept;
     void open(const char *);
-    // seek() const noexcept;
+    void seek() const noexcept;
     size_t size() const noexcept;
     off_t tell() const noexcept;
 };

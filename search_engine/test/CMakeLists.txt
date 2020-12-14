@@ -2,8 +2,8 @@ set(BINARY ${PROJECT_NAME}_test)
 
 add_executable(${BINARY}
     ${PROJECT_SOURCE_DIR}/src/tokenizator.cpp
+    index_ctor.cpp
     tokenizator.test.cpp
-    abc.test.cpp
 )
 target_include_directories(${BINARY} PRIVATE
     "${PROJECT_SOURCE_DIR}/lib/googletest/googletest/include"

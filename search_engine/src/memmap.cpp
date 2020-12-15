@@ -57,7 +57,7 @@ memmap::~memmap() noexcept {
         }
 }
 
-void memmap::close() noexcept {
+void memmap::close() {
     if (!is_open())
         throw runtime_error("memmap::close: memory map is not open");
     assert(fildes_ >= 0);

@@ -4,29 +4,29 @@
 #include <sys/types.h>
 
 class memmap final {
-    off_t off;
-    off_t size;
-    const void *addr;
-    int fildes;
+    off_t off_;
+    off_t size_;
+    const void *addr_;
+    int fildes_;
 
     static constexpr size_t max_len = 1ULL << 31;
-public:
 
-    constexpr memmap() noexcept;
+public:
+    memmap() noexcept;
     memmap(const char *);
     constexpr memmap(const memmap &) noexcept = delete;
-    constexpr memmap(memmap &&) noexcept;
-    memmap &operator=(const memmap &) noexcept = delete;
-    constexpr memmap &operator=(memmap &&) noexcept;
+    memmap(memmap &&) noexcept;
+    constexpr memmap &operator=(const memmap &) noexcept = delete;
+    memmap &operator=(memmap &&) noexcept;
     ~memmap() noexcept;
 
-    void close() noexcept;
+    void close();
     const char *data() const noexcept;
     bool is_open() const noexcept;
     size_t length() const noexcept;
     void open(const char *);
-    void seek() const noexcept;
-    size_t size() const noexcept;
+    void seek();
+    off_t size() const noexcept;
     off_t tell() const noexcept;
 };
 

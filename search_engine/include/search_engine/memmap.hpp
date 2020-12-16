@@ -15,9 +15,9 @@ public:
     memmap() noexcept;
     memmap(const char *);
     constexpr memmap(const memmap &) noexcept = delete;
-    memmap(memmap &&) noexcept;
+    memmap(memmap &&);
     constexpr memmap &operator=(const memmap &) noexcept = delete;
-    memmap &operator=(memmap &&) noexcept;
+    memmap &operator=(memmap &&);
     ~memmap() noexcept;
 
     void close();

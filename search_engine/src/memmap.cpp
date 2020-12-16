@@ -19,10 +19,9 @@ memmap::memmap(
 
 memmap::memmap(const char * const filename) : memmap() {
     open(filename);
-    assert(fildes_ >= 0);
 }
 
-memmap::memmap(memmap &&rhs) noexcept : memmap() {
+memmap::memmap(memmap &&rhs) : memmap() {
     *this = std::move(rhs);
     assert(
         rhs.off_ == -1 &&
@@ -32,7 +31,7 @@ memmap::memmap(memmap &&rhs) noexcept : memmap() {
     );
 }
 
-memmap &memmap::operator=(memmap &&rhs) noexcept {
+memmap &memmap::operator=(memmap &&rhs) {
     using std::swap;
     if (is_open())
         close();
@@ -76,12 +75,6 @@ void memmap::close() {
 }
 
 const char *memmap::data() const noexcept {
-    assert(
-        (off_ == -1 && size_ == -1 && addr_ == MAP_FAILED && fildes_ == -1) ||
-        (off_ >= 0 && off_ < size_ && addr_ != MAP_FAILED && fildes_ >= 0) ||
-        (off_ == 0 && size_ == 0 && addr_ == MAP_FAILED && fildes_ >= 0) ||
-        (off_ > 0 && off_ == size_ && addr_ == MAP_FAILED && fildes_ >= 0)
-    );
     return addr_ == MAP_FAILED ? nullptr : static_cast<const char *>(addr_);
 }
 
@@ -104,6 +97,11 @@ void memmap::open(const char * const filename) {
 
     open();
     assert(fildes_ >= 0);
+    assert(
+        (off_ >= 0 && off_ < size_ && addr_ != MAP_FAILED) ||
+        (off_ == 0 && size_ == 0 && addr_ == MAP_FAILED &&) ||
+        (off_ > 0 && off_ == size_ && addr_ == MAP_FAILED &&)
+    );
 }
 
 void memmap::open() {

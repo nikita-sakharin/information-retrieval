@@ -95,6 +95,12 @@ void memmap::open(const char * const filename) {
     if (fildes == -1)
         throw system_error(errno, generic_category(), "memmap::open");
 
+    if (stat buf; fstat(fildes, &buf) == -1)
+        throw system_error(errno, generic_category(), "memmap::open");
+    else
+        size_ = buf.st_size;
+
+    off_ = 0;
     open();
     assert(fildes_ >= 0);
     assert(
@@ -105,7 +111,7 @@ void memmap::open(const char * const filename) {
 }
 
 void memmap::open() {
-    assert(off >= 0 && addr == MAP_FAILED && len == -1 && fildes >= 0);
+    assert(off_ >= 0 && size_ >= 0 && addr_ == MAP_FAILED && fildes_ >= 0);
 
     if (stat buf; fstat(fildes, &buf) != -1) {
         if (off > buf.st_size)
@@ -121,6 +127,33 @@ void memmap::open() {
         throw error;
     }
     this->off = 0;
+}
+
+void memmap::seek(const off_t off) {
+    if (!is_open())
+        throw runtime_error("memmap::seek: memory map is not open");
+    if (off < 0 || off > size_)
+    assert(fildes_ >= 0);
+    assert(
+        (off_ >= 0 && off_ < size_ && addr_ != MAP_FAILED) ||
+        (off_ == 0 && size_ == 0 && addr_ == MAP_FAILED &&) ||
+        (off_ > 0 && off_ == size_ && addr_ == MAP_FAILED &&)
+    );
+
+    if (addr_ != MAP_FAILED && munmap() == -1) {
+        addr_ = MAP_FAILED;
+        const system_error error(errno, generic_category(), "memmap::seek");
+        try {
+            close();
+        } catch (const exception &except) {
+#           ifndef NDEBUG
+            cerr << except.what() << endl;
+#           endif
+        }
+        throw error;
+    }
+    off_ = off;
+    open();
 }
 
 off_t memmap::size() const noexcept {

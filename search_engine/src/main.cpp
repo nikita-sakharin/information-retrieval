@@ -16,7 +16,6 @@
 /*
 /cygdrive/c/Users/nikit/Desktop/Nikita/Learning/IR/webcrawler/texts.json
 */
-
 int main(const int argc, char *argv[]) {
     using namespace std;
     static_cast<void>(argc);

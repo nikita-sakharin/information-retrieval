@@ -25,7 +25,7 @@ public:
     bool is_open() const noexcept;
     size_t length() const noexcept;
     void open(const char *);
-    void seek();
+    void seek(off_t);
     off_t size() const noexcept;
     off_t tell() const noexcept;
 };

@@ -9,25 +9,27 @@ class memmap final {
     const void *addr_;
     int fildes_;
 
-    static constexpr size_t max_len = 1ULL << 31;
+    static constexpr size_t max_len = 1ULL << 32;
+
+    inline void try_close() noexcept;
 
 public:
-    memmap() noexcept;
-    memmap(const char *);
+    inline memmap() noexcept;
+    inline memmap(const char *);
     constexpr memmap(const memmap &) noexcept = delete;
-    memmap(memmap &&);
+    inline memmap(memmap &&);
     constexpr memmap &operator=(const memmap &) noexcept = delete;
     memmap &operator=(memmap &&);
-    ~memmap() noexcept;
+    inline ~memmap() noexcept;
 
     void close();
-    const char *data() const noexcept;
-    bool is_open() const noexcept;
-    size_t length() const noexcept;
+    inline const char *data() const noexcept;
+    inline bool is_open() const noexcept;
+    inline size_t length() const noexcept;
     void open(const char *);
     void seek(off_t);
-    off_t size() const noexcept;
-    off_t tell() const noexcept;
+    inline off_t size() const noexcept;
+    inline off_t tell() const noexcept;
 };
 
 #endif

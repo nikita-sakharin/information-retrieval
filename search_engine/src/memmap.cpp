@@ -14,14 +14,26 @@
 using std::cerr, std::generic_category, std::runtime_error, std::size_t,
     std::system_error;
 
-memmap::memmap(
+inline void try_close() noexcept {
+    assert(fildes_ >= 0);
+
+    try {
+        close();
+    } catch (const std::exception &except) {
+#       ifndef NDEBUG
+        cerr << except.what() << endl;
+#       endif
+    }
+}
+
+inline memmap::memmap(
 ) noexcept : off_(-1), size_(-1), addr_(MAP_FAILED), fildes_(-1) {}
 
-memmap::memmap(const char * const filename) : memmap() {
+inline memmap::memmap(const char * const filename) : memmap() {
     open(filename);
 }
 
-memmap::memmap(memmap &&rhs) : memmap() {
+inline memmap::memmap(memmap &&rhs) : memmap() {
     *this = std::move(rhs);
     assert(
         rhs.off_ == -1 &&
@@ -45,15 +57,9 @@ memmap &memmap::operator=(memmap &&rhs) {
     return *this;
 }
 
-memmap::~memmap() noexcept {
+inline memmap::~memmap() noexcept {
     if (is_open())
-        try {
-            close();
-        } catch (const std::exception &except) {
-#           ifndef NDEBUG
-            cerr << except.what() << endl;
-#           endif
-        }
+        try_close();
 }
 
 void memmap::close() {
@@ -62,11 +68,11 @@ void memmap::close() {
     assert(fildes_ >= 0);
 
     system_error error(0, generic_category(), "memmap::close");
-    if (addr_ != MAP_FAILED) {
-        const int = munmap(addr_, len);
+    if (addr_ != MAP_FAILED && munmap(addr_, length()) == -1) {
+        try_close();
     }
     if (close(fildes) == -1)
-        throw system_error(std::errno, generic_category(), "memmap::close");
+        throw system_error(errno, generic_category(), "memmap::close");
 
     off_ = -1;
     size_ = -1;
@@ -74,15 +80,15 @@ void memmap::close() {
     fildes_ = -1;
 }
 
-const char *memmap::data() const noexcept {
+inline const char *memmap::data() const noexcept {
     return addr_ == MAP_FAILED ? nullptr : static_cast<const char *>(addr_);
 }
 
-bool memmap::is_open() const noexcept {
+inline bool memmap::is_open() const noexcept {
     return fildes_ >= 0;
 }
 
-size_t memmap::length() const noexcept {
+inline size_t memmap::length() const noexcept {
     return std::min(max_len, static_cast<size_t>(size_ - off_));
 }
 
@@ -95,8 +101,10 @@ void memmap::open(const char * const filename) {
     if (fildes == -1)
         throw system_error(errno, generic_category(), "memmap::open");
 
-    if (stat buf; fstat(fildes, &buf) == -1)
+    if (stat buf; fstat(fildes, &buf) == -1) {
+        try_close();
         throw system_error(errno, generic_category(), "memmap::open");
+    }
     else
         size_ = buf.st_size;
 
@@ -143,23 +151,17 @@ void memmap::seek(const off_t off) {
     if (addr_ != MAP_FAILED && munmap() == -1) {
         addr_ = MAP_FAILED;
         const system_error error(errno, generic_category(), "memmap::seek");
-        try {
-            close();
-        } catch (const exception &except) {
-#           ifndef NDEBUG
-            cerr << except.what() << endl;
-#           endif
-        }
+        try_close();
         throw error;
     }
     off_ = off;
     open();
 }
 
-off_t memmap::size() const noexcept {
+inline off_t memmap::size() const noexcept {
     return size_;
 }
 
-off_t memmap::tell() const noexcept {
+inline off_t memmap::tell() const noexcept {
     return off_;
 }

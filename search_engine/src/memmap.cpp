@@ -11,7 +11,7 @@
 
 #include <search_engine/memmap.hpp>
 
-using std::cerr, std::generic_category, std::runtime_error, std::size_t,
+using std::cerr, std::generic_category, std::logic_error, std::size_t,
     std::system_error;
 
 inline void try_close() noexcept {
@@ -64,20 +64,26 @@ inline memmap::~memmap() noexcept {
 
 void memmap::close() {
     if (!is_open())
-        throw runtime_error("memmap::close: memory map is not open");
+        throw logic_error("memmap::close: memory map is not open");
     assert(fildes_ >= 0);
+    assert(
+        (off_ >= 0 && off_ < size_ && addr_ != MAP_FAILED) ||
+        (off_ >= 0 && off_ == size_ && addr_ == MAP_FAILED)
+    );
 
-    system_error error(0, generic_category(), "memmap::close");
-    if (addr_ != MAP_FAILED && munmap(addr_, length()) == -1) {
-        try_close();
-    }
-    if (close(fildes) == -1)
-        throw system_error(errno, generic_category(), "memmap::close");
+    int ec = 0;
+    if (addr_ != MAP_FAILED && munmap(addr_, length()) == -1)
+        ec = errno;
+    if (close(fildes_) == -1 && ec == 0)
+        ec = errno;
 
     off_ = -1;
     size_ = -1;
     addr_ = MAP_FAILED;
     fildes_ = -1;
+
+    if (ec != 0)
+        throw system_error(ec, generic_category(), "memmap::close");
 }
 
 inline const char *memmap::data() const noexcept {
@@ -94,66 +100,84 @@ inline size_t memmap::length() const noexcept {
 
 void memmap::open(const char * const filename) {
     if (is_open())
-        throw runtime_error("memmap::open: memory map is aldready open");
-    assert(size == -1 && off == -1 && addr == MAP_FAILED && fildes == -1);
+        throw logic_error("memmap::open: memory map is aldready open");
+    assert(size_ == -1 && off_ == -1 && addr_ == MAP_FAILED && fildes_ == -1);
 
-    fildes = open(filename, O_RDONLY);
-    if (fildes == -1)
+    if (stat buf; stat(filename, &buf) == -1)
         throw system_error(errno, generic_category(), "memmap::open");
-
-    if (stat buf; fstat(fildes, &buf) == -1) {
-        try_close();
-        throw system_error(errno, generic_category(), "memmap::open");
-    }
     else
         size_ = buf.st_size;
 
+    fildes_ = open(filename, O_RDONLY);
+    if (fildes_ == -1) {
+        size_ = -1;
+        throw system_error(errno, generic_category(), "memmap::open");
+    }
+
     off_ = 0;
     open();
+
     assert(fildes_ >= 0);
     assert(
         (off_ >= 0 && off_ < size_ && addr_ != MAP_FAILED) ||
-        (off_ == 0 && size_ == 0 && addr_ == MAP_FAILED &&) ||
-        (off_ > 0 && off_ == size_ && addr_ == MAP_FAILED &&)
+        (off_ >= 0 && off_ == size_ && addr_ == MAP_FAILED)
     );
 }
 
 void memmap::open() {
     assert(off_ >= 0 && size_ >= 0 && addr_ == MAP_FAILED && fildes_ >= 0);
+    assert(off_ >= 0 && size_ >= 0 && addr_ == MAP_FAILED && fildes_ >= 0);
+    ;
 
-    if (stat buf; fstat(fildes, &buf) != -1) {
-        if (off > buf.st_size)
-            throw runtime_error("memmap::open: memory map is aldready open");
+    if (off_ > size_)
+        ;
+    if (stat buf; fstat(fildes_, &buf) != -1) {
+            throw logic_error("memmap::open: memory map is aldready open");
         len = min(max_len, buf.st_size);
-        addr = mmap(NULL, len, PROT_READ, MAP_PRIVATE, fildes, off);
+        addr = mmap(NULL, len, PROT_READ, MAP_PRIVATE, fildes_, off_);
     }
 
     if (addr == MAP_FAILED) {
         const system_error error(errno, generic_category(), "memmap::open");
-        close(fildes);
-        fildes = -1;
+        close(fildes_);
+        fildes_ = -1;
         throw error;
     }
-    this->off = 0;
+    this->off_ = 0;
 }
 
 void memmap::seek(const off_t off) {
     if (!is_open())
-        throw runtime_error("memmap::seek: memory map is not open");
-    if (off < 0 || off > size_)
+        throw logic_error("memmap::seek: memory map is not open");
+    else if (off < 0 || off > size_)
+        throw logic_error("memmap::seek: off is negative or greater than size");
+
     assert(fildes_ >= 0);
     assert(
         (off_ >= 0 && off_ < size_ && addr_ != MAP_FAILED) ||
-        (off_ == 0 && size_ == 0 && addr_ == MAP_FAILED &&) ||
-        (off_ > 0 && off_ == size_ && addr_ == MAP_FAILED &&)
+        (off_ >= 0 && off_ == size_ && addr_ == MAP_FAILED)
     );
 
-    if (addr_ != MAP_FAILED && munmap() == -1) {
+    const void *addr = addr_;
+    addr_ = MAP_FAILED;
+    if (addr != MAP_FAILED && munmap(addr, length()) == -1)
+        throw system_error(errno, generic_category(), "memmap::seek");
+
+
+    if (addr_ != MAP_FAILED) {
+        const int ec = munmap(addr_, length());
         addr_ = MAP_FAILED;
-        const system_error error(errno, generic_category(), "memmap::seek");
-        try_close();
-        throw error;
+        if (ec == -1)
+            throw system_error(errno, generic_category(), "memmap::seek");
     }
+
+
+    if (addr_ != MAP_FAILED && munmap(addr_, length()) == -1) {
+        addr_ = MAP_FAILED;
+        throw system_error(errno, generic_category(), "memmap::seek");
+    }
+    addr_ = MAP_FAILED;
+
     off_ = off;
     open();
 }

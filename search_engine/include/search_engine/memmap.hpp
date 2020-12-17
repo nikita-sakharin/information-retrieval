@@ -4,21 +4,49 @@
 #include <sys/types.h>
 
 class memmap final {
-    off_t off_;
-    off_t size_;
-    const void *addr_;
-    int fildes_;
+    class file final {
+        int fildes_;
 
-    static constexpr size_t max_len = 1ULL << 32;
+    public:
+        inline constexpr file() noexcept;
+        inline file(const char *);
+        inline constexpr file(const file &) noexcept = delete;
+        inline constexpr file(file &&);
+        inline constexpr file &operator=(const file &) noexcept = delete;
+        inline constexpr file &operator=(file &&);
+        inline ~file() noexcept;
 
-    inline void try_close() noexcept;
+        inline void close();
+        inline constexpr bool is_open() const noexcept;
+        inline void open(const char *);
+    };
+
+    class map final {
+        off_t off_;
+        off_t size_;
+        const void *addr_;
+
+        static constexpr size_t max_len = 1ULL << 32;
+
+    public:
+        inline constexpr map() noexcept;
+        inline map(const char *);
+        inline constexpr map(const map &) noexcept = delete;
+        inline constexpr map(const map &&);
+        inline constexpr map &operator=(const map &) noexcept = delete;
+        inline constexpr map &operator=(map &&);
+        inline ~map() noexcept;
+    };
+
+    map map_;
+    file file_;
 
 public:
     inline memmap() noexcept;
     inline memmap(const char *);
-    constexpr memmap(const memmap &) noexcept = delete;
+    inline constexpr memmap(const memmap &) noexcept = delete;
     inline memmap(memmap &&);
-    constexpr memmap &operator=(const memmap &) noexcept = delete;
+    inline constexpr memmap &operator=(const memmap &) noexcept = delete;
     memmap &operator=(memmap &&);
     inline ~memmap() noexcept;
 

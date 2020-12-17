@@ -1,13 +1,14 @@
 #include <cassert>
 #include <cerrno>
 
-#include <iostream>
+#include <iostream> // cerr
 #include <system_error>
-#include <utility>
+#include <utility> // swap
 
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
+#include <fcntl.h> // open
+#include <sys/mman.h> // mmap, munmap
+#include <sys/stat.h> // stat
+#include <unistd.h> // close
 
 #include <search_engine/memmap.hpp>
 
@@ -17,6 +18,7 @@ inline constexpr file::file() noexcept : fildes_(-1) {}
 
 inline file::file(const char * const filename) : file() {
     open(filename);
+    assert(fildes_ >= 0);
 }
 
 inline constexpr file::file(file &&rhs) : file() {
@@ -42,6 +44,7 @@ inline file::~file() noexcept {
             std::cerr << except.what() << std::endl;
 #           endif
         }
+    assert(fildes_ == -1);
 }
 
 inline void file::close() {
@@ -53,6 +56,12 @@ inline void file::close() {
     fildes_ = -1;
     if (close(fildes) == -1)
         throw system_error(errno, generic_category(), "file::close");
+}
+
+inline constexpr int file::fildes() const noexcept {
+    if (!is_open())
+        throw logic_error("file::fildes: file is not open");
+    return fildes_;
 }
 
 inline constexpr bool file::is_open() const noexcept {
@@ -67,4 +76,5 @@ inline void file::open(const char * const filename) {
     fildes_ = open(filename, O_RDONLY);
     if (fildes_ == -1)
         throw system_error(errno, generic_category(), "file::open");
+    assert(fildes_ >= 0);
 }

@@ -17,6 +17,7 @@ class memmap final {
         inline ~file() noexcept;
 
         inline void close();
+        inline constexpr int fildes() const noexcept;
         inline constexpr bool is_open() const noexcept;
         inline void open(const char *);
     };
@@ -29,10 +30,10 @@ class memmap final {
         static constexpr size_t max_len = 1ULL << 32;
 
     public:
-        inline constexpr map() noexcept;
+        inline map() noexcept;
         inline map(const char *);
         inline constexpr map(const map &) noexcept = delete;
-        inline constexpr map(const map &&);
+        inline constexpr map(map &&);
         inline constexpr map &operator=(const map &) noexcept = delete;
         inline constexpr map &operator=(map &&);
         inline ~map() noexcept;

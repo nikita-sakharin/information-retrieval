@@ -1,6 +1,8 @@
 #ifndef SEARCH_ENGINE_MEMMAP_HPP
 #define SEARCH_ENGINE_MEMMAP_HPP
 
+#include <cstddef>
+
 #include <sys/types.h>
 
 class memmap final {
@@ -20,26 +22,14 @@ class memmap final {
         inline constexpr int fildes() const noexcept;
         inline constexpr bool is_open() const noexcept;
         inline void open(const char *);
+        inline off_t size() const;
     };
 
-    class map final {
-        off_t off_;
-        off_t size_;
-        const void *addr_;
+    static constexpr std::size_t max_len = 1ULL << 32;
 
-        static constexpr size_t max_len = 1ULL << 32;
-
-    public:
-        inline map() noexcept;
-        inline map(const char *);
-        inline constexpr map(const map &) noexcept = delete;
-        inline constexpr map(map &&);
-        inline constexpr map &operator=(const map &) noexcept = delete;
-        inline constexpr map &operator=(map &&);
-        inline ~map() noexcept;
-    };
-
-    map map_;
+    off_t off_;
+    off_t size_;
+    const void *addr_;
     file file_;
 
 public:
@@ -55,7 +45,7 @@ public:
     inline const char *data() const noexcept;
     inline bool is_open() const noexcept;
     inline size_t length() const noexcept;
-    void open(const char *);
+    inline void open(const char *);
     void seek(off_t);
     inline off_t size() const noexcept;
     inline off_t tell() const noexcept;

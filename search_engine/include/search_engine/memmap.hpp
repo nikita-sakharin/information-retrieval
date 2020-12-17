@@ -30,7 +30,6 @@ class memmap final {
     off_t off_;
     off_t size_;
     const void *addr_;
-    file file_;
 
 public:
     inline memmap() noexcept;
@@ -38,15 +37,15 @@ public:
     inline constexpr memmap(const memmap &) noexcept = delete;
     inline memmap(memmap &&);
     inline constexpr memmap &operator=(const memmap &) noexcept = delete;
-    memmap &operator=(memmap &&);
+    inline memmap &operator=(memmap &&);
     inline ~memmap() noexcept;
 
-    void close();
+    inline void close();
     inline const char *data() const noexcept;
     inline bool is_open() const noexcept;
-    inline size_t length() const noexcept;
+    inline std::size_t length() const noexcept;
     inline void open(const char *);
-    void seek(off_t);
+    inline void seek(off_t);
     inline off_t size() const noexcept;
     inline off_t tell() const noexcept;
 };

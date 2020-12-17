@@ -97,9 +97,62 @@ inline memmap::memmap(
 
 inline memmap::memmap(const char * const filename) : memmap() {
     open(filename);
+    assert(off_ >= 0 && file_.is_open());
+    assert(
+        (off_ < size_ && addr_ != MAP_FAILED) ||
+        (off_ == size_ && addr_ == MAP_FAILED)
+    );
 }
 
-inline const char *memmap::data() const noexcept {
+inline memmap::~memmap() noexcept {
+    if (is_open())
+        try {
+            close();
+        } catch (const std::exception &except) {
+#           ifndef NDEBUG
+            std::cerr << except.what() << std::endl;
+#           endif
+        }
+    assert(
+        off_ == -1 &&
+        size_ == -1 &&
+        addr_ == MAP_FAILED &&
+        !file_.is_open()
+    );
+}
+
+inline void memmap::close() {
+    if (!is_open())
+        throw logic_error("memmap::close: memory map is not open");
+    assert(off_ >= 0);
+    assert(
+        (off_ < size_ && addr_ != MAP_FAILED) ||
+        (off_ == size_ && addr_ == MAP_FAILED)
+    );
+
+    off_ = -1;
+    size_ = -1;
+    const void * const addr = addr_;
+    addr_ = MAP_FAILED;
+    int ec = 0;
+    if (addr != MAP_FAILED && munmap(addr, length()) == -1)
+        ec = errno;
+
+    try {
+        file_.close();
+    } catch (const std::exception &except) {
+        if (ec == 0)
+            ec = errno;
+#       ifndef NDEBUG
+        std::cerr << except.what() << std::endl;
+#       endif
+    }
+
+    if (ec != 0)
+        throw system_error(errno, generic_category(), "memmap::close");
+}
+
+inline const char *memmap::data() const {
     if (!is_open())
         throw logic_error("memmap::data: file is not open");
     return addr_ == MAP_FAILED ? nullptr : static_cast<const char *>(addr_);
@@ -109,10 +162,10 @@ inline bool memmap::is_open() const noexcept {
     return file_.is_open();
 }
 
-inline size_t memmap::length() const noexcept {
+inline size_t memmap::length() const {
     if (!is_open())
         throw logic_error("memmap::data: file is not open");
-    return std::min(max_len, static_cast<size_t>(size_ - off_));
+    return std::min(max_len, static_cast<size_t>(size() - tell()));
 }
 
 inline void memmap::open(const char * const filename) {
@@ -122,21 +175,30 @@ inline void memmap::open(const char * const filename) {
 
     file_.open(filename);
     size_ = file_.size();
-    ;
+    assert(size_ >= 0);
 }
 
 void memmap::seek(const off_t off) {
     if (!is_open())
         throw logic_error("memmap::seek: memory map is not open");
-    else if (off < 0 || off > size_)
+    else if (off < 0 || off > size())
         throw logic_error("memmap::seek: off is negative or greater than size");
-    assert(fildes_ >= 0);
+    assert(off_ >= 0);
     assert(
-        (off_ >= 0 && off_ < size_ && addr_ != MAP_FAILED) ||
-        (off_ >= 0 && off_ == size_ && addr_ == MAP_FAILED)
+        (off_ < size_ && addr_ != MAP_FAILED) ||
+        (off_ == size_ && addr_ == MAP_FAILED)
     );
 
-    ;
+    off_ = size();
+    const void * const addr = addr_;
+    addr_ = MAP_FAILED;
+    if (addr != MAP_FAILED && munmap(addr, length()) == -1)
+        throw system_error(errno, generic_category(), "memmap::seek");
+
+    addr_ = mmap(NULL, length(), PROT_READ, MAP_PRIVATE, file_.fildes(), off);
+    if (addr_ == MAP_FAILED)
+        throw system_error(errno, generic_category(), "memmap::seek");
+    off_ = off;
 }
 
 inline off_t memmap::size() const noexcept {

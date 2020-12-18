@@ -130,25 +130,25 @@ inline void memmap::close() {
         (off_ == size_ && addr_ == MAP_FAILED)
     );
 
-    off_ = -1;
-    size_ = -1;
     const void * const addr = addr_;
     addr_ = MAP_FAILED;
-    int ec = 0;
+    int errnum = 0;
     if (addr != MAP_FAILED && munmap(addr, length()) == -1)
-        ec = errno;
+        errnum = errno;
+    off_ = -1;
+    size_ = -1;
 
     try {
         file_.close();
     } catch (const std::exception &except) {
-        if (ec == 0)
-            ec = errno;
+        if (errnum == 0)
+            errnum = errno;
 #       ifndef NDEBUG
         std::cerr << except.what() << std::endl;
 #       endif
     }
 
-    if (ec != 0)
+    if (errnum != 0)
         throw system_error(errno, generic_category(), "memmap::close");
 }
 
@@ -176,6 +176,7 @@ inline void memmap::open(const char * const filename) {
     file_.open(filename);
     size_ = file_.size();
     assert(size_ >= 0);
+    seek(0);
 }
 
 void memmap::seek(const off_t off) {
@@ -189,16 +190,35 @@ void memmap::seek(const off_t off) {
         (off_ == size_ && addr_ == MAP_FAILED)
     );
 
-    off_ = size();
+    if (off == tell())
+        return;
+    assert(off_ != off);
+
+    int errnum = 0;
     const void * const addr = addr_;
     addr_ = MAP_FAILED;
     if (addr != MAP_FAILED && munmap(addr, length()) == -1)
-        throw system_error(errno, generic_category(), "memmap::seek");
+        errnum = errno;
 
-    addr_ = mmap(NULL, length(), PROT_READ, MAP_PRIVATE, file_.fildes(), off);
-    if (addr_ == MAP_FAILED)
+    if (errnum == 0 && tell() != size()) {
+        off_ = off;
+        addr_ = mmap(
+            NULL,
+            length(),
+            PROT_READ,
+            MAP_PRIVATE,
+            file_.fildes(),
+            tell()
+        );
+        if (addr_ == MAP_FAILED)
+            errnum = errno;
+    }
+
+    if (errnum != 0) {
+        off_ == size();
+        assert(off_ == size_ && addr_ == MAP_FAILED);
         throw system_error(errno, generic_category(), "memmap::seek");
-    off_ = off;
+    }
 }
 
 inline off_t memmap::size() const noexcept {

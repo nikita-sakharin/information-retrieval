@@ -229,7 +229,7 @@ void memmap::seek(const off_t off) {
     }
 }
 
-inline size_t memmap::size() const noexcept {
+inline size_t memmap::size() const {
     if (!is_open())
         throw logic_error("memmap::size: file is not open");
     return size_;

@@ -13,7 +13,8 @@
 
 #include <search_engine/memmap.hpp>
 
-using std::generic_category, std::logic_error, std::size_t, std::system_error;
+using std::cerr, std::endl, std::generic_category, std::logic_error, std::move,
+    std::size_t, std::swap, std::system_error;
 using size_limits = std::numeric_limits<size_t>;
 
 inline constexpr memmap::file::file() noexcept : fildes_(-1) {}
@@ -23,12 +24,12 @@ inline memmap::file::file(const char * const filename) : file() {
     assert(fildes_ >= 0);
 }
 
-inline constexpr memmap::file::file(memmap::file &&rhs) : file() {
-    *this = std::move(rhs);
+inline constexpr memmap::file::file(file &&rhs) : file() {
+    *this = move(rhs);
     assert(rhs.fildes_ == -1);
 }
 
-inline constexpr file &memmap::file::operator=(memmap::file &&rhs) {
+inline constexpr memmap::file &memmap::file::operator=(file &&rhs) {
     if (is_open())
         close();
     assert(fildes_ == -1);
@@ -43,7 +44,7 @@ inline memmap::file::~file() noexcept {
             close();
         } catch (const std::exception &except) {
 #           ifndef NDEBUG
-            std::cerr << except.what() << std::endl;
+            cerr << except.what() << std::endl;
 #           endif
         }
     assert(fildes_ == -1);
@@ -54,13 +55,13 @@ inline void memmap::file::close() {
         throw logic_error("file::close: file is not open");
     assert(fildes_ >= 0);
 
-    const int returns = close(fildes_);
+    const int returns = ::close(fildes_);
     fildes_ = -1;
     if (returns == -1)
         throw system_error(errno, generic_category(), "file::close");
 }
 
-inline constexpr int memmap::file::fildes() const noexcept {
+inline constexpr int memmap::file::fildes() const {
     if (!is_open())
         throw logic_error("file::fildes: file is not open");
     assert(fildes_ >= 0);
@@ -77,7 +78,7 @@ inline void memmap::file::open(const char * const filename) {
         throw logic_error("file::open: file is aldready open");
     assert(fildes_ == -1);
 
-    fildes_ = open(filename, O_RDONLY);
+    fildes_ = ::open(filename, O_RDONLY);
     if (fildes_ == -1)
         throw system_error(errno, generic_category(), "file::open");
     assert(fildes_ >= 0);
@@ -88,7 +89,8 @@ inline size_t memmap::file::size() const {
         throw logic_error("file::size: file is not open");
     assert(fildes_ >= 0);
 
-    if (stat buf; fstat(fildes_, &buf) == -1)
+    struct stat buf;
+    if (fstat(fildes_, &buf) == -1)
         throw system_error(errno, generic_category(), "file::size");
     else
         return static_cast<size_t>(buf.st_size);
@@ -106,8 +108,8 @@ inline memmap::memmap(const char * const filename) : memmap() {
     assert(size_ != size_limits::max() && file_.is_open());
 }
 
-inline constexpr memmap::memmap(memmap &&rhs) : memmap() {
-    *this = std::move(rhs);
+inline memmap::memmap(memmap &&rhs) : memmap() {
+    *this = move(rhs);
     assert(
         rhs.addr_ == MAP_FAILED &&
         rhs.size_ == size_limits::max() &&
@@ -115,7 +117,7 @@ inline constexpr memmap::memmap(memmap &&rhs) : memmap() {
     );
 }
 
-inline constexpr memmap &memmap::operator=(memmap &&rhs) {
+inline memmap &memmap::operator=(memmap &&rhs) {
     if (is_open())
         close();
     assert(
@@ -126,7 +128,7 @@ inline constexpr memmap &memmap::operator=(memmap &&rhs) {
 
     swap(addr_, rhs.addr_);
     swap(size_, rhs.size_);
-    swap(fildes_, rhs.fildes_);
+    swap(file_, rhs.file_);
     return *this;
 }
 
@@ -136,7 +138,7 @@ inline memmap::~memmap() noexcept {
             close();
         } catch (const std::exception &except) {
 #           ifndef NDEBUG
-            std::cerr << except.what() << std::endl;
+            cerr << except.what() << std::endl;
 #           endif
         }
     assert(
@@ -156,7 +158,7 @@ inline void memmap::close() {
     assert(size_ != size_limits::max() && file_.is_open());
 
     int errnum = 0;
-    if (addr_ != MAP_FAILED && munmap(addr_, size()) == -1)
+    if (addr_ != MAP_FAILED && munmap(const_cast<void *>(addr_), size()) == -1)
         errnum = errno;
     addr_ = MAP_FAILED;
     size_ = size_limits::max();
@@ -167,7 +169,7 @@ inline void memmap::close() {
         if (errnum == 0)
             errnum = errno;
 #       ifndef NDEBUG
-        std::cerr << except.what() << std::endl;
+        cerr << except.what() << std::endl;
 #       endif
     }
     assert(
@@ -186,7 +188,7 @@ inline const char *memmap::data() const {
     return addr_ == MAP_FAILED ? nullptr : static_cast<const char *>(addr_);
 }
 
-inline bool memmap::is_open() const noexcept {
+inline constexpr bool memmap::is_open() const noexcept {
     return file_.is_open();
 }
 
@@ -217,7 +219,7 @@ inline void memmap::open(const char * const filename) {
     assert(size_ != size_limits::max() && file_.is_open());
 }
 
-inline size_t memmap::size() const {
+inline constexpr size_t memmap::size() const {
     if (!is_open())
         throw logic_error("memmap::size: file is not open");
     return size_;

@@ -19,7 +19,7 @@ class memmap final {
         inline ~file() noexcept;
 
         inline void close();
-        inline constexpr int fildes() const noexcept;
+        inline constexpr int fildes() const;
         inline constexpr bool is_open() const noexcept;
         inline void open(const char *);
         inline std::size_t size() const;
@@ -40,9 +40,9 @@ public:
 
     inline void close();
     inline const char *data() const;
-    inline bool is_open() const noexcept;
+    inline constexpr bool is_open() const noexcept;
     inline void open(const char *);
-    inline std::size_t size() const;
+    inline constexpr std::size_t size() const;
 };
 
 #endif

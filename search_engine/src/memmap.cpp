@@ -23,12 +23,12 @@ inline memmap::file::file(const char * const filename) : file() {
     assert(fildes_ >= 0);
 }
 
-inline constexpr memmap::file::file(file &&rhs) : file() {
+inline constexpr memmap::file::file(memmap::file &&rhs) : file() {
     *this = std::move(rhs);
     assert(rhs.fildes_ == -1);
 }
 
-inline constexpr file &memmap::file::operator=(file &&rhs) {
+inline constexpr file &memmap::file::operator=(memmap::file &&rhs) {
     if (is_open())
         close();
     assert(fildes_ == -1);

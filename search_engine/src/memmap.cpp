@@ -2,6 +2,7 @@
 #include <cerrno>
 
 #include <iostream> // cerr
+#include <limits>
 #include <system_error>
 #include <utility> // swap
 

@@ -39,10 +39,10 @@ public:
     inline ~memmap() noexcept;
 
     inline void close();
-    inline const char *data() const noexcept;
+    inline const char *data() const;
     inline bool is_open() const noexcept;
     inline void open(const char *);
-    inline std::size_t size() const noexcept;
+    inline std::size_t size() const;
 };
 
 #endif

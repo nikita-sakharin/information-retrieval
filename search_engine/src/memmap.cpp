@@ -53,9 +53,9 @@ inline void file::close() {
         throw logic_error("file::close: file is not open");
     assert(fildes_ >= 0);
 
-    const int fildes = fildes_;
+    const int returns = close(fildes_);
     fildes_ = -1;
-    if (close(fildes) == -1)
+    if (returns == -1)
         throw system_error(errno, generic_category(), "file::close");
 }
 
@@ -130,11 +130,10 @@ inline void memmap::close() {
     );
     assert(size_ != size_limits::max() && file_.is_open());
 
-    const void * const addr = addr_;
-    addr_ = MAP_FAILED;
     int errnum = 0;
-    if (addr != MAP_FAILED && munmap(addr, length()) == -1)
+    if (addr_ != MAP_FAILED && munmap(addr_, size()) == -1)
         errnum = errno;
+    addr_ = MAP_FAILED;
     size_ = size_limits::max();
 
     try {
@@ -166,12 +165,6 @@ inline bool memmap::is_open() const noexcept {
     return file_.is_open();
 }
 
-inline size_t memmap::length() const {
-    if (!is_open())
-        throw logic_error("memmap::length: file is not open");
-    return std::min(max_len, static_cast<size_t>(size() - tell()));
-}
-
 inline void memmap::open(const char * const filename) {
     if (is_open())
         throw logic_error("memmap::open: memory map is aldready open");
@@ -182,51 +175,21 @@ inline void memmap::open(const char * const filename) {
     );
 
     file_.open(filename);
-    size_ = file_.size();
-    assert(size_ >= 0);
-    seek(0);
-}
+    size_ = 0;
 
-void memmap::seek(const off_t off) {
-    if (!is_open())
-        throw logic_error("memmap::seek: memory map is not open");
-    else if (off < 0 || off > size())
-        throw logic_error("memmap::seek: off is negative or greater than size");
-    assert(off_ >= 0);
+    if (const size_t len = file_.size(); len != 0) {
+        assert(len != size_limits::max());
+        addr_ = mmap(nullptr, len, PROT_READ, MAP_SHARED, file_.fildes(), 0);
+        if (addr_ == MAP_FAILED) // try
+            throw system_error(errno, generic_category(), "memmap::open");
+        size_ = len;
+    }
+
     assert(
-        (off_ < size_ && addr_ != MAP_FAILED) ||
-        (off_ == size_ && addr_ == MAP_FAILED)
+        (addr_ == MAP_FAILED && size_ == 0) ||
+        (addr_ != MAP_FAILED && size_ > 0)
     );
-
-    if (off == tell())
-        return;
-    assert(off_ != off);
-
-    int errnum = 0;
-    const void * const addr = addr_;
-    addr_ = MAP_FAILED;
-    if (addr != MAP_FAILED && munmap(addr, length()) == -1)
-        errnum = errno;
-
-    if (errnum == 0 && tell() != size()) {
-        off_ = off;
-        addr_ = mmap(
-            NULL,
-            length(),
-            PROT_READ,
-            MAP_SHARED,
-            file_.fildes(),
-            tell()
-        );
-        if (addr_ == MAP_FAILED)
-            errnum = errno;
-    }
-
-    if (errnum != 0) {
-        off_ == size();
-        assert(off_ == size_ && addr_ == MAP_FAILED);
-        throw system_error(errno, generic_category(), "memmap::seek");
-    }
+    assert(size_ != size_limits::max() && file_.is_open());
 }
 
 inline size_t memmap::size() const {

@@ -12,8 +12,8 @@
 
 #include <search_engine/memmap.hpp>
 
-using size_limits = std::numeric_limits<size_t>;
 using std::generic_category, std::logic_error, std::size_t, std::system_error;
+using size_limits = std::numeric_limits<size_t>;
 
 inline constexpr file::file() noexcept : fildes_(-1) {}
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14.0)
+cmake_minimum_required(VERSION 3.17.0)
 
 project(search_engine VERSION 1.0.0 LANGUAGES CXX)
 

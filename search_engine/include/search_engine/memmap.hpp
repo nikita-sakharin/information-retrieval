@@ -22,14 +22,12 @@ class memmap final {
         inline constexpr int fildes() const noexcept;
         inline constexpr bool is_open() const noexcept;
         inline void open(const char *);
-        inline off_t size() const;
+        inline std::size_t size() const;
     };
 
-    static constexpr std::size_t max_len = 1ULL << 32;
-
-    off_t off_;
-    off_t size_;
     const void *addr_;
+    std::size_t size_;
+    file file_;
 
 public:
     inline memmap() noexcept;
@@ -43,11 +41,8 @@ public:
     inline void close();
     inline const char *data() const noexcept;
     inline bool is_open() const noexcept;
-    inline std::size_t length() const noexcept;
     inline void open(const char *);
-    inline void seek(off_t);
-    inline off_t size() const noexcept;
-    inline off_t tell() const noexcept;
+    inline std::size_t size() const noexcept;
 };
 
 #endif

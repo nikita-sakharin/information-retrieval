@@ -106,6 +106,30 @@ inline memmap::memmap(const char * const filename) : memmap() {
     assert(size_ != size_limits::max() && file_.is_open());
 }
 
+inline constexpr memmap::memmap(memmap &&rhs) : memmap() {
+    *this = std::move(rhs);
+    assert(
+        rhs.addr_ == MAP_FAILED &&
+        rhs.size_ == size_limits::max() &&
+        !rhs.file_.is_open()
+    );
+}
+
+inline constexpr memmap &memmap::operator=(memmap &&rhs) {
+    if (is_open())
+        close();
+    assert(
+        addr_ == MAP_FAILED &&
+        size_ == size_limits::max() &&
+        !file_.is_open()
+    );
+
+    swap(addr_, rhs.addr_);
+    swap(size_, rhs.size_);
+    swap(fildes_, rhs.fildes_);
+    return *this;
+}
+
 inline memmap::~memmap() noexcept {
     if (is_open())
         try {

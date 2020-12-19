@@ -2,7 +2,7 @@ set(BINARY ${PROJECT_NAME}_test)
 
 add_executable(${BINARY}
     ${PROJECT_SOURCE_DIR}/src/tokenizator.cpp
-    index_ctor.cpp
+    index_ctor.test.cpp
     tokenizator.test.cpp
 )
 target_include_directories(${BINARY} PRIVATE

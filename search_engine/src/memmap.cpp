@@ -16,19 +16,19 @@
 using std::generic_category, std::logic_error, std::size_t, std::system_error;
 using size_limits = std::numeric_limits<size_t>;
 
-inline constexpr file::file() noexcept : fildes_(-1) {}
+inline constexpr memmap::file::file() noexcept : fildes_(-1) {}
 
-inline file::file(const char * const filename) : file() {
+inline memmap::file::file(const char * const filename) : file() {
     open(filename);
     assert(fildes_ >= 0);
 }
 
-inline constexpr file::file(file &&rhs) : file() {
+inline constexpr memmap::file::file(file &&rhs) : file() {
     *this = std::move(rhs);
     assert(rhs.fildes_ == -1);
 }
 
-inline constexpr file &file::operator=(file &&rhs) {
+inline constexpr file &memmap::file::operator=(file &&rhs) {
     if (is_open())
         close();
     assert(fildes_ == -1);
@@ -37,7 +37,7 @@ inline constexpr file &file::operator=(file &&rhs) {
     return *this;
 }
 
-inline file::~file() noexcept {
+inline memmap::file::~file() noexcept {
     if (is_open())
         try {
             close();
@@ -49,7 +49,7 @@ inline file::~file() noexcept {
     assert(fildes_ == -1);
 }
 
-inline void file::close() {
+inline void memmap::file::close() {
     if (!is_open())
         throw logic_error("file::close: file is not open");
     assert(fildes_ >= 0);
@@ -60,7 +60,7 @@ inline void file::close() {
         throw system_error(errno, generic_category(), "file::close");
 }
 
-inline constexpr int file::fildes() const noexcept {
+inline constexpr int memmap::file::fildes() const noexcept {
     if (!is_open())
         throw logic_error("file::fildes: file is not open");
     assert(fildes_ >= 0);
@@ -68,11 +68,11 @@ inline constexpr int file::fildes() const noexcept {
     return fildes_;
 }
 
-inline constexpr bool file::is_open() const noexcept {
+inline constexpr bool memmap::file::is_open() const noexcept {
     return fildes_ >= 0;
 }
 
-inline void file::open(const char * const filename) {
+inline void memmap::file::open(const char * const filename) {
     if (is_open())
         throw logic_error("file::open: file is aldready open");
     assert(fildes_ == -1);
@@ -83,7 +83,7 @@ inline void file::open(const char * const filename) {
     assert(fildes_ >= 0);
 }
 
-inline size_t file::size() const {
+inline size_t memmap::file::size() const {
     if (!is_open())
         throw logic_error("file::size: file is not open");
     assert(fildes_ >= 0);

@@ -1,28 +1,33 @@
 #include <cassert>
-#include <cctype>
-#include <cmath>
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
-#include <cuchar>
-#include <cwchar>
-#include <cwctype>
 
 #include <exception>
+#include <iostream>
 #include <string>
 
 #include <search_engine/header.hpp>
+#include <search_engine/memmap.hpp>
 
 /*
 /cygdrive/c/Users/nikit/Desktop/Nikita/Learning/IR/webcrawler/texts.json
 */
 int main(const int argc, char *argv[]) {
     using namespace std;
-    static_cast<void>(argc);
-    static_cast<void>(argv);
+
+    if (argc != 2) {
+        printf("argc != 2\n");
+        std::exit(EXIT_FAILURE);
+    }
 
     try {
-        cout << argc << argv[0];
+        memmap m(argv[1]);
+        const char * const data = m.data();
+        const size_t size = m.size();
+        cout << "size = " << size << '\n';
+        for (size_t i = 0; i < 100; ++i)
+            cout << data[i];
     } catch (const exception &except) {
         cerr << except.what() << endl;
     }

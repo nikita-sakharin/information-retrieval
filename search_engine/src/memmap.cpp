@@ -96,10 +96,10 @@ inline size_t memmap::file::size() const {
         return static_cast<size_t>(buf.st_size);
 }
 
-inline memmap::memmap(
+memmap::memmap(
 ) noexcept : addr_(MAP_FAILED), size_(size_limits::max()), file_() {}
 
-inline memmap::memmap(const char * const filename) : memmap() {
+memmap::memmap(const char * const filename) : memmap() {
     open(filename);
     assert(
         (addr_ == MAP_FAILED && size_ == 0) ||
@@ -108,7 +108,7 @@ inline memmap::memmap(const char * const filename) : memmap() {
     assert(size_ != size_limits::max() && file_.is_open());
 }
 
-inline memmap::memmap(memmap &&rhs) : memmap() {
+memmap::memmap(memmap &&rhs) : memmap() {
     *this = move(rhs);
     assert(
         rhs.addr_ == MAP_FAILED &&
@@ -117,7 +117,7 @@ inline memmap::memmap(memmap &&rhs) : memmap() {
     );
 }
 
-inline memmap &memmap::operator=(memmap &&rhs) {
+memmap &memmap::operator=(memmap &&rhs) {
     if (is_open())
         close();
     assert(
@@ -132,7 +132,7 @@ inline memmap &memmap::operator=(memmap &&rhs) {
     return *this;
 }
 
-inline memmap::~memmap() noexcept {
+memmap::~memmap() noexcept {
     if (is_open())
         try {
             close();
@@ -148,7 +148,7 @@ inline memmap::~memmap() noexcept {
     );
 }
 
-inline void memmap::close() {
+void memmap::close() {
     if (!is_open())
         throw logic_error("memmap::close: memory map is not open");
     assert(
@@ -182,17 +182,17 @@ inline void memmap::close() {
         throw system_error(errnum, generic_category(), "memmap::close");
 }
 
-inline const char *memmap::data() const {
+const char *memmap::data() const {
     if (!is_open())
         throw logic_error("memmap::data: file is not open");
     return addr_ == MAP_FAILED ? nullptr : static_cast<const char *>(addr_);
 }
 
-inline constexpr bool memmap::is_open() const noexcept {
+constexpr bool memmap::is_open() const noexcept {
     return file_.is_open();
 }
 
-inline void memmap::open(const char * const filename) {
+void memmap::open(const char * const filename) {
     if (is_open())
         throw logic_error("memmap::open: memory map is aldready open");
     assert(
@@ -219,7 +219,7 @@ inline void memmap::open(const char * const filename) {
     assert(size_ != size_limits::max() && file_.is_open());
 }
 
-inline constexpr size_t memmap::size() const {
+constexpr size_t memmap::size() const {
     if (!is_open())
         throw logic_error("memmap::size: file is not open");
     return size_;

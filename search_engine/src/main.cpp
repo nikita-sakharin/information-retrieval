@@ -22,10 +22,14 @@ int main(const int argc, char *argv[]) {
     }
 
     try {
+        memmap p;
+        p.open(argv[1]);
         memmap m(argv[1]);
         const char * const data = m.data();
+/*
         const size_t size = m.size();
         cout << "size = " << size << '\n';
+*/
         for (size_t i = 0; i < 100; ++i)
             cout << data[i];
     } catch (const exception &except) {

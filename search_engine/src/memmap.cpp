@@ -206,7 +206,7 @@ void memmap::seek(const off_t off) {
             NULL,
             length(),
             PROT_READ,
-            MAP_PRIVATE,
+            MAP_SHARED,
             file_.fildes(),
             tell()
         );

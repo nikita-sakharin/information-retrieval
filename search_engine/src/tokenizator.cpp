@@ -1,9 +1,5 @@
 #include <cctype>
 
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-
 #include <search_engine/header.hpp>
 // #include <search_engine/tokenizator.hpp> ???
 
@@ -12,14 +8,14 @@ public:
     constexpr tokenizator() noexcept = delete;
     constexpr tokenizator(const tokenizator &) noexcept = delete;
     constexpr tokenizator(tokenizator &&) noexcept = delete;
-    tokenizator &operator =(const tokenizator &) noexcept = delete;
-    tokenizator &operator =(tokenizator &&) noexcept = delete;
-    ~tokenizator() noexcept = delete;
+    constexpr tokenizator &operator =(const tokenizator &) noexcept = delete;
+    constexpr tokenizator &operator =(tokenizator &&) noexcept = delete;
+    constexpr ~tokenizator() noexcept = delete;
 
     static void index_file(const char * const filename, index_ctor &index) {
-
-        if (const int errnum = close(fildes); errnum != 0)
-            throw system_error(errnum);
+        const memmap map(filename);
+        const char * const data = map.data(), data_end = data + map.size();
+        for ()
     }
 }
 

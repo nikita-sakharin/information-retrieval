@@ -207,7 +207,7 @@ void memmap::open(const char * const filename) {
     if (const size_t len = file_.size(); len != 0) {
         assert(len != size_limits::max());
         addr_ = mmap(nullptr, len, PROT_READ, MAP_SHARED, file_.fildes(), 0);
-        if (addr_ == MAP_FAILED) // try
+        if (addr_ == MAP_FAILED)
             throw system_error(errno, generic_category(), "memmap::open");
         size_ = len;
     }

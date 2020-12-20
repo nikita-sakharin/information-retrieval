@@ -24,12 +24,16 @@ int main(const int argc, char *argv[]) {
     try {
         memmap p;
         p.open(argv[1]);
-        memmap m(argv[1]);
-        const char * const data = m.data();
-        const size_t size = m.size();
+        memmap q(move(p));
+        p = move(q);
+        q.open(argv[1]);
+        if (q.is_open())
+            q.close();
+        const char * const data = p.data();
+        const size_t size = p.size();
         cout << "size = " << size << '\n';
 
-        for (size_t i = 0; i < 100; ++i)
+        for (size_t i = 0; i < size; ++i)
             cout << data[i];
     } catch (const exception &except) {
         cerr << except.what() << endl;

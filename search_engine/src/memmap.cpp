@@ -38,7 +38,7 @@ inline constexpr memmap::file &memmap::file::operator=(file &&rhs) {
     return *this;
 }
 
-inline memmap::file::~file() noexcept {
+inline constexpr memmap::file::~file() noexcept {
     if (is_open())
         try {
             close();
@@ -188,7 +188,7 @@ const char *memmap::data() const {
     return addr_ == MAP_FAILED ? nullptr : static_cast<const char *>(addr_);
 }
 
-constexpr bool memmap::is_open() const noexcept {
+bool memmap::is_open() const noexcept {
     return file_.is_open();
 }
 
@@ -219,7 +219,7 @@ void memmap::open(const char * const filename) {
     assert(size_ != size_limits::max() && file_.is_open());
 }
 
-constexpr size_t memmap::size() const {
+size_t memmap::size() const {
     if (!is_open())
         throw logic_error("memmap::size: file is not open");
     return size_;

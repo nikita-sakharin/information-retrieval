@@ -10,19 +10,19 @@ class memmap final {
         int fildes_;
 
     public:
-        constexpr file() noexcept;
-        file(const char *);
-        constexpr file(const file &) noexcept = delete;
-        constexpr file(file &&);
-        constexpr file &operator=(const file &) noexcept = delete;
-        constexpr file &operator=(file &&);
-        ~file() noexcept;
+        inline constexpr file() noexcept;
+        inline file(const char *);
+        inline constexpr file(const file &) noexcept = delete;
+        inline constexpr file(file &&);
+        inline constexpr file &operator=(const file &) noexcept = delete;
+        inline constexpr file &operator=(file &&);
+        inline constexpr ~file() noexcept;
 
-        void close();
-        constexpr int fildes() const;
-        constexpr bool is_open() const noexcept;
-        void open(const char *);
-        std::size_t size() const;
+        inline void close();
+        inline constexpr int fildes() const;
+        inline constexpr bool is_open() const noexcept;
+        inline void open(const char *);
+        inline std::size_t size() const;
     };
 
     const void *addr_;
@@ -40,9 +40,9 @@ public:
 
     void close();
     const char *data() const;
-    constexpr bool is_open() const noexcept;
+    bool is_open() const noexcept;
     void open(const char *);
-    constexpr std::size_t size() const;
+    std::size_t size() const;
 };
 
 #endif

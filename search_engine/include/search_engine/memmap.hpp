@@ -16,7 +16,7 @@ class memmap final {
         inline constexpr file(file &&);
         inline constexpr file &operator=(const file &) noexcept = delete;
         inline constexpr file &operator=(file &&);
-        inline constexpr ~file() noexcept;
+        ~file() noexcept;
 
         inline void close();
         inline constexpr int fildes() const;

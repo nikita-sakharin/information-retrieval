@@ -6,7 +6,7 @@ if (CYGWIN)
     set(CMAKE_AR "/usr/bin/gcc-ar.exe")
 endif()
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CXX_FLAGS -Wall -Werror -Wextra -Wfatal-errors -Wpedantic -pedantic-errors)

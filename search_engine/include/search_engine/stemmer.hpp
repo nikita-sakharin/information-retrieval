@@ -4,7 +4,7 @@
 class stemmer final {
 public:
     static inline constexpr char *stem(char *) noexcept;
-    static inline constexpr char *tolower(char *, char *) noexcept;
+    static char *tolower(char *, const char *, size_t) noexcept;
 };
 
 #endif

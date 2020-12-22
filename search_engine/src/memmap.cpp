@@ -50,7 +50,7 @@ memmap::file::~file() noexcept {
     assert(fildes_ == -1);
 }
 
-inline void memmap::file::close() {
+void memmap::file::close() {
     if (!is_open())
         throw logic_error("file::close: file is not open");
     assert(fildes_ >= 0);
@@ -73,7 +73,7 @@ inline constexpr bool memmap::file::is_open() const noexcept {
     return fildes_ >= 0;
 }
 
-inline void memmap::file::open(const char * const filename) {
+void memmap::file::open(const char * const filename) {
     if (is_open())
         throw logic_error("file::open: file is aldready open");
     assert(fildes_ == -1);
@@ -84,7 +84,7 @@ inline void memmap::file::open(const char * const filename) {
     assert(fildes_ >= 0);
 }
 
-inline size_t memmap::file::size() const {
+size_t memmap::file::size() const {
     if (!is_open())
         throw logic_error("file::size: file is not open");
     assert(fildes_ >= 0);

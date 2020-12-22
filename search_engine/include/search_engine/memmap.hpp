@@ -18,11 +18,11 @@ class memmap final {
         inline constexpr file &operator=(file &&);
         ~file() noexcept;
 
-        inline void close();
+        void close();
         inline constexpr int fildes() const;
         inline constexpr bool is_open() const noexcept;
-        inline void open(const char *);
-        inline std::size_t size() const;
+        void open(const char *);
+        std::size_t size() const;
     };
 
     const void *addr_;

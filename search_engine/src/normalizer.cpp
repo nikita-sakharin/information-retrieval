@@ -11,8 +11,12 @@ char *normalizer::normalize(
     const char * const last,
     char * const result
 ) noexcept {
-    // assert(*last == '\0');
-    assert(first != nullptr && first < last && result != nullptr);
+    assert(
+        first != nullptr &&
+        first < last &&
+        *last == '\0' &&
+        result != nullptr
+    );
 
     const char * const name = setlocale(LC_ALL, "en_US.utf8");
     assert(name != nullptr);
@@ -24,6 +28,8 @@ char *normalizer::normalize(
     mbstate_t mbstate;
 
     const size_t converted = mbsrtowcs(buffer, &first, size, &mbstate);
+    if (converted != size) [[unlikely]]
+        throw ;
     for ()
         ;
 

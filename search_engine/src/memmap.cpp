@@ -51,18 +51,18 @@ memmap::file::~file() noexcept {
 }
 
 void memmap::file::close() {
-    if (!is_open())
+    if (!is_open()) [[unlikely]]
         throw logic_error("file::close: file is not open");
     assert(fildes_ >= 0);
 
     const int returns = ::close(fildes_);
     fildes_ = -1;
-    if (returns == -1)
+    if (returns == -1) [[unlikely]]
         throw system_error(errno, generic_category(), "file::close");
 }
 
 inline constexpr int memmap::file::fildes() const {
-    if (!is_open())
+    if (!is_open()) [[unlikely]]
         throw logic_error("file::fildes: file is not open");
     assert(fildes_ >= 0);
 
@@ -74,23 +74,22 @@ inline constexpr bool memmap::file::is_open() const noexcept {
 }
 
 void memmap::file::open(const char * const filename) {
-    if (is_open())
+    if (is_open()) [[unlikely]]
         throw logic_error("file::open: file is aldready open");
     assert(fildes_ == -1);
 
     fildes_ = ::open(filename, O_RDONLY);
-    if (fildes_ == -1)
+    if (fildes_ == -1) [[unlikely]]
         throw system_error(errno, generic_category(), "file::open");
     assert(fildes_ >= 0);
 }
 
 size_t memmap::file::size() const {
-    if (!is_open())
+    if (!is_open()) [[unlikely]]
         throw logic_error("file::size: file is not open");
     assert(fildes_ >= 0);
 
-    struct stat buf;
-    if (fstat(fildes_, &buf) == -1)
+    if (struct stat buf; fstat(fildes_, &buf) == -1) [[unlikely]]
         throw system_error(errno, generic_category(), "file::size");
     else
         return static_cast<size_t>(buf.st_size);
@@ -149,7 +148,7 @@ memmap::~memmap() noexcept {
 }
 
 void memmap::close() {
-    if (!is_open())
+    if (!is_open()) [[unlikely]]
         throw logic_error("memmap::close: memory map is not open");
     assert(
         (addr_ == MAP_FAILED && size_ == 0) ||
@@ -178,12 +177,12 @@ void memmap::close() {
         !file_.is_open()
     );
 
-    if (errnum != 0)
+    if (errnum != 0) [[unlikely]]
         throw system_error(errnum, generic_category(), "memmap::close");
 }
 
 const char *memmap::data() const {
-    if (!is_open())
+    if (!is_open()) [[unlikely]]
         throw logic_error("memmap::data: file is not open");
     return addr_ == MAP_FAILED ? nullptr : static_cast<const char *>(addr_);
 }
@@ -193,7 +192,7 @@ bool memmap::is_open() const noexcept {
 }
 
 void memmap::open(const char * const filename) {
-    if (is_open())
+    if (is_open()) [[unlikely]]
         throw logic_error("memmap::open: memory map is aldready open");
     assert(
         addr_ == MAP_FAILED &&
@@ -220,7 +219,7 @@ void memmap::open(const char * const filename) {
 }
 
 size_t memmap::size() const {
-    if (!is_open())
+    if (!is_open()) [[unlikely]]
         throw logic_error("memmap::size: file is not open");
     return size_;
 }

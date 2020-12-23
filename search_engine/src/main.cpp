@@ -1,8 +1,9 @@
 #include <cstddef>
-#include <cstdlib>
+#include <cstdlib> // exit
+#include <cstring> // strcmp
 
-#include <exception>
-#include <iostream>
+#include <exception> // exception
+#include <iostream> // cerr
 
 #include <search_engine/indexer.hpp>
 
@@ -28,8 +29,8 @@ int main(const int argc, char *argv[]) {
     }
 
     try {
-        indexer::index(argv[1], argv[2]);
-    } catch (const std::exception &except) {
+        // indexer::index(argv[1], argv[2]);
+    } catch (const exception &except) {
         cerr << except.what() << '\n';
         exit(EXIT_FAILURE);
     }

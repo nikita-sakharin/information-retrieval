@@ -7,6 +7,7 @@ static_assert(__STDC_ISO_10646__ >= 201103L); // Unicode revision
 static_assert(sizeof(wint_t) == 4U); // TODO
 
 class normalizer final {
+    static char *normalize(const char *, const char *, char *) noexcept;
 public:
     static char *normalize(const char *, const char *, char *) noexcept;
 };

@@ -18,7 +18,7 @@ int main(const int argc, char *argv[]) {
         if (strcmp(argv[i], "--text"))
             text = argv[i + 1];
         else if (strcmp(argv[i], "--index"))
-            index = argv[i + 1]
+            index = argv[i + 1];
         else
             break;
     }
@@ -29,7 +29,7 @@ int main(const int argc, char *argv[]) {
     }
 
     try {
-        // indexer::index(argv[1], argv[2]);
+        indexer::index(argv[1], argv[2]);
     } catch (const exception &except) {
         cerr << except.what() << '\n';
         exit(EXIT_FAILURE);

@@ -3,7 +3,7 @@
 
 #include <iostream> // cerr
 #include <limits>
-#include <system_error>
+#include <system_error> // generic_category, system_error
 #include <utility> // swap
 
 #include <fcntl.h> // open

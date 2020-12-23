@@ -1,16 +1,19 @@
-#include <clocale>
+#include <clocale> // setlocale
+#include <cwctype> // towlower
+
+#include <system_error> // generic_category, system_error
 
 #include <search_engine/header.hpp>
 #include <search_engine/normalizer.hpp>
 
-using std::setlocale;
+using std::generic_category, std::setlocale, std::system_error;
 
 template<bool Diacritic>
 char *normalizer::normalize(
     const char *first,
     const char * const last,
     char * const result
-) noexcept {
+) {
     assert(
         first != nullptr &&
         first < last &&
@@ -29,9 +32,17 @@ char *normalizer::normalize(
 
     const size_t converted = mbsrtowcs(buffer, &first, size, &mbstate);
     if (converted != size) [[unlikely]]
-        throw ;
-    for ()
-        ;
+        throw system_error(errno, generic_category(), "normalizer::normalize");
+
+    for (size_t i = 0; i < )
+        buffer[i] = towlower(buffer);
 
     return result + size;
+}
+
+normalizer::diacritic(
+    const char *first,
+    const char * const last,
+    char * const result
+) noexcept {
 }

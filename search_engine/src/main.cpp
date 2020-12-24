@@ -27,26 +27,25 @@ int main(const int argc, char ** const argv) {
         exit(EXIT_SUCCESS);
     }
 
-    char command = '\0';
+    int command = 0;
     const char *file = nullptr, *text = nullptr;
-    bool err = false; // needed ?
     for (int opt; opt = getopt(argc, argv, "f:ist:"), opt != -1; ) {
         switch (opt) {
             case ':':
-                err = true;
+                command = -1;
                 cerr << argv[0] << ": unknown option -- "
                     << static_cast<char>(optopt) << '\n';
                 break;
             case '?':
-                err = true;
+                command = -1;
                 break;
             case 'f':
                 file = optarg;
                 break;
             case 'i':
             case 's':
-                if (command != '\0') {
-                    err = true;
+                if (command != 0) {
+                    command = -1;
                     cerr << argv[0]
                         << ": You may not specify more than one "
                         "'-i' or '-s' option\n";
@@ -60,17 +59,17 @@ int main(const int argc, char ** const argv) {
             default:
                 assert(false);
         }
-        if (err)
+        if (command == -1)
             break;
     }
 
-    if (!err && command == '\0')
+    if (command == 0)
         cerr << argv[0] << ": missing command\n";
-    else if (!err && !file)
+    else if (command != -1 && !file)
         cerr << argv[0] << ": option requires an argument -- f\n";
-    else if (!err && command == 'i' && !text)
+    else if (command == 'i' && !text)
         cerr << argv[0] << ": option requires an argument -- t\n";
-    if (err || command == '\0' || !file || (command == 'i' && !text)) {
+    if (command <= 0 || !file || (command == 'i' && !text)) {
         cerr << "Try '" << argv[0] << " --help' for more information.\n";
         exit(EXIT_FAILURE);
     }

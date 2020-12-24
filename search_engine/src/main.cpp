@@ -1,35 +1,92 @@
+#include <cassert> // assert
 #include <cstddef>
 #include <cstdlib> // exit
+#include <cstring> // strcmp
 #include <cstring> // strcmp
 
 #include <exception> // exception
 #include <iostream> // cerr
 
+#include <unistd.h> // getopt
+
 #include <search_engine/indexer.hpp>
 
-int main(const int argc, char *argv[]) {
-    using std::cerr, std::exception, std::exit;
+int main(const int argc, char ** const argv) {
+    using std::cerr, std::cin, std::cout, std::exception, std::exit,
+        std::ios_base, std::strcmp;
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-    // --help?
-    const char *text = nullptr, *index = nullptr;
-    for (int i = 1; i < argc; ++i) {
-        if (i + 1 >= argc)
-            break;
-        if (strcmp(argv[i], "--text"))
-            text = argv[i + 1];
-        else if (strcmp(argv[i], "--index"))
-            index = argv[i + 1];
-        else
+    if (argc < 2) {
+        cerr << argv[0] << ": not enough arguments\n";
+        exit(EXIT_FAILURE);
+    } else if (strcmp(argv[1], "--help") == 0) {
+        cout << "Usage:\n"
+            << "  " << argv[0] << " -i -f FILE -t FILE\n"
+            << "  " << argv[0] << " -s -f FILE\n";
+        exit(EXIT_SUCCESS);
+    }
+
+    char command = '\0';
+    const char *file = nullptr, *text = nullptr;
+    bool err = false;
+    for (int opt; opt = getopt(argc, argv, "f:ist:"), opt != -1; ) {
+        switch (opt) {
+            case ':':
+                err = true;
+                cerr << argv[0] << ": unknown option -- "
+                    << static_cast<char>(optopt) << '\n';
+                break;
+            case '?':
+                err = true;
+                break;
+            case 'f':
+                file = optarg;
+                break;
+            case 'i':
+            case 's':
+                if (command != '\0') {
+                    err = true;
+                    cerr << argv[0]
+                        << ": You may not specify more than one "
+                        "'-i' or '-s' option\n";
+                    break;
+                }
+                command = opt;
+                break;
+            case 't':
+                text = optarg;
+                break;
+            default:
+                assert(false);
+        }
+        if (err)
             break;
     }
 
-    if (text == nullptr || index == nullptr) {
-        cerr << "Usage: " << argv[0] << " --text [FILE] --index [FILE]\n";
+    if (!err && command == '\0')
+        cerr << argv[0] << ": missing command\n";
+    else if (!err && !file)
+        cerr << argv[0] << ": option requires an argument -- f\n";
+    else if (!err && command == 'i' && !text)
+        cerr << argv[0] << ": option requires an argument -- t\n";
+    if (err || command == '\0' || !file || (command == 'i' && !text)) {
+        cerr << "Try '" << argv[0] << " --help' for more information.\n";
         exit(EXIT_FAILURE);
     }
 
     try {
-        indexer::index(argv[1], argv[2]);
+        switch (command) {
+            case 'i':
+                cout << "start indexer::index(" << text << ", " << file << ")\n";
+                // indexer::index(text, file);
+                break;
+            case 's':
+                cout << "start searcher::search(" << file << ")\n";
+                break;
+            default:
+                assert(false);
+        }
     } catch (const exception &except) {
         cerr << except.what() << '\n';
         exit(EXIT_FAILURE);

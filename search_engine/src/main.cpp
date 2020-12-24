@@ -29,7 +29,7 @@ int main(const int argc, char ** const argv) {
 
     char command = '\0';
     const char *file = nullptr, *text = nullptr;
-    bool err = false;
+    bool err = false; // needed ?
     for (int opt; opt = getopt(argc, argv, "f:ist:"), opt != -1; ) {
         switch (opt) {
             case ':':

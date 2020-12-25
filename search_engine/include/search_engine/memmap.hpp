@@ -11,7 +11,7 @@ class memmap final {
 
     public:
         constexpr file() noexcept;
-        inline file(const char *);
+        inline explicit file(const char *);
         constexpr file(const file &) noexcept = delete;
         constexpr file(file &&);
         constexpr file &operator=(const file &) noexcept = delete;
@@ -31,7 +31,7 @@ class memmap final {
 
 public:
     memmap() noexcept;
-    memmap(const char *);
+    explicit memmap(const char *);
     constexpr memmap(const memmap &) noexcept = delete;
     memmap(memmap &&);
     constexpr memmap &operator=(const memmap &) noexcept = delete;

@@ -17,19 +17,19 @@ using std::cerr, std::endl, std::generic_category, std::logic_error, std::move,
     std::size_t, std::swap, std::system_error;
 using size_limits = std::numeric_limits<size_t>;
 
-inline constexpr memmap::file::file() noexcept : fildes_(-1) {}
+constexpr memmap::file::file() noexcept : fildes_(-1) {}
 
 inline memmap::file::file(const char * const filename) : file() {
     open(filename);
     assert(fildes_ >= 0);
 }
 
-inline constexpr memmap::file::file(file &&rhs) : file() {
+constexpr memmap::file::file(file &&rhs) : file() {
     *this = move(rhs);
     assert(rhs.fildes_ == -1);
 }
 
-inline constexpr memmap::file &memmap::file::operator=(file &&rhs) {
+constexpr memmap::file &memmap::file::operator=(file &&rhs) {
     if (is_open())
         close();
     assert(fildes_ == -1);
@@ -38,7 +38,7 @@ inline constexpr memmap::file &memmap::file::operator=(file &&rhs) {
     return *this;
 }
 
-memmap::file::~file() noexcept {
+inline memmap::file::~file() noexcept {
     if (is_open())
         try {
             close();
@@ -61,7 +61,7 @@ void memmap::file::close() {
         throw system_error(errno, generic_category(), "file::close");
 }
 
-inline constexpr int memmap::file::fildes() const {
+constexpr int memmap::file::fildes() const {
     if (!is_open()) [[unlikely]]
         throw logic_error("file::fildes: file is not open");
     assert(fildes_ >= 0);
@@ -69,7 +69,7 @@ inline constexpr int memmap::file::fildes() const {
     return fildes_;
 }
 
-inline constexpr bool memmap::file::is_open() const noexcept {
+constexpr bool memmap::file::is_open() const noexcept {
     return fildes_ >= 0;
 }
 

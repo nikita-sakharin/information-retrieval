@@ -14,7 +14,7 @@
 
 int main(const int argc, char ** const argv) {
     using std::cerr, std::cin, std::cout, std::exception, std::exit,
-        std::ios_base, std::strcmp;
+        std::ios_base, std::ofstream, std::strcmp;
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 
@@ -75,7 +75,6 @@ int main(const int argc, char ** const argv) {
         exit(EXIT_FAILURE);
     }
 
-    using std::ofstream, std::ios_base;
     try {
         switch (command) {
             case 'i': {

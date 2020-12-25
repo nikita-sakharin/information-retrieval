@@ -38,7 +38,7 @@ constexpr memmap::file &memmap::file::operator=(file &&rhs) {
     return *this;
 }
 
-inline memmap::file::~file() noexcept {
+memmap::file::~file() noexcept {
     if (is_open())
         try {
             close();

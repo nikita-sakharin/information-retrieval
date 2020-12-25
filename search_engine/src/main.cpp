@@ -77,7 +77,7 @@ int main(const int argc, char ** const argv) {
     try {
         switch (command) {
             case 'i':
-                indexer::index(text, file);
+                indexer::make_index(text, file);
                 break;
             case 's':
                 break;

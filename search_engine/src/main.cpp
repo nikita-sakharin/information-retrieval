@@ -28,7 +28,7 @@ int main(const int argc, char ** const argv) {
     }
 
     int command = 0;
-    const char *file = nullptr, *text = nullptr;
+    const char *file = nullptr, *texts = nullptr;
     for (int opt; opt = getopt(argc, argv, "f:ist:"), opt != -1; ) {
         switch (opt) {
             case ':':
@@ -54,7 +54,7 @@ int main(const int argc, char ** const argv) {
                 command = opt;
                 break;
             case 't':
-                text = optarg;
+                texts = optarg;
                 break;
             default:
                 assert(false);
@@ -67,9 +67,9 @@ int main(const int argc, char ** const argv) {
         cerr << argv[0] << ": missing command\n";
     else if (command != -1 && !file)
         cerr << argv[0] << ": option requires an argument -- f\n";
-    else if (command == 'i' && !text)
+    else if (command == 'i' && !texts)
         cerr << argv[0] << ": option requires an argument -- t\n";
-    if (command <= 0 || !file || (command == 'i' && !text)) {
+    if (command <= 0 || !file || (command == 'i' && !texts)) {
         cerr << "Try '" << argv[0] << " --help' for more information.\n";
         exit(EXIT_FAILURE);
     }
@@ -77,7 +77,7 @@ int main(const int argc, char ** const argv) {
     try {
         switch (command) {
             case 'i':
-                indexer::make_index(text, file);
+                indexer::make_index(texts, file);
                 break;
             case 's':
                 break;

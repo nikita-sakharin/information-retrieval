@@ -1,18 +1,19 @@
-#include <cctype>
+#include <search_engine/index.hpp>
 
-#include <sys/mman.h>
-
-#include <search_engine/header.hpp>
-// #include <search_engine/index.hpp> ???
-
-class index_ctor {
-    static constexpr size_t len = ;
-
-    map<const char *, > dictionary;
-public:
-    void write(std::ostream &);
+using std::istream, std::ostream;
+/*
+void index::insert(
+    const char * const first,
+    const char * const last,
+    const uint doc_id
+) {
+    dictionary.insert();
+}
+*/
+istream &operator<<(istream &stream, index &) {
+    return stream;
 }
 
-wchar_t wchar_to_char(const char ch) noexcept {
-    return std::tolower(ch);
+ostream &operator<<(ostream &stream, const index &) {
+    return stream;
 }

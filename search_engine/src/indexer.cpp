@@ -1,5 +1,5 @@
-#include <fstream>
-#include <iostream>
+#include <fstream> // ofstream
+#include <iostream> // ios_base
 
 #include <search_engine/index.hpp>
 #include <search_engine/indexer.hpp>

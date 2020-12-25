@@ -1,9 +1,7 @@
 #ifndef SEARCH_ENGINE_MEMMAP_HPP
 #define SEARCH_ENGINE_MEMMAP_HPP
 
-#include <cstddef>
-
-#include <sys/types.h>
+#include <cstddef> // size_t
 
 class memmap final {
     class file final {

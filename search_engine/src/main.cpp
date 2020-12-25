@@ -5,7 +5,8 @@
 #include <cstring> // strcmp
 
 #include <exception> // exception
-#include <iostream> // cerr
+#include <fstream> // ofstream
+#include <iostream> // cerr, ios_base
 
 #include <unistd.h> // getopt
 
@@ -74,11 +75,17 @@ int main(const int argc, char ** const argv) {
         exit(EXIT_FAILURE);
     }
 
+    using std::ofstream, std::ios_base;
     try {
         switch (command) {
-            case 'i':
-                indexer::make_index(texts_file, index_file);
+            case 'i': {
+                ofstream stream(
+                    index_file,
+                    ios_base::binary | ios_base::out | ios_base::trunc
+                );
+                stream << indexer::make_index(texts_file);
                 break;
+            }
             case 's':
                 break;
             default:

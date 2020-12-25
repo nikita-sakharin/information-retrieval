@@ -3,7 +3,7 @@
 
 class indexer final {
 public:
-    static void index(const char *, const char *);
+    static void make_index(const char *, const char *);
 };
 
 #endif

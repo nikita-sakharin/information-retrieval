@@ -77,11 +77,9 @@ int main(const int argc, char ** const argv) {
     try {
         switch (command) {
             case 'i':
-                cout << "start indexer::index(" << text << ", " << file << ")\n";
-                // indexer::index(text, file);
+                indexer::index(text, file);
                 break;
             case 's':
-                cout << "start searcher::search(" << file << ")\n";
                 break;
             default:
                 assert(false);

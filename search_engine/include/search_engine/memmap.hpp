@@ -10,17 +10,17 @@ class memmap final {
         int fildes_;
 
     public:
-        inline constexpr file() noexcept;
+        constexpr file() noexcept;
         inline file(const char *);
-        inline constexpr file(const file &) noexcept = delete;
-        inline constexpr file(file &&);
-        inline constexpr file &operator=(const file &) noexcept = delete;
-        inline constexpr file &operator=(file &&);
-        ~file() noexcept;
+        constexpr file(const file &) noexcept = delete;
+        constexpr file(file &&);
+        constexpr file &operator=(const file &) noexcept = delete;
+        constexpr file &operator=(file &&);
+        inline ~file() noexcept;
 
         void close();
-        inline constexpr int fildes() const;
-        inline constexpr bool is_open() const noexcept;
+        constexpr int fildes() const;
+        constexpr bool is_open() const noexcept;
         void open(const char *);
         std::size_t size() const;
     };

@@ -77,13 +77,12 @@ int main(const int argc, char ** const argv) {
 
     try {
         switch (command) {
-            case 'i': {
+            case 'i':
                 ofstream(
                     index_file,
                     ios_base::binary | ios_base::out | ios_base::trunc
                 ) << indexer::make_index(texts_file);
                 break;
-            }
             case 's':
                 break;
             default:

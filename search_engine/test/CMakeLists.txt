@@ -2,7 +2,10 @@ set(BINARY ${PROJECT_NAME}_test)
 
 add_executable(${BINARY}
     ${PROJECT_SOURCE_DIR}/src/index.cpp
+    ${PROJECT_SOURCE_DIR}/src/indexer.cpp
     ${PROJECT_SOURCE_DIR}/src/memmap.cpp
+    ${PROJECT_SOURCE_DIR}/src/normalizer.cpp
+    ${PROJECT_SOURCE_DIR}/src/stemmer.cpp
     ${PROJECT_SOURCE_DIR}/src/tokenizer.cpp
     index.test.cpp
     memmap.test.cpp

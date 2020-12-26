@@ -12,7 +12,14 @@ set(CXXFLAGS -Wcast-align -Wcast-qual -Wdouble-promotion -Weffc++ -Wfloat-equal
 )
 set(LDFLAGS -s)
 
-add_executable(${TARGET} main.cpp tokenizator.cpp)
+add_executable(${TARGET} main.cpp
+    index.cpp
+    indexer.cpp
+    memmap.cpp
+    normalizer.cpp
+    stemmer.cpp
+    tokenizer.cpp
+)
 target_compile_options(${TARGET} PRIVATE
     "$<$<CXX_COMPILER_ID:GNU>:${CXXFLAGS}>"
 )

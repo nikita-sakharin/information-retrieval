@@ -20,16 +20,16 @@ index make_index(const char * const texts_file) {
     if (data == data_end) [[unlikely]]
         throw logic_error("make_index: file is empty");
     else if (*data != '{') [[unlikely]] throw logic_error(what);
+    ++data;
 
     index returns;
-    do {
-        // ++data;
+    while (data < data_end) {
         data = parse_title(data, data_end, buffer, max_size);
+        if (*data != ':') [[unlikely]] throw logic_error(what);
         const doc_id id = index.insert_document(string_view(buffer));
-
-        if (*data != '\"') [[unlikely]]
-            throw logic_error(what);
-    } while (data < data_end);
+        if (*data != ',') [[unlikely]] throw logic_error(what);
+        ++data;
+    }
 
     if (*data != '}') [[unlikely]] throw logic_error(what);
 
@@ -77,6 +77,7 @@ static const char *parse_title(
 
     bool is_escape = false;
     while (data < data_end && (is_escape || *data != '\"')) {
+        // TODO check size: buffer overflow
         if (is_escape) [[unlikely]] {
             is_escape = false;
             data = parse_escape(data, data_end, buf);
@@ -88,7 +89,7 @@ static const char *parse_title(
     }
     if (data == data_end) // TODO
 
-    if () [[unlikely]]
+    if () [[unlikely]] // TODO
         throw logic_error("make_index: JSON is valid but title is empty");
     *buf = '\0';
 }

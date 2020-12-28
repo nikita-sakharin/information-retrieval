@@ -1,5 +1,4 @@
 #include <cassert> // assert
-#include <cstddef> // size_t
 
 #include <exception> // logic_error
 #include <string> // string

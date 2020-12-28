@@ -15,9 +15,11 @@ static const char *parse_escape(const char *, const char *, string &);
 static const char *parse_string(const char *, const char *, string &);
 
 index make_index(const char * const texts_file) {
+    static constexpr const char
+        *invalid = "make_index: invalid JSON",
+        *empty = "make_index: empty string";
     static constexpr size_t reserve = 1UL << 21; // 2 MiB = 512 * 4 KiB
     static string buf;
-    static constexpr const char *what = "make_index: invalid JSON";
 
     buf.reserve(reserve);
     const memmap map(texts_file);
@@ -25,24 +27,26 @@ index make_index(const char * const texts_file) {
     const char * const last = first + map.size();
     if (first == last) [[unlikely]]
         throw logic_error("make_index: file is empty");
-    else if (*first != '{') [[unlikely]] throw logic_error(what);
+    else if (*first != '{') [[unlikely]] throw logic_error(invalid);
     ++first;
 
     index returns;
     while (first < last && *first != '}') {
         first = parse_string(first, last, buf);
         if (first == last || *first != ':') [[unlikely]]
-            throw logic_error(what);
+            throw logic_error(invalid);
+        else if (buf.empty()) [[unlikely]] throw logic_error(empty);
         const index::doc_id id = returns.insert_document(buf);
         ++first;
 
         first = parse_string(first, last, buf); // TODO
         if (first == last || *first != ',') [[unlikely]]
-            throw logic_error(what);
+            throw logic_error(invalid);
+        else if (buf.empty()) [[unlikely]] throw logic_error(empty);
         ++first;
     }
     assert(first <= last);
-    if (first == last) [[unlikely]] throw logic_error(what);
+    if (first == last) [[unlikely]] throw logic_error(invalid);
     assert(*first == '}');
 
     return returns;

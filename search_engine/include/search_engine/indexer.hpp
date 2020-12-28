@@ -3,9 +3,6 @@
 
 #include <search_engine/index.hpp>
 
-class indexer final {
-public:
-    static index make_index(const char *);
-};
+index make_index(const char *);
 
 #endif

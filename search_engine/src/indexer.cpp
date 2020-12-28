@@ -32,6 +32,7 @@ index make_index(const char * const texts_file) {
         if (first == last || *first != ':') [[unlikely]]
             throw logic_error(what);
         const index::doc_id id = returns.insert_document(buf);
+        ++first;
 
         first = parse_string(first, last, buf); // TODO
         if (first == last || *first != ',') [[unlikely]]

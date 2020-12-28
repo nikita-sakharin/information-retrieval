@@ -1,7 +1,9 @@
 #include <cassert> // assert
+#include <cstddef> // size_t
 
 #include <exception> // logic_error
 #include <string> // string
+#include <string_view> // string_view
 
 #include <search_engine/index.hpp>
 #include <search_engine/indexer.hpp>

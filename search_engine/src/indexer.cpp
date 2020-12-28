@@ -27,7 +27,7 @@ index make_index(const char * const texts_file) {
     ++first;
 
     index returns;
-    while (first < last) {
+    while (first < last && *first != '}') {
         first = parse_string(first, last, buf);
         if (first == last || *first != ':') [[unlikely]]
             throw logic_error(what);
@@ -39,8 +39,9 @@ index make_index(const char * const texts_file) {
             throw logic_error(what);
         ++first;
     }
-
-    if (*first != '}') [[unlikely]] throw logic_error(what);
+    assert(first <= last);
+    if (first == last) [[unlikely]] throw logic_error(what);
+    assert(*first == '}');
 
     return returns;
 }

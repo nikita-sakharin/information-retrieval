@@ -1,12 +1,14 @@
+#include <cassert> // assert
 #include <cstddef> // size_t
 
+#include <exception> // logic_error
 #include <string> // string
 
 #include <search_engine/index.hpp>
 #include <search_engine/indexer.hpp>
 #include <search_engine/memmap.hpp>
 
-using std::size_t, std::string, std::string_view, index::doc_id;
+using std::logic_error, std::size_t, std::string, std::string_view;
 
 static const char *parse_escape(const char *, const char *, string &);
 static const char *parse_string(const char *, const char *, string &);
@@ -30,7 +32,7 @@ index make_index(const char * const texts_file) {
         first = parse_string(first, last, buf);
         if (first == last || *first != ':') [[unlikely]]
             throw logic_error(what);
-        const doc_id id = index.insert_document(buf);
+        const index::doc_id id = returns.insert_document(buf);
 
         first = parse_string(first, last, buf); // TODO
         if (first == last || *first != ',') [[unlikely]]
@@ -59,7 +61,7 @@ static const char *parse_escape(
         [[likely]]   case 'n':  buf.push_back('\n'); return first + 1;
         [[likely]]   case 'r':  buf.push_back('\r'); return first + 1;
         [[likely]]   case 't':  buf.push_back('\t'); return first + 1;
-        [[unlikely]] case 'u':
+        [[unlikely]] case 'u': {
             if (first + 4 >= last) [[unlikely]] throw logic_error(what);
             const int value = (first[3] - '0') * 16 + first[4] - '0';
             if (first[1] != '0' || first[2] != '0' || (
@@ -69,6 +71,7 @@ static const char *parse_escape(
             )) [[unlikely]] throw logic_error(what);
             buf.push_back(value);
             return first + 5;
+        }
         [[unlikely]] default: throw logic_error(what);
     }
 }

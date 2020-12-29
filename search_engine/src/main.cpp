@@ -1,5 +1,4 @@
 #include <cassert> // assert
-#include <cstddef>
 #include <cstdlib> // exit
 #include <cstring> // strcmp
 #include <cstring> // strcmp

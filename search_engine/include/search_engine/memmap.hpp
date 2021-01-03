@@ -4,30 +4,6 @@
 #include <cstddef> // size_t
 
 class memmap final {
-    class file final {
-        int fildes_;
-
-    public:
-        constexpr file() noexcept;
-        inline explicit file(const char *);
-        constexpr file(const file &) noexcept = delete;
-        constexpr file(file &&);
-        constexpr file &operator=(const file &) noexcept = delete;
-        constexpr file &operator=(file &&);
-        ~file() noexcept;
-
-        void close();
-        constexpr int fildes() const;
-        constexpr bool is_open() const noexcept;
-        void open(const char *);
-        std::size_t size() const;
-        constexpr void swap(file &) noexcept;
-    };
-
-    const void *addr_;
-    std::size_t size_;
-    file file_;
-
 public:
     memmap() noexcept;
     explicit memmap(const char *);
@@ -44,6 +20,32 @@ public:
     void open(const char *);
     std::size_t size() const;
     void swap(memmap &) noexcept;
+
+private:
+    class file final {
+    public:
+        constexpr file() noexcept;
+        inline explicit file(const char *);
+        constexpr file(const file &) noexcept = delete;
+        constexpr file(file &&);
+        constexpr file &operator=(const file &) noexcept = delete;
+        constexpr file &operator=(file &&);
+        ~file() noexcept;
+
+        void close();
+        constexpr int fildes() const;
+        constexpr bool is_open() const noexcept;
+        void open(const char *);
+        std::size_t size() const;
+        constexpr void swap(file &) noexcept;
+
+    private:
+        int fildes_;
+    };
+
+    const void *addr_;
+    std::size_t size_;
+    file file_;
 };
 
 #endif

@@ -35,7 +35,7 @@ constexpr memmap::file &memmap::file::operator=(file &&rhs) {
         close();
     assert(fildes_ == -1);
 
-    swap(fildes_, rhs.fildes_);
+    swap(rhs);
     return *this;
 }
 
@@ -97,7 +97,7 @@ size_t memmap::file::size() const {
 }
 
 constexpr void memmap::file::swap(file &rhs) noexcept {
-    swap(fildes_, rhs.fildes_);
+    ::swap(fildes_, rhs.fildes_);
 }
 
 memmap::memmap(
@@ -130,9 +130,7 @@ memmap &memmap::operator=(memmap &&rhs) {
         !file_.is_open()
     );
 
-    swap(addr_, rhs.addr_);
-    swap(size_, rhs.size_);
-    swap(file_, rhs.file_);
+    swap(rhs);
     return *this;
 }
 
@@ -227,4 +225,10 @@ size_t memmap::size() const {
     if (!is_open()) [[unlikely]]
         throw logic_error("memmap::size: file is not open");
     return size_;
+}
+
+void memmap::swap(memmap &rhs) noexcept {
+    ::swap(addr_, rhs.addr_);
+    ::swap(size_, rhs.size_);
+    file_.swap(rhs.file_);
 }

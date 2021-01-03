@@ -5,7 +5,7 @@
 #include <iostream> // cerr
 #include <limits> // numeric_limits
 #include <system_error> // generic_category, system_error
-#include <utility> // swap
+#include <utility> // move, swap
 
 #include <fcntl.h> // open
 #include <sys/mman.h> // mmap, munmap

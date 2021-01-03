@@ -43,7 +43,7 @@ public:
     bool is_open() const noexcept;
     void open(const char *);
     std::size_t size() const;
-    void swap(memmap &) noexcept;
+    constexpr void swap(memmap &) noexcept;
 };
 
 #endif

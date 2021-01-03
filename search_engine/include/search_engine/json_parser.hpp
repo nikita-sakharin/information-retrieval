@@ -17,7 +17,7 @@ public:
     using pointer = void;
     using reference = void;
 
-    constexpr json_parser() noexcept;
+    constexpr json_parser() noexcept = default;
     constexpr explicit json_parser(std::string_view) noexcept;
     constexpr json_parser(const char *, std::size_t) noexcept;
     constexpr json_parser(const char *, const char *) noexcept;
@@ -33,7 +33,6 @@ public:
 private:
     string_view view_;
 };
-constexpr json_parser::json_parser() noexcept : view_() {}
 
 constexpr json_parser::json_parser(
     const char * const data,

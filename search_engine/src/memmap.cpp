@@ -96,6 +96,10 @@ size_t memmap::file::size() const {
         return static_cast<size_t>(buf.st_size);
 }
 
+constexpr void memmap::file::swap(file &rhs) noexcept {
+    swap(fildes_, rhs.fildes_);
+}
+
 memmap::memmap(
 ) noexcept : addr_(MAP_FAILED), size_(size_limits::max()), file_() {}
 

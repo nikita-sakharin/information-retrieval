@@ -52,18 +52,18 @@ memmap::file::~file() noexcept {
 
 void memmap::file::close() {
     if (!is_open()) [[unlikely]]
-        throw logic_error("file::close: file is not open");
+        throw logic_error("memmap::file::close: file is not open");
     assert(fildes_ >= 0);
 
     const int returns = ::close(fildes_);
     fildes_ = -1;
     if (returns == -1) [[unlikely]]
-        throw system_error(errno, generic_category(), "file::close");
+        throw system_error(errno, generic_category(), "memmap::file::close");
 }
 
 constexpr int memmap::file::fildes() const {
     if (!is_open()) [[unlikely]]
-        throw logic_error("file::fildes: file is not open");
+        throw logic_error("memmap::file::fildes: file is not open");
     assert(fildes_ >= 0);
 
     return fildes_;
@@ -75,22 +75,22 @@ constexpr bool memmap::file::is_open() const noexcept {
 
 void memmap::file::open(const char * const filename) {
     if (is_open()) [[unlikely]]
-        throw logic_error("file::open: file is aldready open");
+        throw logic_error("memmap::file::open: file is aldready open");
     assert(fildes_ == -1);
 
     fildes_ = ::open(filename, O_RDONLY);
     if (fildes_ == -1) [[unlikely]]
-        throw system_error(errno, generic_category(), "file::open");
+        throw system_error(errno, generic_category(), "memmap::file::open");
     assert(fildes_ >= 0);
 }
 
 size_t memmap::file::size() const {
     if (!is_open()) [[unlikely]]
-        throw logic_error("file::size: file is not open");
+        throw logic_error("memmap::file::size: file is not open");
     assert(fildes_ >= 0);
 
     if (struct stat buf; fstat(fildes_, &buf) == -1) [[unlikely]]
-        throw system_error(errno, generic_category(), "file::size");
+        throw system_error(errno, generic_category(), "memmap::file::size");
     else
         return static_cast<size_t>(buf.st_size);
 }

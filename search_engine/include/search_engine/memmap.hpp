@@ -39,6 +39,7 @@ public:
 
     void close();
     const char *data() const;
+    bool empty() const;
     bool is_open() const noexcept;
     void open(const char *);
     std::size_t size() const;

@@ -186,8 +186,14 @@ void memmap::close() {
 
 const char *memmap::data() const {
     if (!is_open()) [[unlikely]]
-        throw logic_error("memmap::data: file is not open");
+        throw logic_error("memmap::data: memory map is not open");
     return addr_ == MAP_FAILED ? nullptr : static_cast<const char *>(addr_);
+}
+
+bool memmap::empty() const {
+    if (!is_open()) [[unlikely]]
+        throw logic_error("memmap::empty: memory map is not open");
+    return size() > 0;
 }
 
 bool memmap::is_open() const noexcept {
@@ -223,7 +229,7 @@ void memmap::open(const char * const filename) {
 
 size_t memmap::size() const {
     if (!is_open()) [[unlikely]]
-        throw logic_error("memmap::size: file is not open");
+        throw logic_error("memmap::size: memory map is not open");
     return size_;
 }
 

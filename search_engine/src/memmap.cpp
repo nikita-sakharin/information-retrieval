@@ -1,6 +1,7 @@
 #include <cassert> // assert
 #include <cerrno> // errno
 
+#include <exception> // exception
 #include <iostream> // cerr
 #include <limits> // numeric_limits
 #include <system_error> // generic_category, system_error
@@ -13,8 +14,8 @@
 
 #include <search_engine/memmap.hpp>
 
-using std::cerr, std::endl, std::generic_category, std::logic_error, std::move,
-    std::size_t, std::swap, std::system_error;
+using std::cerr, std::endl, std::exception, std::generic_category,
+    std::logic_error, std::move, std::size_t, std::swap, std::system_error;
 using size_limits = std::numeric_limits<size_t>;
 
 constexpr memmap::file::file() noexcept : fildes_(-1) {}
@@ -42,9 +43,9 @@ memmap::file::~file() noexcept {
     if (is_open())
         try {
             close();
-        } catch (const std::exception &except) {
+        } catch (const exception &except) {
 #           ifndef NDEBUG
-            cerr << except.what() << std::endl;
+            cerr << except.what() << endl;
 #           endif
         }
     assert(fildes_ == -1);
@@ -135,9 +136,9 @@ memmap::~memmap() noexcept {
     if (is_open())
         try {
             close();
-        } catch (const std::exception &except) {
+        } catch (const exception &except) {
 #           ifndef NDEBUG
-            cerr << except.what() << std::endl;
+            cerr << except.what() << endl;
 #           endif
         }
     assert(
@@ -164,11 +165,11 @@ void memmap::close() {
 
     try {
         file_.close();
-    } catch (const std::exception &except) {
+    } catch (const exception &except) {
         if (errnum == 0)
             errnum = errno;
 #       ifndef NDEBUG
-        cerr << except.what() << std::endl;
+        cerr << except.what() << endl;
 #       endif
     }
     assert(

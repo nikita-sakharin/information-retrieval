@@ -21,6 +21,7 @@ class memmap final {
         constexpr bool is_open() const noexcept;
         void open(const char *);
         std::size_t size() const;
+        constexpr void swap(file &) noexcept;
     };
 
     const void *addr_;

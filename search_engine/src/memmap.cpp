@@ -76,7 +76,7 @@ constexpr bool memmap::file::is_open() const noexcept {
 
 void memmap::file::open(const char * const filename) {
     if (is_open()) [[unlikely]]
-        throw logic_error("memmap::file::open: file is aldready open");
+        throw logic_error("memmap::file::open: file is already open");
     assert(fildes_ == -1);
 
     fildes_ = ::open(filename, O_RDONLY);
@@ -202,7 +202,7 @@ bool memmap::is_open() const noexcept {
 
 void memmap::open(const char * const filename) {
     if (is_open()) [[unlikely]]
-        throw logic_error("memmap::open: memory map is aldready open");
+        throw logic_error("memmap::open: memory map is already open");
     assert(
         addr_ == MAP_FAILED &&
         size_ == size_limits::max() &&

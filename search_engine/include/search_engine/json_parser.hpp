@@ -1,8 +1,6 @@
 #ifndef SEARCH_ENGINE_JSON_PARSER_HPP
 #define SEARCH_ENGINE_JSON_PARSER_HPP
 
-#include <cstddef> // ptrdiff_t
-
 #include <iterator> // input_iterator_tag
 #include <string_view> // string_view
 #include <utility> // pair
@@ -12,7 +10,7 @@
 class json_parser final {
 public:
     using iterator_category = std::input_iterator_tag;
-    using difference_type = std::ptrdiff_t;
+    using difference_type = void;
     using value_type = std::pair<std::string_view, str_parser>;
     using pointer = void;
     using reference = void;
@@ -35,16 +33,22 @@ private:
 };
 
 constexpr json_parser::json_parser(
+    const std::string_view view
+) noexcept : view_(view) { // delegating constructor => fewer assert
+    assert(view_.data() <= view_.data() + view_.size());
+}
+
+constexpr json_parser::json_parser(
     const char * const data,
     const std::size_t size
-) noexcept : view_(data, size) {
+) noexcept : view_(data, size) { // delegating constructor => fewer assert
     assert(view_.data() <= view_.data() + view_.size());
 }
 
 constexpr json_parser::json_parser(
     const char * const first,
     const char * const last
-) noexcept : first_(), last_() {
+) noexcept : first_(), last_() { // delegating constructor => fewer assert
     assert(view_.data() <= view_.data() + view_.size());
 }
 /*

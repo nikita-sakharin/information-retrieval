@@ -4,6 +4,7 @@
 #include <exception> // exception
 #include <iostream> // cerr
 #include <limits> // numeric_limits
+#include <stdexcept> // logic_error
 #include <system_error> // generic_category, system_error
 #include <utility> // move, swap
 

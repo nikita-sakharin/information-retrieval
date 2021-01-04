@@ -8,8 +8,8 @@
 #include <system_error> // generic_category, system_error
 #include <utility> // move, swap
 
-#include <fcntl.h> // open
-#include <sys/mman.h> // mmap, munmap
+#include <fcntl.h> // O_RDONLY, open
+#include <sys/mman.h> // MAP_FAILED, MAP_SHARED, mmap, munmap
 #include <sys/stat.h> // fstat
 #include <unistd.h> // close
 

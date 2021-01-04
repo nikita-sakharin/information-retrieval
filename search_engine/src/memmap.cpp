@@ -179,7 +179,7 @@ constexpr memmap::file &memmap::file::operator=(file &&rhs) {
     return *this;
 }
 
-memmap::file::~file() noexcept {
+constexpr memmap::file::~file() noexcept {
     if (is_open())
         try {
             close();

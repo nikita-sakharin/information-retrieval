@@ -30,7 +30,7 @@ private:
         constexpr file(file &&);
         constexpr file &operator=(const file &) noexcept = delete;
         constexpr file &operator=(file &&);
-        ~file() noexcept;
+        constexpr ~file() noexcept;
 
         void close();
         constexpr int fildes() const;

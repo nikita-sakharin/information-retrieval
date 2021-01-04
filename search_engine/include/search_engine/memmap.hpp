@@ -3,6 +3,8 @@
 
 #include <cstddef> // size_t
 
+#include <limits> // numeric_limits
+
 class memmap final {
 public:
     memmap() noexcept;

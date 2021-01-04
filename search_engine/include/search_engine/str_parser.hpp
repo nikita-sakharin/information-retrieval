@@ -5,6 +5,11 @@
 #include <stdexcept> // logic_error
 #include <string_view> // string_view
 
+#error "character_filter"
+#error "operator-()"
+#error "operator const char *()"
+#error "friend"
+
 class str_parser final {
 public:
     using iterator_category = std::input_iterator_tag;
@@ -14,9 +19,9 @@ public:
     using reference = std::string_view::reference;
 
     constexpr str_parser() noexcept = default;
-    constexpr explicit str_parser(std::string_view) noexcept;
-    constexpr str_parser(const char *, std::size_t) noexcept;
-    constexpr str_parser(const char *, const char *) noexcept;
+    constexpr explicit str_parser(std::string_view);
+    constexpr str_parser(const char *, std::size_t);
+    constexpr str_parser(const char *, const char *);
     constexpr str_parser(const str_parser &) noexcept = default;
     constexpr str_parser(str_parser &&) noexcept = default;
     constexpr str_parser &operator=(const str_parser &) noexcept = default;
@@ -25,6 +30,9 @@ public:
 
     friend constexpr bool operator==(str_parser, str_parser) noexcept = default;
     friend constexpr bool operator!=(str_parser, str_parser) noexcept = default;
+
+    friend constexpr bool operator-(str_parser, str_parser) noexcept;
+    constexpr operator const char *() const noexcept;
 
 private:
     std::string_view view_;
@@ -49,5 +57,13 @@ constexpr str_parser::str_parser(
     const char * const first,
     const char * const last
 ) : str_parser(std::string_view(first, last)) {}
+
+constexpr bool operator-(const str_parser lhs, const str_parser rhs) noexcept {
+    return lhs.view_.data() - rhs.view_.data();
+}
+
+constexpr str_parser::operator const char *() const noexcept {
+    return view_.data();
+}
 
 #endif

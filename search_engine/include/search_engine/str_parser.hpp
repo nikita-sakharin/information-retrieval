@@ -2,6 +2,7 @@
 #define SEARCH_ENGINE_STR_PARSER_HPP
 
 #include <iterator> // input_iterator_tag
+#include <stdexcept> // logic_error
 #include <string_view> // string_view
 
 class str_parser final {
@@ -31,23 +32,22 @@ private:
 
 constexpr str_parser::str_parser(
     const std::string_view view
-) noexcept : view_(view) {
+) : view_(view) {
     assert(view_.data() <= view_.data() + view_.size());
 
-    if (view_.data() < 2 || view_.front() != '\"') [[unlikely]]
-        throw logic_error("str_parser::str_parser: invalid string");
-    else
-        view_ = view_.substr(1);
+    if (view_.size() < 2 || view_.front() != '\"') [[unlikely]]
+        throw std::logic_error("str_parser::str_parser: invalid string");
+    view_ = view_.substr(1);
 }
 
 constexpr str_parser::str_parser(
     const char * const data,
     const std::size_t size
-) noexcept : str_parser(std::string_view(data, size)) {}
+) : str_parser(std::string_view(data, size)) {}
 
 constexpr str_parser::str_parser(
     const char * const first,
     const char * const last
-) noexcept : str_parser(std::string_view(first, last)) {}
+) : str_parser(std::string_view(first, last)) {}
 
 #endif

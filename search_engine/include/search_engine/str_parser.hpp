@@ -29,8 +29,7 @@ private:
 
 constexpr str_parser::str_parser(
     const std::string_view view
-) noexcept : view_(view) {
-}
+) noexcept : view_(view) {}
 /*
 constexpr str_parser::str_parser(
     const char * const first,

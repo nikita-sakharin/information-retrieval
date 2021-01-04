@@ -19,88 +19,6 @@ using std::cerr, std::endl, std::exception, std::generic_category,
     std::logic_error, std::move, std::size_t, std::swap, std::system_error;
 using size_limits = std::numeric_limits<size_t>;
 
-constexpr memmap::file::file() noexcept : fildes_(-1) {}
-
-inline memmap::file::file(const char * const filename) : file() {
-    open(filename);
-    assert(fildes_ >= 0);
-}
-
-constexpr memmap::file::file(file &&rhs) : file() {
-    *this = move(rhs);
-    assert(rhs.fildes_ == -1);
-}
-
-constexpr memmap::file &memmap::file::operator=(file &&rhs) {
-    if (is_open())
-        close();
-    assert(fildes_ == -1);
-
-    swap(rhs);
-    return *this;
-}
-
-memmap::file::~file() noexcept {
-    if (is_open())
-        try {
-            close();
-        } catch (const exception &except) {
-#           ifndef NDEBUG
-            cerr << except.what() << endl;
-#           endif
-        }
-    assert(fildes_ == -1);
-}
-
-void memmap::file::close() {
-    if (!is_open()) [[unlikely]]
-        throw logic_error("memmap::file::close: file is not open");
-    assert(fildes_ >= 0);
-
-    const int returns = ::close(fildes_);
-    fildes_ = -1;
-    if (returns == -1) [[unlikely]]
-        throw system_error(errno, generic_category(), "memmap::file::close");
-}
-
-constexpr int memmap::file::fildes() const {
-    if (!is_open()) [[unlikely]]
-        throw logic_error("memmap::file::fildes: file is not open");
-    assert(fildes_ >= 0);
-
-    return fildes_;
-}
-
-constexpr bool memmap::file::is_open() const noexcept {
-    return fildes_ >= 0;
-}
-
-void memmap::file::open(const char * const filename) {
-    if (is_open()) [[unlikely]]
-        throw logic_error("memmap::file::open: file is already open");
-    assert(fildes_ == -1);
-
-    fildes_ = ::open(filename, O_RDONLY);
-    if (fildes_ == -1) [[unlikely]]
-        throw system_error(errno, generic_category(), "memmap::file::open");
-    assert(fildes_ >= 0);
-}
-
-size_t memmap::file::size() const {
-    if (!is_open()) [[unlikely]]
-        throw logic_error("memmap::file::size: file is not open");
-    assert(fildes_ >= 0);
-
-    if (struct stat buf; fstat(fildes_, &buf) == -1) [[unlikely]]
-        throw system_error(errno, generic_category(), "memmap::file::size");
-    else
-        return static_cast<size_t>(buf.st_size);
-}
-
-constexpr void memmap::file::swap(file &rhs) noexcept {
-    ::swap(fildes_, rhs.fildes_);
-}
-
 memmap::memmap(
 ) noexcept : addr_(MAP_FAILED), size_(size_limits::max()), file_() {}
 
@@ -238,4 +156,86 @@ void memmap::swap(memmap &rhs) noexcept {
     ::swap(addr_, rhs.addr_);
     ::swap(size_, rhs.size_);
     file_.swap(rhs.file_);
+}
+
+constexpr memmap::file::file() noexcept : fildes_(-1) {}
+
+inline memmap::file::file(const char * const filename) : file() {
+    open(filename);
+    assert(fildes_ >= 0);
+}
+
+constexpr memmap::file::file(file &&rhs) : file() {
+    *this = move(rhs);
+    assert(rhs.fildes_ == -1);
+}
+
+constexpr memmap::file &memmap::file::operator=(file &&rhs) {
+    if (is_open())
+        close();
+    assert(fildes_ == -1);
+
+    swap(rhs);
+    return *this;
+}
+
+memmap::file::~file() noexcept {
+    if (is_open())
+        try {
+            close();
+        } catch (const exception &except) {
+#           ifndef NDEBUG
+            cerr << except.what() << endl;
+#           endif
+        }
+    assert(fildes_ == -1);
+}
+
+void memmap::file::close() {
+    if (!is_open()) [[unlikely]]
+        throw logic_error("memmap::file::close: file is not open");
+    assert(fildes_ >= 0);
+
+    const int returns = ::close(fildes_);
+    fildes_ = -1;
+    if (returns == -1) [[unlikely]]
+        throw system_error(errno, generic_category(), "memmap::file::close");
+}
+
+constexpr int memmap::file::fildes() const {
+    if (!is_open()) [[unlikely]]
+        throw logic_error("memmap::file::fildes: file is not open");
+    assert(fildes_ >= 0);
+
+    return fildes_;
+}
+
+constexpr bool memmap::file::is_open() const noexcept {
+    return fildes_ >= 0;
+}
+
+void memmap::file::open(const char * const filename) {
+    if (is_open()) [[unlikely]]
+        throw logic_error("memmap::file::open: file is already open");
+    assert(fildes_ == -1);
+
+    fildes_ = ::open(filename, O_RDONLY);
+    if (fildes_ == -1) [[unlikely]]
+        throw system_error(errno, generic_category(), "memmap::file::open");
+    assert(fildes_ >= 0);
+}
+
+size_t memmap::file::size() const {
+    if (!is_open()) [[unlikely]]
+        throw logic_error("memmap::file::size: file is not open");
+    assert(fildes_ >= 0);
+
+    if (struct stat buf; fstat(fildes_, &buf) == -1) [[unlikely]]
+        throw system_error(errno, generic_category(), "memmap::file::size");
+    else
+        return static_cast<size_t>(buf.st_size);
+}
+
+constexpr void memmap::file::swap(file &rhs) noexcept {
+    ::swap(fildes_, rhs.fildes_);
 }

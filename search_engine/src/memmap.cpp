@@ -17,7 +17,6 @@
 
 using std::cerr, std::endl, std::exception, std::generic_category,
     std::logic_error, std::move, std::size_t, std::swap, std::system_error;
-using size_limits = std::numeric_limits<size_t>;
 
 memmap::memmap(
 ) noexcept : addr_(MAP_FAILED), size_(size_limits::max()), file_() {}

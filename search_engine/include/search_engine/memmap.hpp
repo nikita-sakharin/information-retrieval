@@ -43,6 +43,8 @@ private:
         int fildes_;
     };
 
+    using size_limits = std::numeric_limits<size_t>;
+
     const void *addr_;
     std::size_t size_;
     file file_;

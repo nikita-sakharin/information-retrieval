@@ -20,14 +20,25 @@ public:
     constexpr str_parser &operator=(str_parser &&) noexcept = default;
     constexpr ~str_parser() noexcept = default;
 
-    friend constexpr bool operator==(str_parser, str_parser) noexcept;
+    friend constexpr bool operator==(str_parser, str_parser) noexcept = default;
     friend constexpr bool operator!=(str_parser, str_parser) noexcept = default;
 
 private:
     std::string_view view_;
 };
 
-constexpr explicit str_parser::str_parser(std::string_view view) noexcept : view_(view) {
+constexpr str_parser::str_parser(
+    const std::string_view view
+) noexcept : view_(view) {
 }
-
+/*
+constexpr str_parser::str_parser(
+    const char * const first,
+    const char * const last
+) noexcept : first_(), last_() {
+    if (first_ > last_) [[unlikely]]
+        throw logic_error("memmap::file::close: file is not open");
+    assert(fildes_ >= 0);
+}
+*/
 #endif

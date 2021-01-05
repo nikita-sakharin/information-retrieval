@@ -5,7 +5,6 @@
 #include <iostream> // cerr
 #include <stdexcept> // logic_error
 #include <system_error> // generic_category, system_error
-#include <utility> // move, swap
 
 #include <fcntl.h> // O_RDONLY, open
 #include <sys/mman.h> // MAP_FAILED, MAP_SHARED, PROT_READ, mmap, munmap
@@ -15,7 +14,7 @@
 #include <search_engine/memmap.hpp>
 
 using std::cerr, std::endl, std::exception, std::generic_category,
-    std::logic_error, std::move, std::size_t, std::swap, std::system_error;
+    std::logic_error, std::move, std::size_t, std::system_error;
 
 memmap::memmap(
 ) noexcept : addr_(MAP_FAILED), size_(size_limits::max()), file_() {}
@@ -107,12 +106,6 @@ const char *memmap::data() const {
     return addr_ == MAP_FAILED ? nullptr : static_cast<const char *>(addr_);
 }
 
-bool memmap::empty() const {
-    if (!is_open()) [[unlikely]]
-        throw logic_error("memmap::empty: memory map is not open");
-    return size() > 0;
-}
-
 void memmap::open(const char * const filename) {
     if (is_open()) [[unlikely]]
         throw logic_error("memmap::open: memory map is already open");
@@ -138,18 +131,6 @@ void memmap::open(const char * const filename) {
         (addr_ != MAP_FAILED && size_ > 0)
     );
     assert(size_ != size_limits::max() && file_.is_open());
-}
-
-size_t memmap::size() const {
-    if (!is_open()) [[unlikely]]
-        throw logic_error("memmap::size: memory map is not open");
-    return size_;
-}
-
-void memmap::swap(memmap &rhs) noexcept {
-    ::swap(addr_, rhs.addr_);
-    ::swap(size_, rhs.size_);
-    file_.swap(rhs.file_);
 }
 
 constexpr memmap::file::file() noexcept : fildes_(-1) {}
@@ -224,8 +205,4 @@ size_t memmap::file::size() const {
         throw system_error(errno, generic_category(), "memmap::file::size");
     else
         return static_cast<size_t>(buf.st_size);
-}
-
-constexpr void memmap::file::swap(file &rhs) noexcept {
-    ::swap(fildes_, rhs.fildes_);
 }

@@ -4,6 +4,8 @@
 #include <cstddef> // size_t
 
 #include <limits> // numeric_limits
+#include <stdexcept> // logic_error
+#include <utility> // swap
 
 class memmap final {
 public:
@@ -17,11 +19,11 @@ public:
 
     void close();
     const char *data() const;
-    bool empty() const;
+    constexpr bool empty() const;
     constexpr bool is_open() const noexcept;
     void open(const char *);
-    std::size_t size() const;
-    void swap(memmap &) noexcept;
+    constexpr std::size_t size() const;
+    constexpr void swap(memmap &) noexcept;
 
 private:
     class file final {
@@ -52,12 +54,34 @@ private:
     file file_;
 };
 
+constexpr bool memmap::empty() const {
+    if (!is_open()) [[unlikely]]
+        throw std::logic_error("memmap::empty: memory map is not open");
+    return size() > 0;
+}
+
 constexpr bool memmap::is_open() const noexcept {
     return file_.is_open();
 }
 
+constexpr size_t memmap::size() const {
+    if (!is_open()) [[unlikely]]
+        throw std::logic_error("memmap::size: memory map is not open");
+    return size_;
+}
+
+constexpr void memmap::swap(memmap &rhs) noexcept {
+    std::swap(addr_, rhs.addr_);
+    std::swap(size_, rhs.size_);
+    file_.swap(rhs.file_);
+}
+
 constexpr bool memmap::file::is_open() const noexcept {
     return fildes_ >= 0;
+}
+
+constexpr void memmap::file::swap(file &rhs) noexcept {
+    std::swap(fildes_, rhs.fildes_);
 }
 
 #endif

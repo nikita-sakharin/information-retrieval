@@ -28,7 +28,7 @@ public:
 private:
     class file final {
     public:
-        constexpr file() noexcept;
+        constexpr file() noexcept = default;
         inline explicit file(const char *);
         constexpr file(const file &) noexcept = delete;
         constexpr file(file &&);
@@ -44,7 +44,7 @@ private:
         constexpr void swap(file &) noexcept;
 
     private:
-        int fildes_;
+        int fildes_ = -1;
     };
 
     using size_limits = std::numeric_limits<size_t>;

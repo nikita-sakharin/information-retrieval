@@ -1,6 +1,8 @@
 #ifndef SEARCH_ENGINE_STR_PARSER_HPP
 #define SEARCH_ENGINE_STR_PARSER_HPP
 
+#include <cstdio> // EOF
+
 #include <iterator> // input_iterator_tag
 #include <locale> // isxdigit, locale
 #include <stdexcept> // logic_error
@@ -52,7 +54,7 @@ private:
 
 constexpr str_parser::str_parser(
     const std::string_view view
-) : view_(view), value_() {
+) : view_(view), value_(EOF) {
     assert(view_.data() <= view_.data() + view_.size());
 
     if (view_.size() < 2 || view_.front() != '\"') [[unlikely]]
@@ -70,7 +72,7 @@ constexpr str_parser::str_parser(
     const char * const last
 ) : str_parser(std::string_view(first, last)) {}
 
-constexpr char operator*() const {
+constexpr const char &operator*() const {
     return value_;
 }
 
@@ -78,10 +80,16 @@ constexpr const char *operator->() const {
 }
 
 constexpr str_parser &str_parser::operator++() {
+    assert(view_.size() > 0);
+
     if (view_.front() == '\\') {
         view_.remove_prefix(1);
         value = parse_escape();
-    } else
+        return *this;
+    } else if (view_.front() == '\"')
+        view_.remove_prefix(1);
+        view_.remove_suffix(view_.size());
+    else
         value = view_.front();
     return *this;
 }

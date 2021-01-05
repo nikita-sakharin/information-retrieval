@@ -75,7 +75,7 @@ void memmap::close() {
     assert(size_ != size_limits::max() && file_.is_open());
 
     int errnum = 0;
-    if (addr_ != MAP_FAILED && munmap(const_cast<void *>(addr_), size()) == -1)
+    if (addr_ != MAP_FAILED && munmap(const_cast<void *>(addr_), size_) == -1)
         errnum = errno;
     addr_ = MAP_FAILED;
     size_ = size_limits::max();

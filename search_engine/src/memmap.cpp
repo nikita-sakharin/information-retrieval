@@ -113,10 +113,6 @@ bool memmap::empty() const {
     return size() > 0;
 }
 
-bool memmap::is_open() const noexcept {
-    return file_.is_open();
-}
-
 void memmap::open(const char * const filename) {
     if (is_open()) [[unlikely]]
         throw logic_error("memmap::open: memory map is already open");
@@ -206,10 +202,6 @@ constexpr int memmap::file::fildes() const {
     assert(fildes_ >= 0);
 
     return fildes_;
-}
-
-constexpr bool memmap::file::is_open() const noexcept {
-    return fildes_ >= 0;
 }
 
 void memmap::file::open(const char * const filename) {

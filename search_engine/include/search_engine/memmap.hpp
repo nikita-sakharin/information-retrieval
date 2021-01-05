@@ -18,7 +18,7 @@ public:
     void close();
     const char *data() const;
     bool empty() const;
-    bool is_open() const noexcept;
+    constexpr bool is_open() const noexcept;
     void open(const char *);
     std::size_t size() const;
     void swap(memmap &) noexcept;
@@ -51,5 +51,13 @@ private:
     std::size_t size_;
     file file_;
 };
+
+constexpr bool memmap::is_open() const noexcept {
+    return file_.is_open();
+}
+
+constexpr bool memmap::file::is_open() const noexcept {
+    return fildes_ >= 0;
+}
 
 #endif

@@ -5,11 +5,6 @@
 #include <stdexcept> // logic_error
 #include <string_view> // string_view
 
-#error "character_filter"
-#error "operator-()"
-#error "operator const char *()"
-#error "friend"
-
 class str_parser final {
 public:
     using iterator_category = std::input_iterator_tag;

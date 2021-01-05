@@ -13,7 +13,7 @@
 class str_parser final {
 public:
     using iterator_category = std::input_iterator_tag;
-    using difference_type = std::string_view::difference_type;
+    using difference_type = void;
     using value_type = std::string_view::value_type;
     using pointer = std::string_view::pointer;
     using reference = std::string_view::reference;
@@ -28,10 +28,15 @@ public:
     constexpr str_parser &operator=(str_parser &&) noexcept = default;
     constexpr ~str_parser() noexcept = default;
 
-    friend constexpr bool operator==(str_parser, str_parser) noexcept = default;
-    friend constexpr bool operator!=(str_parser, str_parser) noexcept = default;
+    friend constexpr bool operator==(
+        const str_parser &,
+        const str_parser &
+    ) noexcept;
+    friend constexpr bool operator!=(
+        const str_parser &,
+        const str_parser &
+    ) noexcept = default;
 
-    friend constexpr bool operator-(str_parser, str_parser) noexcept;
     constexpr operator const char *() const noexcept;
 
 private:
@@ -58,8 +63,13 @@ constexpr str_parser::str_parser(
     const char * const last
 ) : str_parser(std::string_view(first, last)) {}
 
-constexpr bool operator-(const str_parser lhs, const str_parser rhs) noexcept {
-    return lhs.view_.data() - rhs.view_.data();
+constexpr bool operator==(
+    const str_parser &lhs,
+    const str_parser &rhs
+) noexcept {
+    if (lhs.view_.size() == 0 && rhs.view_.size() == 0)
+        return true;
+    return lhs.view_ == rhs.view_;
 }
 
 constexpr str_parser::operator const char *() const noexcept {

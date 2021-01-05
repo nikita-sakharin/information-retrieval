@@ -3,7 +3,6 @@
 
 #include <exception> // exception
 #include <iostream> // cerr
-#include <stdexcept> // logic_error
 #include <system_error> // generic_category, system_error
 
 #include <fcntl.h> // O_RDONLY, open

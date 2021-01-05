@@ -8,7 +8,7 @@
 #include <utility> // move, swap
 
 #include <fcntl.h> // O_RDONLY, open
-#include <sys/mman.h> // MAP_FAILED, MAP_SHARED, mmap, munmap
+#include <sys/mman.h> // MAP_FAILED, MAP_SHARED, PROT_READ, mmap, munmap
 #include <sys/stat.h> // fstat
 #include <unistd.h> // close
 

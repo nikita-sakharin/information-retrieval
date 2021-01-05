@@ -200,6 +200,5 @@ size_t memmap::file::size() const {
 
     if (struct stat buf; fstat(fildes_, &buf) == -1) [[unlikely]]
         throw system_error(errno, generic_category(), "memmap::file::size");
-    else
-        return static_cast<size_t>(buf.st_size);
+    return static_cast<size_t>(buf.st_size);
 }

@@ -5,7 +5,7 @@
 
 #include <limits> // numeric_limits
 #include <stdexcept> // logic_error
-#include <utility> // swap
+#include <utility> // move, swap
 
 class memmap final {
 public:

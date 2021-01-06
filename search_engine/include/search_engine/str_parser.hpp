@@ -1,8 +1,6 @@
 #ifndef SEARCH_ENGINE_STR_PARSER_HPP
 #define SEARCH_ENGINE_STR_PARSER_HPP
 
-#include <cstdio> // EOF
-
 #include <iterator> // input_iterator_tag
 #include <locale> // isxdigit, locale
 #include <stdexcept> // logic_error
@@ -15,8 +13,8 @@ public:
     using iterator_category = std::input_iterator_tag;
     using difference_type = void;
     using value_type = char;
-    using pointer = void;
-    using reference = void;
+    using pointer = const char *;
+    using reference = const char &;
 
     constexpr str_parser() noexcept = default;
     constexpr explicit str_parser(std::string_view);

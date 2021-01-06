@@ -103,6 +103,12 @@ constexpr str_parser &str_parser::operator++() {
     return *this;
 }
 
+constexpr str_parser str_parser::operator++(int) {
+    const str_parser temp(*this);
+    operator++();
+    return temp;
+}
+
 constexpr str_parser::operator const char *() const noexcept {
     return view_.data();
 }

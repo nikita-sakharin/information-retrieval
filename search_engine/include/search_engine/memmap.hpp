@@ -51,7 +51,7 @@ private:
 
     const void *addr_;
     std::size_t size_;
-    file file_;
+    file file_{};
 };
 
 constexpr bool memmap::empty() const {

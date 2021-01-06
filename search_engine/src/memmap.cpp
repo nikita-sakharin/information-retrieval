@@ -16,7 +16,7 @@ using std::cerr, std::endl, std::exception, std::generic_category,
     std::logic_error, std::move, std::size_t, std::system_error;
 
 memmap::memmap(
-) noexcept : addr_(MAP_FAILED), size_(size_limits::max()), file_() {}
+) noexcept : addr_(MAP_FAILED), size_(size_limits::max()) {}
 
 memmap::memmap(const char * const filename) : memmap() {
     open(filename);

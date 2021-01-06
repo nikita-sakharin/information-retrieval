@@ -48,7 +48,7 @@ private:
     static constexpr uint hex_digit(char);
     constexpr char parse_escape();
 
-    std::string_view view_;
+    std::string_view view_{};
     char value_ = -1;
 };
 

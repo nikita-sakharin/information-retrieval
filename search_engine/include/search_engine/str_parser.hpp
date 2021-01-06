@@ -49,17 +49,18 @@ private:
     constexpr char parse_escape();
 
     std::string_view view_;
-    int value_;
+    char value_ = -1;
 };
 
 constexpr str_parser::str_parser(
     const std::string_view view
-) : view_(view), value_(EOF) {
+) : view_(view) {
     assert(view_.data() <= view_.data() + view_.size());
 
     if (view_.size() < 2 || view_.front() != '\"') [[unlikely]]
         throw std::logic_error("str_parser::str_parser: invalid string");
     view_.remove_prefix(1);
+    operator++();
 }
 
 constexpr str_parser::str_parser(
@@ -72,25 +73,33 @@ constexpr str_parser::str_parser(
     const char * const last
 ) : str_parser(std::string_view(first, last)) {}
 
-constexpr const char &operator*() const {
+constexpr const char &str_parser::operator*() const {
     return value_;
 }
 
-constexpr const char *operator->() const {
+constexpr const char *str_parser::operator->() const {
+    return &value_;
 }
 
 constexpr str_parser &str_parser::operator++() {
-    assert(view_.size() > 0);
+    constexpr const char *what =
+        "str_parser::operator++: string not properly ended";
+    assert(view_.data() < view_.data() + view_.size());
 
-    if (view_.front() == '\\') {
+    if (view_.size() == 1 && view_.front() != '\"') [[unlikely]]
+        throw std::logic_error(what);
+
+    if (view_.front() == '\\') [[unlikely]] {
         view_.remove_prefix(1);
-        value = parse_escape();
-        return *this;
-    } else if (view_.front() == '\"')
+        value_ = parse_escape();
+        if (view_.size() == 0) [[unlikely]] throw std::logic_error(what);
+    } else if (view_.front() == '\"') [[unlikely]] {
         view_.remove_prefix(1);
         view_.remove_suffix(view_.size());
-    else
-        value = view_.front();
+    } else [[likely]] {
+        value_ = view_.front();
+        view_.remove_prefix(1);
+    }
     return *this;
 }
 
@@ -107,7 +116,7 @@ constexpr bool operator==(
     return lhs.view_ == rhs.view_;
 }
 
-static constexpr uint str_parser::hex_digit(const char c) {
+constexpr uint str_parser::hex_digit(const char c) {
     if (c >= '0' && c <= '9') [[likely]]
         return c - '0';
     else if (c >= 'a' && c <= 'f') [[likely]] // upper hex not allowed

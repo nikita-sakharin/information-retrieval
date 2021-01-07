@@ -21,9 +21,11 @@ public:
     const char *data() const;
     constexpr bool empty() const;
     constexpr bool is_open() const noexcept;
+    inline explicit operator std::string_view() const;
     void open(const char *);
     constexpr std::size_t size() const;
     constexpr void swap(memmap &) noexcept;
+
 
 private:
     class file final {
@@ -60,6 +62,10 @@ constexpr bool memmap::empty() const {
 
 constexpr bool memmap::is_open() const noexcept {
     return file_.is_open();
+}
+
+inline memmap::operator std::string_view() const {
+    return std::string_view(data(), size_);
 }
 
 constexpr size_t memmap::size() const {

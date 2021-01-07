@@ -4,7 +4,6 @@
 #include <cstddef> // size_t
 
 #include <span> // span
-#include <string_view> // string_view
 #include <utility> // pair
 
 class tokenizator final {

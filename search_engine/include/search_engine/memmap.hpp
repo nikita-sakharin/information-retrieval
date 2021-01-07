@@ -26,7 +26,6 @@ public:
     constexpr std::size_t size() const;
     constexpr void swap(memmap &) noexcept;
 
-
 private:
     class file final {
     public:

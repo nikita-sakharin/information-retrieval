@@ -55,8 +55,6 @@ private:
 };
 
 constexpr bool memmap::empty() const {
-    if (!is_open()) [[unlikely]]
-        throw std::logic_error("memmap::empty: memory map is not open");
     return size() > 0;
 }
 

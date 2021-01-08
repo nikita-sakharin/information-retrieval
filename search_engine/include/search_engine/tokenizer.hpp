@@ -17,27 +17,41 @@ public:
 
     constexpr void operator()(char) noexcept;
 
-private:
-    static constexpr void char_mapping(wchar_t) noexcept;
+    constexpr void reset();
 
-    constexpr std::size_t get_end_index() noexcept; // is_token_end
+private:
+    constexpr std::size_t get_end_index() noexcept;
 
     std::span<char> buffer;
-    std::size_t index;
-    const std::function<void(std::pair<std::size_t, std::span<char>>)> &func;
+    std::size_t index = 0, position = 0;
+    std::function<void(std::pair<std::size_t, std::span<char>>)> func;
 }
 
 constexpr void tokenizator::operator()(const char value) noexcept {
     buffer[index++] = value;
-    if (const std::size_t end_index = get_end_index(); end_index < index) { // TODO
-        if (index > 1)
-            func(make_pair(0 /* TODO */, buffer.first(index - 1)));
+    if (const std::size_t end_index = get_end_index(); end_index <= index) {
+        if (index > 1) {
+            func(std::make_pair(position++, buffer.first(end_index)));
+            std::move(buffer.cbegin() + , buffer.cbegin() + , buffer.begin());
+        }
         index = 0;
     }
 }
 
+constexpr void reset() noexcept {
+/*
+    if (index)
+        func(make_pair(position, buffer.first(index)));
+*/
+    index = 0;
+    position = 0;
+}
+
 constexpr std::size_t tokenizator::get_end_index() noexcept {
-    return ;
+    if ()
+        return;
+
+    return std::numeric_limits<std::size_t>::max();
 }
 
 #endif

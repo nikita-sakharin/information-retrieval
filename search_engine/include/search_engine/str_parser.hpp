@@ -3,6 +3,7 @@
 
 #include <stdexcept> // logic_error
 #include <string_view> // string_view
+#include <type_traits> // enable_if_t, is_invocable_r_v
 
 #include <search_engine/header.hpp>
 
@@ -15,10 +16,12 @@ public:
     constexpr str_parser &operator=(str_parser &&) noexcept = default;
     constexpr ~str_parser() noexcept = default;
 
+    template<typename Invocable, typename =
+        std::enable_if_t<std::is_invocable_r_v<void, Invocable, char>>>
     static constexpr std::string_view::const_iterator parse(
         std::string_view::const_iterator,
         std::string_view::const_iterator,
-        const std::function<void(char)> &
+        const Invocable &
     );
 
 private:
@@ -31,10 +34,11 @@ private:
     );
 };
 
+template<typename Invocable, typename>
 constexpr std::string_view::const_iterator str_parser::parse(
     std::string_view::const_iterator first,
     const std::string_view::const_iterator last,
-    const std::function<void(char)> &func
+    const Invocable &invocable
 ) {
     assert(first < last);
 
@@ -48,13 +52,13 @@ constexpr std::string_view::const_iterator str_parser::parse(
             is_escape = false;
             char value;
             first = parse_escape(first, last, value);
-            func(value);
+            invocable(value);
         } else if (*first == '\\') [[unlikely]] {
             is_escape = true;
             ++first;
         } else [[likely]] {
             assert(*first != '\"');
-            func(*first++);
+            invocable(*first++);
         }
     }
 

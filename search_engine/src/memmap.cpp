@@ -1,4 +1,3 @@
-#include <cassert> // assert
 #include <cerrno> // errno
 
 #include <exception> // exception

@@ -1,6 +1,7 @@
 #ifndef SEARCH_ENGINE_MEMMAP_HPP
 #define SEARCH_ENGINE_MEMMAP_HPP
 
+#include <cassert> // assert
 #include <cstddef> // size_t
 
 #include <limits> // numeric_limits

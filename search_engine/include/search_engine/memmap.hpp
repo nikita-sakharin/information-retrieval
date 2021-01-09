@@ -79,6 +79,14 @@ constexpr void memmap::swap(memmap &rhs) noexcept {
     file_.swap(rhs.file_);
 }
 
+constexpr int memmap::file::fildes() const {
+    if (!is_open()) [[unlikely]]
+        throw std::logic_error("memmap::file::fildes: file is not open");
+    assert(fildes_ >= 0);
+
+    return fildes_;
+}
+
 constexpr bool memmap::file::is_open() const noexcept {
     return fildes_ >= 0;
 }

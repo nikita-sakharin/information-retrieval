@@ -174,14 +174,6 @@ void memmap::file::close() {
         throw system_error(errno, generic_category(), "memmap::file::close");
 }
 
-constexpr int memmap::file::fildes() const {
-    if (!is_open()) [[unlikely]]
-        throw logic_error("memmap::file::fildes: file is not open");
-    assert(fildes_ >= 0);
-
-    return fildes_;
-}
-
 void memmap::file::open(const char * const filename) {
     if (is_open()) [[unlikely]]
         throw logic_error("memmap::file::open: file is already open");

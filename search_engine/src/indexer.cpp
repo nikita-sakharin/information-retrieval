@@ -32,7 +32,7 @@ index make_index(const char * const texts_file) {
 
     index returns;
     while (first < last && *first != '}') {
-        first = parse_string(first, last, buf);
+        first = str_parser::parse(first, last, );
         if (first == last || *first != ':') [[unlikely]]
             throw logic_error(invalid);
         else if (buf.empty()) [[unlikely]] throw logic_error(empty);

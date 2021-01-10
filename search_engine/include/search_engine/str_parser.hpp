@@ -3,7 +3,7 @@
 
 #include <stdexcept> // logic_error
 #include <string_view> // string_view
-#include <type_traits> // enable_if_t, is_invocable_r_v
+#include <type_traits> // is_invocable_r_v
 
 #include <search_engine/header.hpp>
 

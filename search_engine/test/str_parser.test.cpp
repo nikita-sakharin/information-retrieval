@@ -11,6 +11,7 @@ using std::logic_error, std::string, std::string_view;
 static string parse_string(string_view);
 
 TEST(StrParserTest, ParseEscape) {
+    ASSERT_EQ(parse_string("\"\""), "");
     ASSERT_EQ(parse_string("\"\\u0000\""), string(1, '\0'));
     ASSERT_EQ(parse_string("\"\\u0001\""), "\x01");
     ASSERT_EQ(parse_string("\"\\u0002\""), "\x02");

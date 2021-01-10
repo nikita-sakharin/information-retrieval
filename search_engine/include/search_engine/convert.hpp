@@ -3,6 +3,8 @@
 
 #include <type_traits>
 
+static_assert(__STDC_ISO_10646__ >= 201103L); // Unicode revision
+
 template<typename From, typename To, typename Invocable>
 class convert final {
 public:

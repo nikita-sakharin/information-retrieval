@@ -4,7 +4,7 @@
 
 #include <exception> // exception
 #include <fstream> // ofstream
-#include <iostream> // cerr, ios_base
+#include <iostream> // cerr, cin, cout, ios_base
 
 #include <unistd.h> // getopt
 

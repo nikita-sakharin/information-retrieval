@@ -40,6 +40,7 @@ index make_index(const char * const texts_file) {
         ++first;
 
         first = parse_string(first, last, buf); // TODO
+        // lambda insert to index
         if (first == last || *first != ',') [[unlikely]]
             throw logic_error(invalid);
         else if (buf.empty()) [[unlikely]] throw logic_error(empty);

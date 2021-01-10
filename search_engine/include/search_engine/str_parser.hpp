@@ -22,7 +22,14 @@ public:
         std::string_view::const_iterator,
         const Invocable &
     );
+/*
+    constexpr std::string_view::const_iterator operator()(
+        std::string_view::const_iterator,
+        std::string_view::const_iterator
+    );
 
+    constexpr Invocable invocable() const noexcept(...) // by value!
+*/
 private:
     static constexpr uint hex_digit(char);
 
@@ -31,6 +38,8 @@ private:
         std::string_view::const_iterator,
         char &
     );
+
+    // Invocable invocable_{};
 };
 
 template<typename Invocable>

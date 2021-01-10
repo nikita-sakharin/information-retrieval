@@ -1,58 +1,73 @@
 #include <iostream>
 #include <string>
+#include <string_view>
 
 #include <gtest/gtest.h>
 
 #include <search_engine/str_parser.hpp>
 
-static constexpr str_parser end;
+using std::string, std::string_view;
 
-TEST(StrParserTest, Hex) {
-    const string_view str_0 = "\"\\u0000\"";
-    str_parser iter_0(str_0);
-    ASSERT_NE(iter_0, end);
-    ASSERT_EQ('\0', *iter_0);
-    ++iter_0;
-    ASSERT_EQ(iter_0, end);
+static string parse_string(string_view);
 
-    const string_view str_b = "\"\\u000b\"";
-    str_parser iter_b(str_b);
-    ASSERT_NE(iter_b, end);
-    ASSERT_EQ('\xB', *iter_b);
-    ++iter_b;
-    ASSERT_EQ(iter_b, end);
-
-    const string_view str_e = "\"\\u000e\"";
-    str_parser iter_e(str_e);
-    ASSERT_NE(iter_e, end);
-    ASSERT_EQ('\xE', *iter_e);
-    ++iter_e;
-    ASSERT_EQ(iter_e, end);
-
-    const string_view str31 = "\"\\u001f\"";
-    str_parser iter31(str31);
-    ASSERT_NE(iter31, end);
-    ASSERT_EQ('\x1F', *iter31);
-    ++iter31;
-    ASSERT_EQ(iter31, end);
+TEST(StrParserTest, ParseEscape) {
+    ASSERT_EQ(parse_string("\"\\u0000\""),   "\0");
+    ASSERT_EQ(parse_string("\"\\u0001\""), "\x01");
+    ASSERT_EQ(parse_string("\"\\u0002\""), "\x02");
+    ASSERT_EQ(parse_string("\"\\u0003\""), "\x03");
+    ASSERT_EQ(parse_string("\"\\u0004\""), "\x04");
+    ASSERT_EQ(parse_string("\"\\u0005\""), "\x05");
+    ASSERT_EQ(parse_string("\"\\u0006\""), "\x06");
+    ASSERT_EQ(parse_string("\"\\u0007\""), "\x07");
+    ASSERT_EQ(parse_string(    "\"\\b\""),   "\b");
+    ASSERT_EQ(parse_string(    "\"\\t\""),   "\t");
+    ASSERT_EQ(parse_string(    "\"\\n\""),   "\n");
+    ASSERT_EQ(parse_string("\"\\u000b\""), "\x0B");
+    ASSERT_EQ(parse_string(    "\"\\f\""),   "\f");
+    ASSERT_EQ(parse_string(    "\"\\r\""),   "\r");
+    ASSERT_EQ(parse_string("\"\\u000e\""), "\x0E");
+    ASSERT_EQ(parse_string("\"\\u000f\""), "\x0F");
+    ASSERT_EQ(parse_string("\"\\u0010\""), "\x10");
+    ASSERT_EQ(parse_string("\"\\u0011\""), "\x11");
+    ASSERT_EQ(parse_string("\"\\u0012\""), "\x12");
+    ASSERT_EQ(parse_string("\"\\u0013\""), "\x13");
+    ASSERT_EQ(parse_string("\"\\u0014\""), "\x14");
+    ASSERT_EQ(parse_string("\"\\u0015\""), "\x15");
+    ASSERT_EQ(parse_string("\"\\u0016\""), "\x16");
+    ASSERT_EQ(parse_string("\"\\u0017\""), "\x17");
+    ASSERT_EQ(parse_string("\"\\u0018\""), "\x18");
+    ASSERT_EQ(parse_string("\"\\u0019\""), "\x19");
+    ASSERT_EQ(parse_string("\"\\u001a\""), "\x1A");
+    ASSERT_EQ(parse_string("\"\\u001b\""), "\x1B");
+    ASSERT_EQ(parse_string("\"\\u001c\""), "\x1C");
+    ASSERT_EQ(parse_string("\"\\u001d\""), "\x1D");
+    ASSERT_EQ(parse_string("\"\\u001e\""), "\x1E");
+    ASSERT_EQ(parse_string("\"\\u001f\""), "\x1F");
+    ASSERT_EQ(parse_string("\"\\u007f\""), "\x7F");
 }
 
-TEST(StrParserTest, Hex) {
-    const string_view str_error = "\"\\u007f";
-    str_parser iter_error(str_error);
-    ASSERT_NE(iter_error, end);
-    ASSERT_EQ('\0', *iter_0);
-    ++iter_0;
-    ASSERT_EQ(iter_0, end);
+TEST(StrParserTest, Throw) {
+    ASSERT_THROW(parse_string("\"\\"), logic_error);
+    ASSERT_THROW(parse_string("\"\\\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\u007F\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\u00ff\""), logic_error);
 }
 
 TEST(StrParserTest, Pangram) {
-    const string_view str = "\"The quick brown fox jumps over the lazy dog\"";
-    str_parser iter(str);
-    for (size_t i = 0; i < str.size(); ++i) {
-        ASSERT_NE(iter, end);
-        ASSERT_EQ(str[i], *iter);
-        ++iter;
-    }
-    ASSERT_EQ(iter, end);
+    ASSERT_EQ(
+        parse_string("\"The quick brown fox jumps over the lazy dog.\""),
+        "The quick brown fox jumps over the lazy dog."
+    );
+    ASSERT_EQ(parse_string(
+        "\"Съешь еще этих мягких французских булок, да выпей чаю.\""),
+        "Съешь еще этих мягких французских булок, да выпей чаю."
+    );
+}
+
+static string parse_string(const string_view str) {
+    string buffer;
+    str_parser::parse(str.cbegin(), str.cend(), [](const char c) -> void {
+        buffer.push_back(c);
+    });
+    return buffer;
 }

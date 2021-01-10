@@ -75,4 +75,11 @@ constexpr std::size_t tokenizer::get_end_index() noexcept {
     return std::numeric_limits<std::size_t>::max();
 }
 
+/*
+если в тексте есть тире
+инженер-механик co-education
+или точки
+C.A.T. U.S.A.
+то они обрабатываются в токенизаторе, а не нормализаторе
+*/
 #endif

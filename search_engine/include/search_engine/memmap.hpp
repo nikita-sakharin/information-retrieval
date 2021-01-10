@@ -22,8 +22,8 @@ public:
     const char *data() const;
     constexpr bool empty() const;
     constexpr bool is_open() const noexcept;
-    inline explicit operator std::string_view() const;
     void open(const char *);
+    inline explicit operator std::string_view() const;
     constexpr std::size_t size() const;
     constexpr void swap(memmap &) noexcept;
 

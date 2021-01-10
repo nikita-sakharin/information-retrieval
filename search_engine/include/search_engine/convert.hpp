@@ -1,5 +1,5 @@
-#ifndef SEARCH_ENGINE_CONVERT_HPP
-#define SEARCH_ENGINE_CONVERT_HPP
+#ifndef SEARCH_ENGINE_ENCODER_HPP
+#define SEARCH_ENGINE_ENCODER_HPP
 
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v, is_same_v
 
@@ -7,21 +7,21 @@ static_assert(__STDC_ISO_10646__ >= 201103L,
     "Unicode version 2011 or later required");
 
 template<typename From, typename To, typename Invocable>
-class convert final {
+class encoder final {
 public:
-    constexpr convert() noexcept(
+    constexpr encoder() noexcept(
         std::is_nothrow_default_constructible_v<Invocable>) = default;
-    constexpr convert(const Invocable &invocable) noexcept(
+    constexpr encoder(const Invocable &invocable) noexcept(
         std::is_nothrow_copy_constructible_v<Invocable>);
-    constexpr convert(const convert &) noexcept(
+    constexpr encoder(const encoder &) noexcept(
         std::is_nothrow_copy_constructible_v<Invocable>) = default;
-    constexpr convert(convert &&) noexcept(
+    constexpr encoder(encoder &&) noexcept(
         std::is_nothrow_move_constructible_v<Invocable>) = default;
-    constexpr convert &operator=(const convert &) noexcept(
+    constexpr encoder &operator=(const encoder &) noexcept(
         std::is_nothrow_copy_assignable_v<Invocable>) = default;
-    constexpr convert &operator=(convert &&) noexcept(
+    constexpr encoder &operator=(encoder &&) noexcept(
         std::is_nothrow_move_assignable_v<Invocable>) = default;
-    constexpr ~convert() noexcept(
+    constexpr ~encoder() noexcept(
         std::is_nothrow_destructible_v<Invocable>) = default;
 
     constexpr void operator()(From) noexcept(
@@ -42,12 +42,12 @@ private:
 };
 
 template<typename, typename, typename Invocable>
-constexpr convert::convert(const Invocable &invocable) noexcept(
+constexpr encoder::encoder(const Invocable &invocable) noexcept(
     std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {}
 
 template<typename From, typename To, typename Invocable>
-constexpr void convert::operator()(const From from) noexcept(
+constexpr void encoder::operator()(const From from) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, To>
 ) {
     if constexpr (is_same_v<From, char> && is_same_v<To, wchar_t>) {

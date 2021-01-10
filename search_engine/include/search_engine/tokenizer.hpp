@@ -40,7 +40,7 @@ private:
 
     std::span<wchar_t> buffer;
     std::size_t index = 0, position = 0;
-    Invocable invocable{};
+    Invocable invocable_{};
 };
 
 template<typename Invocable>

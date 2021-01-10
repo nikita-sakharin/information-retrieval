@@ -16,8 +16,7 @@ public:
     constexpr str_parser &operator=(str_parser &&) noexcept = default;
     constexpr ~str_parser() noexcept = default;
 
-    template<typename Invocable, typename =
-        std::enable_if_t<std::is_invocable_r_v<void, Invocable, char>>>
+    template<typename Invocable>
     static constexpr std::string_view::const_iterator parse(
         std::string_view::const_iterator,
         std::string_view::const_iterator,
@@ -34,12 +33,14 @@ private:
     );
 };
 
-template<typename Invocable, typename>
+template<typename Invocable>
 constexpr std::string_view::const_iterator str_parser::parse(
     std::string_view::const_iterator first,
     const std::string_view::const_iterator last,
     const Invocable &invocable
 ) {
+    static_assert(std::is_invocable_r_v<void, Invocable, char>,
+        "invocable must have signature void(char)");
     assert(first < last);
 
     if (*first != '\"') [[unlikely]]

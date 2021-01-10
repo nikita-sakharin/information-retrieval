@@ -24,8 +24,10 @@ public:
     constexpr ~encoder() noexcept(
         std::is_nothrow_destructible_v<Invocable>) = default;
 
-    constexpr void operator()(From) noexcept(
+    constexpr void operator()(From) noexcept( // enable_if
         std::is_nothrow_invocable_r_v<void, Invocable, To>);
+    constexpr void operator()(basic_string_view<From>) noexcept( // enable_if
+        std::is_nothrow_invocable_r_v<void, Invocable, To>); // string_view of span
 
 private:
     static_assert(

@@ -16,9 +16,6 @@ add_executable(${TARGET} main.cpp
     index.cpp
     indexer.cpp
     memmap.cpp
-    normalizer.cpp
-    stemmer.cpp
-    tokenizer.cpp
 )
 target_compile_options(${TARGET} PRIVATE
     "$<$<CXX_COMPILER_ID:GNU>:${CXXFLAGS}>"

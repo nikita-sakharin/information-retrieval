@@ -5,7 +5,7 @@
 #include <cstddef> // size_t
 
 #include <span> // span
-#include <type_traits>
+#include <type_traits> // is_invocable_r_v, is_nothrow_*_v
 
 template<typename Invocable>
 class tokenizer final {

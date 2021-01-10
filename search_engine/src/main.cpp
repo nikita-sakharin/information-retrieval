@@ -1,5 +1,5 @@
 #include <cassert> // assert
-#include <cstdlib> // exit
+#include <cstdlib> // EXIT_FAILURE, EXIT_SUCCESS, exit
 #include <cstring> // strcmp
 
 #include <exception> // exception

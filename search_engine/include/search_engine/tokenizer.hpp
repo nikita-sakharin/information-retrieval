@@ -1,33 +1,52 @@
 #ifndef SEARCH_ENGINE_TOKENIZER_HPP
 #define SEARCH_ENGINE_TOKENIZER_HPP
 
+#include <cctype> // isalnum
 #include <cstddef> // size_t
 
 #include <span> // span
-#include <utility> // pair
+#include <type_traits>
 
-class tokenizator final {
+template<typename Invocable>
+class tokenizer final {
 public:
-    constexpr tokenizator() noexcept = default;
-    constexpr tokenizator(const tokenizator &) noexcept = default;
-    constexpr tokenizator(tokenizator &&) noexcept = default;
-    constexpr tokenizator &operator=(const tokenizator &) noexcept = default;
-    constexpr tokenizator &operator=(tokenizator &&) noexcept = default;
-    constexpr ~tokenizator() noexcept = default;
+    constexpr tokenizer() noexcept(
+        std::is_nothrow_default_constructible_v<Invocable>) = default;
+    constexpr tokenizer(const Invocable &invocable) noexcept(
+        std::is_nothrow_copy_constructible_v<Invocable>);
+    constexpr tokenizer(const tokenizer &) noexcept(
+        std::is_nothrow_copy_constructible_v<Invocable>) = default;
+    constexpr tokenizer(tokenizer &&) noexcept(
+        std::is_nothrow_move_constructible_v<Invocable>) = default;
+    constexpr tokenizer &operator=(const tokenizer &) noexcept(
+        std::is_nothrow_copy_assignable_v<Invocable>) = default;
+    constexpr tokenizer &operator=(tokenizer &&) noexcept(
+        std::is_nothrow_move_assignable_v<Invocable>) = default;
+    constexpr ~tokenizer() noexcept(
+        std::is_nothrow_destructible_v<Invocable>) = default;
 
-    constexpr void operator()(char) noexcept;
+    constexpr void operator()(wchar_t) noexcept(std::is_nothrow_invocable_r_v<
+        void, Invocable, std::size_t, std::span<wchar_t>>);
 
     constexpr void reset();
 
 private:
+    static_assert(
+        std::is_invocable_r_v<void, Invocable, std::size_t, std::span<wchar_t>>,
+        "invocable must have signature void(size_t, span<wchar_t>)"
+    );
+
     constexpr std::size_t get_end_index() noexcept;
 
-    std::span<char> buffer;
+    std::span<wchar_t> buffer;
     std::size_t index = 0, position = 0;
-    std::function<void(std::pair<std::size_t, std::span<char>>)> func;
-}
+    Invocable invocable{};
+};
 
-constexpr void tokenizator::operator()(const char value) noexcept {
+template<typename Invocable>
+constexpr void tokenizer::operator()(const wchar_t value) noexcept(
+    std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::span<wchar_t>>
+) {
     buffer[index++] = value;
     if (const std::size_t end_index = get_end_index(); end_index <= index) {
         if (index > 1) {
@@ -47,8 +66,10 @@ constexpr void reset() noexcept {
     position = 0;
 }
 
-constexpr std::size_t tokenizator::get_end_index() noexcept {
-    if ()
+constexpr std::size_t tokenizer::get_end_index() noexcept {
+    assert(index > 0);
+    const wchar_t wc = buffer[index - 1];
+    if (std::isalnum(wc) || wc)
         return;
 
     return std::numeric_limits<std::size_t>::max();

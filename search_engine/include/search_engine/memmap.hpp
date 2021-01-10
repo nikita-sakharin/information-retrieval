@@ -80,6 +80,25 @@ constexpr void memmap::swap(memmap &rhs) noexcept {
     file_.swap(rhs.file_);
 }
 
+inline memmap::file::file(const char * const filename) {
+    open(filename);
+    assert(fildes_ >= 0);
+}
+
+constexpr memmap::file::file(file &&rhs) {
+    *this = move(rhs);
+    assert(rhs.fildes_ == -1);
+}
+
+constexpr memmap::file &memmap::file::operator=(file &&rhs) {
+    if (is_open())
+        close();
+    assert(fildes_ == -1);
+
+    swap(rhs);
+    return *this;
+}
+
 constexpr int memmap::file::fildes() const {
     if (!is_open()) [[unlikely]]
         throw std::logic_error("memmap::file::fildes: file is not open");

@@ -131,25 +131,6 @@ void memmap::open(const char * const filename) {
     assert(size_ != size_limits::max() && file_.is_open());
 }
 
-inline memmap::file::file(const char * const filename) {
-    open(filename);
-    assert(fildes_ >= 0);
-}
-
-constexpr memmap::file::file(file &&rhs) {
-    *this = move(rhs);
-    assert(rhs.fildes_ == -1);
-}
-
-constexpr memmap::file &memmap::file::operator=(file &&rhs) {
-    if (is_open())
-        close();
-    assert(fildes_ == -1);
-
-    swap(rhs);
-    return *this;
-}
-
 constexpr memmap::file::~file() noexcept {
     if (is_open())
         try {

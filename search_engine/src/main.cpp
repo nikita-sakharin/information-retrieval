@@ -1,7 +1,6 @@
 #include <cassert> // assert
 #include <cstdlib> // exit
 #include <cstring> // strcmp
-#include <cstring> // strcmp
 
 #include <exception> // exception
 #include <fstream> // ofstream

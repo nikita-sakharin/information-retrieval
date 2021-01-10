@@ -86,7 +86,7 @@ inline memmap::file::file(const char * const filename) {
 }
 
 constexpr memmap::file::file(file &&rhs) {
-    *this = move(rhs);
+    *this = std::move(rhs);
     assert(rhs.fildes_ == -1);
 }
 

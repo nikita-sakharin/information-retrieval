@@ -22,7 +22,7 @@ public:
     doc_id insert_document(std::string_view);
 
     // void insert_term(doc_id, std::string_view, size_t);
-    friend std::istream &operator<<(std::istream &, index &);
+    friend std::istream &operator>>(std::istream &, index &);
     friend std::ostream &operator<<(std::ostream &, const index &);
 
 private:

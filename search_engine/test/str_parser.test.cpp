@@ -1,17 +1,17 @@
-#include <iostream>
-#include <string>
-#include <string_view>
+#include <string> // string
+#include <string_view> // string_view
+#include <stdexcept> // logic_error
 
 #include <gtest/gtest.h>
 
 #include <search_engine/str_parser.hpp>
 
-using std::string, std::string_view;
+using std::logic_error, std::string, std::string_view;
 
 static string parse_string(string_view);
 
 TEST(StrParserTest, ParseEscape) {
-    ASSERT_EQ(parse_string("\"\\u0000\""),   "\0");
+    ASSERT_EQ(parse_string("\"\\u0000\""), string(1, '\0'));
     ASSERT_EQ(parse_string("\"\\u0001\""), "\x01");
     ASSERT_EQ(parse_string("\"\\u0002\""), "\x02");
     ASSERT_EQ(parse_string("\"\\u0003\""), "\x03");
@@ -66,7 +66,7 @@ TEST(StrParserTest, Pangram) {
 
 static string parse_string(const string_view str) {
     string buffer;
-    str_parser::parse(str.cbegin(), str.cend(), [](const char c) -> void {
+    str_parser::parse(str.cbegin(), str.cend(), [&buffer](const char c) -> void {
         buffer.push_back(c);
     });
     return buffer;

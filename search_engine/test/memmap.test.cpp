@@ -8,5 +8,5 @@
 
 TEST(MemmapTest, FIXME) {
     std::cout << "MemmapTest, FIXME" << std::endl;
-    ASSERT_EQ(wchar_to_char('Q'), L'q');
+    ASSERT_EQ('q', L'q');
 }

@@ -8,5 +8,5 @@
 
 TEST(TokenizerTest, WcharToChar) {
     std::cout << "TokenizerTest, WcharToChar" << std::endl;
-    ASSERT_EQ(wchar_to_char('Q'), L'q');
+    ASSERT_EQ('q', L'q');
 }

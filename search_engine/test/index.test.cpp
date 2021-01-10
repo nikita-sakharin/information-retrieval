@@ -8,5 +8,5 @@
 
 TEST(IndexTest, FIXME) {
     std::cout << "IndexTest, FIXME" << std::endl;
-    ASSERT_EQ(wchar_to_char('Q'), L'q');
+    ASSERT_EQ('q', L'q');
 }

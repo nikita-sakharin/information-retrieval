@@ -28,7 +28,8 @@ public:
         std::string_view::const_iterator
     );
 
-    constexpr Invocable invocable() const noexcept(...) // by value!
+    constexpr Invocable invocable() const noexcept(
+        std::is_nothrow_copy_assignable_v<Invocable>);
 */
 private:
     static constexpr uint hex_digit(char);

@@ -10,7 +10,7 @@
 
 class index final {
 public:
-    using doc_id = uint32_t;
+    using doc_id = std::uint32_t;
 
     inline index() noexcept = default;
     inline index(const index &) noexcept = default;

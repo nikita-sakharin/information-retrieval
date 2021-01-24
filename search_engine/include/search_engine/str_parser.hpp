@@ -7,22 +7,24 @@
 
 #include <search_engine/header.hpp>
 
+template<typename Invocable>
 class str_parser final {
 public:
-    constexpr str_parser() noexcept = default;
-    constexpr str_parser(const str_parser &) noexcept = default;
-    constexpr str_parser(str_parser &&) noexcept = default;
-    constexpr str_parser &operator=(const str_parser &) noexcept = default;
-    constexpr str_parser &operator=(str_parser &&) noexcept = default;
-    constexpr ~str_parser() noexcept = default;
+    constexpr str_parser() noexcept(
+        std::is_nothrow_default_constructible_v<Invocable>) = default;
+    constexpr str_parser(const Invocable &invocable) noexcept(
+        std::is_nothrow_copy_constructible_v<Invocable>);
+    constexpr str_parser(const str_parser &) noexcept(
+        std::is_nothrow_copy_constructible_v<Invocable>) = default;
+    constexpr str_parser(str_parser &&) noexcept(
+        std::is_nothrow_move_constructible_v<Invocable>) = default;
+    constexpr str_parser &operator=(const str_parser &) noexcept(
+        std::is_nothrow_copy_assignable_v<Invocable>) = default;
+    constexpr str_parser &operator=(str_parser &&) noexcept(
+        std::is_nothrow_move_assignable_v<Invocable>) = default;
+    constexpr ~str_parser() noexcept(
+        std::is_nothrow_destructible_v<Invocable>) = default;
 
-    template<typename Invocable>
-    static constexpr std::string_view::const_iterator parse(
-        std::string_view::const_iterator,
-        std::string_view::const_iterator,
-        const Invocable &
-    );
-/*
     constexpr std::string_view::const_iterator operator()(
         std::string_view::const_iterator,
         std::string_view::const_iterator
@@ -30,8 +32,13 @@ public:
 
     constexpr Invocable invocable() const noexcept(
         std::is_nothrow_copy_assignable_v<Invocable>);
-*/
+
 private:
+    static_assert(
+        std::is_invocable_r_v<void, Invocable, char>,
+        "invocable must have signature void(char)"
+    );
+
     static constexpr uint hex_digit(char);
 
     static constexpr std::string_view::const_iterator parse_escape(
@@ -40,21 +47,25 @@ private:
         char &
     );
 
-    // Invocable invocable_{};
+    Invocable invocable_{};
 };
 
 template<typename Invocable>
-constexpr std::string_view::const_iterator str_parser::parse(
-    std::string_view::const_iterator first,
-    const std::string_view::const_iterator last,
+constexpr str_parser<Invocable>::str_parser(
     const Invocable &invocable
+) noexcept(
+    std::is_nothrow_copy_constructible_v<Invocable>
+) : invocable_(invocable) {}
+
+template<typename Invocable>
+constexpr std::string_view::const_iterator str_parser<Invocable>::operator()(
+    std::string_view::const_iterator first,
+    const std::string_view::const_iterator last
 ) {
-    static_assert(std::is_invocable_r_v<void, Invocable, char>,
-        "invocable must have signature void(char)");
     assert(first < last);
 
     if (*first != '\"') [[unlikely]]
-        throw std::logic_error("str_parser::parse: invalid string");
+        throw std::logic_error("str_parser::operator(): invalid string");
     ++first;
 
     bool is_escape = false;
@@ -63,25 +74,27 @@ constexpr std::string_view::const_iterator str_parser::parse(
             is_escape = false;
             char value;
             first = parse_escape(first, last, value);
-            invocable(value);
+            invocable_(value);
         } else if (*first == '\\') [[unlikely]] {
             is_escape = true;
             ++first;
         } else [[likely]] {
             assert(*first != '\"');
-            invocable(*first++);
+            invocable_(*first++);
         }
     }
 
     assert(first <= last);
-    if (first == last) [[unlikely]]
-        throw std::logic_error("str_parser::parse: string not properly ended");
+    if (first == last) [[unlikely]] throw std::logic_error(
+        "str_parser::operator(): string not properly ended"
+    );
     assert(!is_escape && *first == '\"');
 
     return first + 1;
 }
 
-constexpr uint str_parser::hex_digit(const char c) {
+template<typename Invocable>
+constexpr uint str_parser<Invocable>::hex_digit(const char c) {
     if (c >= '0' && c <= '9') [[likely]]
         return c - '0';
     else if (c >= 'a' && c <= 'f') [[likely]] // upper hex not allowed
@@ -90,7 +103,8 @@ constexpr uint str_parser::hex_digit(const char c) {
         throw std::logic_error("str_parser::hex_digit: invalid hex digit");
 }
 
-constexpr std::string_view::const_iterator str_parser::parse_escape(
+template<typename Invocable>
+constexpr std::string_view::const_iterator str_parser<Invocable>::parse_escape(
     const std::string_view::const_iterator first,
     const std::string_view::const_iterator last,
     char &value_ref

@@ -67,8 +67,9 @@ TEST(StrParserTest, Pangram) {
 
 static string parse_string(const string_view str) {
     string buffer;
-    str_parser::parse(str.cbegin(), str.cend(), [&buffer](const char c) -> void {
+    str_parser parser([&buffer](const char c) constexpr -> void {
         buffer.push_back(c);
     });
+    parser(str.cbegin(), str.cend());
     return buffer;
 }

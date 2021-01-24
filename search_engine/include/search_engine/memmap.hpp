@@ -57,7 +57,7 @@ private:
 };
 
 constexpr bool memmap::empty() const {
-    return size() > 0;
+    return size() == 0;
 }
 
 constexpr bool memmap::is_open() const noexcept {

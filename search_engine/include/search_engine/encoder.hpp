@@ -62,9 +62,7 @@ constexpr encoder<From, To, Invocable>::encoder(
 template<typename From, typename To, typename Invocable>
 constexpr void encoder<From, To, Invocable>::operator()(
     const From from
-) noexcept(
-    std::is_nothrow_invocable_r_v<void, Invocable, To>
-) {
+) noexcept(std::is_nothrow_invocable_r_v<void, Invocable, To>) {
     invocable_(from);
 }
 

@@ -69,9 +69,7 @@ constexpr void encoder<From, To, Invocable>::operator()(
 template<typename Invocable>
 constexpr void encoder<char, wchar_t, Invocable>::operator()(
     const char from
-) noexcept(
-    std::is_nothrow_invocable_r_v<void, Invocable, wchar_t>
-) {
+) noexcept(std::is_nothrow_invocable_r_v<void, Invocable, wchar_t>) {
     wchar_t wc;
     const std::size_t returns = mbrtowc(&wc, &from, 1U, &state);
     if (returns == static_cast<std::size_t>(-1)) [[unlikely]]
@@ -84,9 +82,7 @@ constexpr void encoder<char, wchar_t, Invocable>::operator()(
 template<typename Invocable>
 constexpr void encoder<wchar_t, char, Invocable>::operator()(
     const wchar_t from
-) noexcept(
-    std::is_nothrow_invocable_r_v<void, Invocable, char>
-) {
+) noexcept(std::is_nothrow_invocable_r_v<void, Invocable, char>) {
     std::array<char, MB_LEN_MAX> s;
     const std::size_t returns = wcrtomb(s.data(), from, &state);
     if (returns == static_cast<std::size_t>(-1)) [[unlikely]]

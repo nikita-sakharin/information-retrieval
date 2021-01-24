@@ -5,7 +5,9 @@
 #include <climits> // MB_LEN_MAX
 #include <clocale> // LC_ALL, setlocale
 #include <cstddef> // size_t
+#include <cwchar> // mbrtowc, mbstate_t, wcrtomb
 
+#include <algorithm> // foreach
 #include <system_error> // generic_category, system_error
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v, is_same_v
 
@@ -70,11 +72,13 @@ template<typename Invocable>
 constexpr void encoder<char, wchar_t, Invocable>::operator()(
     const char from
 ) noexcept(std::is_nothrow_invocable_r_v<void, Invocable, wchar_t>) {
+    using std::generic_category, std::size_t, std::system_error;
+
     wchar_t wc;
-    const std::size_t returns = mbrtowc(&wc, &from, 1U, &state);
-    if (returns == static_cast<std::size_t>(-1)) [[unlikely]]
+    const size_t returns = std::mbrtowc(&wc, &from, 1U, &state);
+    if (returns == static_cast<size_t>(-1)) [[unlikely]]
         throw system_error(errno, generic_category(), "encoder::operator()");
-    if (returns == static_cast<std::size_t>(-2))
+    if (returns == static_cast<size_t>(-2))
         return;
     invocable_(wc);
 }
@@ -83,11 +87,13 @@ template<typename Invocable>
 constexpr void encoder<wchar_t, char, Invocable>::operator()(
     const wchar_t from
 ) noexcept(std::is_nothrow_invocable_r_v<void, Invocable, char>) {
+    using std::generic_category, std::size_t, std::system_error;
+
     std::array<char, MB_LEN_MAX> s;
-    const std::size_t returns = wcrtomb(s.data(), from, &state);
-    if (returns == static_cast<std::size_t>(-1)) [[unlikely]]
+    const size_t returns = std::wcrtomb(s.data(), from, &state);
+    if (returns == static_cast<size_t>(-1)) [[unlikely]]
         throw system_error(errno, generic_category(), "encoder::operator()");
-    foreach(s.cbegin(), s.cbegin() + returns, invocable_);
+    std::foreach(s.cbegin(), s.cbegin() + returns, invocable_);
 }
 
 #endif

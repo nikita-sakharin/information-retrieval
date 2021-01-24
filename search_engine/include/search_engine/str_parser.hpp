@@ -41,10 +41,9 @@ private:
 
     static constexpr uint hex_digit(char);
 
-    static constexpr std::string_view::const_iterator parse_escape(
+    constexpr std::string_view::const_iterator parse_escape(
         std::string_view::const_iterator,
-        std::string_view::const_iterator,
-        char &
+        std::string_view::const_iterator
     );
 
     Invocable invocable_{};
@@ -72,9 +71,7 @@ constexpr std::string_view::const_iterator str_parser<Invocable>::operator()(
     while (first < last && (is_escape || *first != '\"')) {
         if (is_escape) [[unlikely]] {
             is_escape = false;
-            char value;
-            first = parse_escape(first, last, value);
-            invocable_(value);
+            first = parse_escape(first, last);
         } else if (*first == '\\') [[unlikely]] {
             is_escape = true;
             ++first;
@@ -106,21 +103,20 @@ constexpr uint str_parser<Invocable>::hex_digit(const char c) {
 template<typename Invocable>
 constexpr std::string_view::const_iterator str_parser<Invocable>::parse_escape(
     const std::string_view::const_iterator first,
-    const std::string_view::const_iterator last,
-    char &value_ref
+    const std::string_view::const_iterator last
 ) {
     constexpr const char *what =
         "str_parser::parse_escape: invalid escape sequence";
     assert(first < last);
 
     switch (*first) {
-        [[likely]]   case '\"': value_ref = '\"'; return first + 1;
-        [[likely]]   case '\\': value_ref = '\\'; return first + 1;
-        [[unlikely]] case  'b': value_ref = '\b'; return first + 1;
-        [[likely]]   case  'f': value_ref = '\f'; return first + 1;
-        [[likely]]   case  'n': value_ref = '\n'; return first + 1;
-        [[likely]]   case  'r': value_ref = '\r'; return first + 1;
-        [[likely]]   case  't': value_ref = '\t'; return first + 1;
+        [[likely]]   case '\"': invocable_('\"'); return first + 1;
+        [[likely]]   case '\\': invocable_('\\'); return first + 1;
+        [[unlikely]] case  'b': invocable_('\b'); return first + 1;
+        [[likely]]   case  'f': invocable_('\f'); return first + 1;
+        [[likely]]   case  'n': invocable_('\n'); return first + 1;
+        [[likely]]   case  'r': invocable_('\r'); return first + 1;
+        [[likely]]   case  't': invocable_('\t'); return first + 1;
         [[unlikely]] case  'u': {
             if (first + 4 >= last || first[1] != '0' || first[2] != '0')
                 [[unlikely]] throw std::logic_error(what);
@@ -128,7 +124,7 @@ constexpr std::string_view::const_iterator str_parser<Invocable>::parse_escape(
             if (value >= 8 && value != 11 &&
                 (value < 14 || value >= 32) && value != 127
             ) [[unlikely]] throw std::logic_error(what);
-            value_ref = value;
+            invocable_(value);
             return first + 5;
         }
         [[unlikely]] default: throw std::logic_error(what);

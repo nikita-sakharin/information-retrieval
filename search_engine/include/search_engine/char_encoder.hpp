@@ -58,8 +58,10 @@ constexpr char_encoder<From, To, Invocable>::char_encoder(
 ) noexcept(
     std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {
-    if (std::setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
-        throw std::logic_error("char_encoder::char_encoder: unable to set locale");
+    using std::logic_error, std::setlocale;
+
+    if (setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
+        throw logic_error("char_encoder::char_encoder: unable to set locale");
 }
 
 template<typename From, typename To, typename Invocable>

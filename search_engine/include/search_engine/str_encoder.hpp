@@ -15,33 +15,25 @@ static_assert(__STDC_ISO_10646__ >= 201103L,
     "Unicode version 2011 or later required");
 
 template<typename From, typename To, typename Invocable>
-class encoder final {
+class str_encoder final {
 public:
-    constexpr encoder() noexcept(
+    constexpr str_encoder() noexcept(
         std::is_nothrow_default_constructible_v<Invocable>) = default;
-    constexpr encoder(const Invocable &invocable) noexcept(
+    constexpr str_encoder(const Invocable &invocable) noexcept(
         std::is_nothrow_copy_constructible_v<Invocable>);
-    constexpr encoder(const encoder &) noexcept(
+    constexpr str_encoder(const str_encoder &) noexcept(
         std::is_nothrow_copy_constructible_v<Invocable>) = default;
-    constexpr encoder(encoder &&) noexcept(
+    constexpr str_encoder(str_encoder &&) noexcept(
         std::is_nothrow_move_constructible_v<Invocable>) = default;
-    constexpr encoder &operator=(const encoder &) noexcept(
+    constexpr str_encoder &operator=(const str_encoder &) noexcept(
         std::is_nothrow_copy_assignable_v<Invocable>) = default;
-    constexpr encoder &operator=(encoder &&) noexcept(
+    constexpr str_encoder &operator=(str_encoder &&) noexcept(
         std::is_nothrow_move_assignable_v<Invocable>) = default;
-    constexpr ~encoder() noexcept(
+    constexpr ~str_encoder() noexcept(
         std::is_nothrow_destructible_v<Invocable>) = default;
 
-    constexpr std::enable_if_v<
-        std::is_invocable_r_v<void, Invocable, To>
-    > operator()(From) noexcept(
-        std::is_nothrow_invocable_r_v<void, Invocable, To>);
-/*
-    constexpr std::enable_if_v<
-        std::is_invocable_r_v<void, Invocable, To>
-    > operator()(std::basic_string_view<From>) noexcept(
-        std::is_nothrow_invocable_r_v<void, Invocable, To>);
-*/
+    constexpr void operator()(std::basic_string_view<From>);
+
     constexpr Invocable get_invocable() const noexcept(
         std::is_nothrow_copy_assignable_v<Invocable>);
 
@@ -52,7 +44,7 @@ private:
         "template arguments From and To must both have type char or wchar_t"
     );
     static_assert(
-        std::is_invocable_r_v<void, Invocable, To>,
+        std::is_invocable_r_v<void, Invocable, std::basic_string<To>>,
         "invocable must have signature void(To)"
     );
 
@@ -61,22 +53,22 @@ private:
 };
 
 template<typename From, typename To, typename Invocable>
-constexpr encoder<From, To, Invocable>::encoder(
+constexpr str_encoder<From, To, Invocable>::str_encoder(
     const Invocable &invocable
 ) noexcept(
     std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {
     if (std::setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
-        throw std::logic_error("encoder::encoder: unable to set locale");
+        throw std::logic_error("str_encoder::str_encoder: unable to set locale");
 }
 
 template<typename From, typename To, typename Invocable>
-constexpr void encoder<From, To, Invocable>::operator()(
+constexpr void str_encoder<From, To, Invocable>::operator()(
     const From from
 ) {
     using std::array, std::for_each, std::generic_category, std::is_same_v,
         std::mbrtowc, std::size_t, std::system_error, std::wcrtomb;
-    constexpr const char *what = "encoder::operator()";
+    constexpr const char *what = "str_encoder::operator()";
 
     if constexpr (is_same_v<From, char> && is_same_v<To, wchar_t>) {
         wchar_t wc;
@@ -97,7 +89,7 @@ constexpr void encoder<From, To, Invocable>::operator()(
 }
 
 template<typename From, typename To, typename Invocable>
-constexpr Invocable encoder<From, To, Invocable>::get_invocable(
+constexpr Invocable str_encoder<From, To, Invocable>::get_invocable(
 ) const noexcept(std::is_nothrow_copy_assignable_v<Invocable>) {
     return invocable_;
 }

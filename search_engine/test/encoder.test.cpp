@@ -1,6 +1,6 @@
 #include <algorithm> // for_each
 #include <functional> // function
-#include <system_error> // generic_category, system_error
+#include <system_error> // system_error
 #include <string> // string, wstring
 #include <string_view> // string_view, wstring_view
 

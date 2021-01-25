@@ -1,8 +1,8 @@
 #include <algorithm> // for_each
 #include <functional> // function
-#include <system_error> // system_error
 #include <string> // string, wstring
 #include <string_view> // string_view, wstring_view
+#include <system_error> // system_error
 
 #include <gtest/gtest.h>
 

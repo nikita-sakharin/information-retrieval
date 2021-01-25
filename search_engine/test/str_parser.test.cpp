@@ -76,7 +76,7 @@ static string parse_string(const string_view str) {
     str_parser parser([&buffer](const char c) constexpr -> void {
         buffer.push_back(c);
     });
-    parser.get_invocable();
     parser(str.cbegin(), str.cend());
+
     return buffer;
 }

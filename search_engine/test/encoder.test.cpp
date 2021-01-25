@@ -1,6 +1,6 @@
 #include <algorithm> // for_each
 #include <functional> // function
-#include <stdexcept> // logic_error
+#include <system_error> // generic_category, system_error
 #include <string> // string, wstring
 #include <string_view> // string_view, wstring_view
 
@@ -8,8 +8,8 @@
 
 #include <search_engine/encoder.hpp>
 
-using std::for_each, std::function, std::logic_error, std::string,
-    std::string_view, std::wstring, std::wstring_view;
+using std::for_each, std::function, std::string, std::string_view,
+    std::system_error, std::wstring, std::wstring_view;
 
 static wstring encode_string(string_view);
 static string encode_wstring(wstring_view);
@@ -37,12 +37,8 @@ TEST(EncoderTest, EncodeWstring) {
 }
 
 TEST(EncoderTest, Throw) {
-/*
-    ASSERT_THROW(parse_string("\"\\"), logic_error);
-    ASSERT_THROW(parse_string("\"\\\""), logic_error);
-    ASSERT_THROW(parse_string("\"\\u007F\""), logic_error);
-    ASSERT_THROW(parse_string("\"\\u00ff\""), logic_error);
-*/
+    ASSERT_THROW(encode_string("\x80"), system_error);
+    ASSERT_THROW(encode_string("\xC0\x80"), system_error);
 }
 
 static wstring encode_string(const string_view str) {

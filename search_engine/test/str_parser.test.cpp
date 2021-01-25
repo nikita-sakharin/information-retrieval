@@ -8,7 +8,7 @@
 
 using std::logic_error, std::string, std::string_view;
 
-static constexpr string parse_string(string_view);
+static string parse_string(string_view);
 
 TEST(StrParserTest, Pangram) {
     ASSERT_EQ(parse_string(
@@ -71,7 +71,7 @@ TEST(StrParserTest, Throw) {
     ASSERT_THROW(parse_string("\"\\u00ff\""), logic_error);
 }
 
-static constexpr string parse_string(const string_view str) {
+static string parse_string(const string_view str) {
     string buffer;
     str_parser parser([&buffer](const char c) constexpr -> void {
         buffer.push_back(c);

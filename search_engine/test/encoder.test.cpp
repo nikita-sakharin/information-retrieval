@@ -1,3 +1,5 @@
+#include <algorithm> // for_each
+#include <functional> // function
 #include <stdexcept> // logic_error
 #include <string> // string, wstring
 #include <string_view> // string_view, wstring_view
@@ -6,11 +8,11 @@
 
 #include <search_engine/encoder.hpp>
 
-using std::logic_error, std::string, std::string_view, std::wstring,
-    std::wstring_view;
+using std::for_each, std::function, std::logic_error, std::string,
+    std::string_view, std::wstring, std::wstring_view;
 
-static constexpr wstring encode_string(string_view);
-static constexpr string encode_wstring(wstring_view);
+static wstring encode_string(string_view);
+static string encode_wstring(wstring_view);
 
 TEST(EncoderTest, EncodeString) {
     ASSERT_EQ(encode_string(
@@ -43,20 +45,25 @@ TEST(EncoderTest, Throw) {
 */
 }
 
-static constexpr wstring encode_string(const string_view str) {
+static wstring encode_string(const string_view str) {
     wstring wbuffer;
-    encoder string_encoder([&wbuffer](const wchar_t wc) constexpr -> void {
-        wbuffer.push_back(wc);
-    });
-    foreach(str.cbegin(), str.cend(), string_encoder);
+    encoder<char, wchar_t, function<void(wchar_t)>> string_encoder(
+        [&wbuffer](const wchar_t wc) constexpr -> void {
+            wbuffer.push_back(wc);
+        }
+    );
+    for_each(str.cbegin(), str.cend(), string_encoder);
+
     return wbuffer;
 }
 
-static constexpr string encode_wstring(const wstring_view wstr) {
+static string encode_wstring(const wstring_view wstr) {
     string buffer;
-    encoder string_encoder([&buffer](const char c) constexpr -> void {
-        buffer.push_back(c);
-    });
-    foreach(wstr.cbegin(), wstr.cend(), string_encoder);
+    encoder<wchar_t, char, function<void(char)>> string_encoder(
+        [&buffer](const char c) constexpr -> void {
+            buffer.push_back(c);
+        }
+    );
+    for_each(wstr.cbegin(), wstr.cend(), string_encoder);
     return buffer;
 }

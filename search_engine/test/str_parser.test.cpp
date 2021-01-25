@@ -1,6 +1,6 @@
+#include <stdexcept> // logic_error
 #include <string> // string
 #include <string_view> // string_view
-#include <stdexcept> // logic_error
 
 #include <gtest/gtest.h>
 
@@ -8,7 +8,18 @@
 
 using std::logic_error, std::string, std::string_view;
 
-static string parse_string(string_view);
+static constexpr string parse_string(string_view);
+
+TEST(StrParserTest, Pangram) {
+    ASSERT_EQ(parse_string(
+        "\"The quick brown fox jumps over the lazy dog.\""
+        ), "The quick brown fox jumps over the lazy dog."
+    );
+    ASSERT_EQ(parse_string(
+        "\"Съешь еще этих мягких французских булок, да выпей чаю.\""
+        ), "Съешь еще этих мягких французских булок, да выпей чаю."
+    );
+}
 
 TEST(StrParserTest, ParseEscape) {
     ASSERT_EQ(parse_string("\"\""), "");
@@ -50,22 +61,17 @@ TEST(StrParserTest, ParseEscape) {
 TEST(StrParserTest, Throw) {
     ASSERT_THROW(parse_string("\"\\"), logic_error);
     ASSERT_THROW(parse_string("\"\\\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\u0008\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\u0009\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\u000a\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\u000c\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\u000d\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u007F\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\u0080\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u00ff\""), logic_error);
 }
 
-TEST(StrParserTest, Pangram) {
-    ASSERT_EQ(
-        parse_string("\"The quick brown fox jumps over the lazy dog.\""),
-        "The quick brown fox jumps over the lazy dog."
-    );
-    ASSERT_EQ(parse_string(
-        "\"Съешь еще этих мягких французских булок, да выпей чаю.\""),
-        "Съешь еще этих мягких французских булок, да выпей чаю."
-    );
-}
-
-static string parse_string(const string_view str) {
+static constexpr string parse_string(const string_view str) {
     string buffer;
     str_parser parser([&buffer](const char c) constexpr -> void {
         buffer.push_back(c);

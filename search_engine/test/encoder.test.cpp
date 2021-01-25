@@ -39,6 +39,8 @@ TEST(EncoderTest, EncodeWstring) {
 TEST(EncoderTest, Throw) {
     ASSERT_THROW(encode_string("\x80"), system_error);
     ASSERT_THROW(encode_string("\xC0\x80"), system_error);
+    ASSERT_THROW(encode_string("\xE0\x80\x80"), system_error);
+    ASSERT_THROW(encode_string("\xF0\x80\x80\x80"), system_error);
 }
 
 static wstring encode_string(const string_view str) {

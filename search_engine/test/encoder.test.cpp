@@ -70,6 +70,7 @@ static basic_string<To> convert(const basic_string_view<From> str) {
             buffer.push_back(c);
         }
     );
+    string_encoder.get_invocable();
     for_each(str.cbegin(), str.cend(), string_encoder);
 
     return buffer;

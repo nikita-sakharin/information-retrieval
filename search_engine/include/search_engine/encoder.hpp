@@ -34,9 +34,10 @@ public:
 
     constexpr void operator()(From) noexcept( // enable_if
         std::is_nothrow_invocable_r_v<void, Invocable, To>);
-    constexpr void operator()(basic_string_view<From>) noexcept( // enable_if
+/*
+    constexpr void operator()(std::basic_string_view<From>) noexcept( // enable_if
         std::is_nothrow_invocable_r_v<void, Invocable, To>); // string_view of span
-
+*/
 private:
     static_assert(
         (std::is_same_v<From, char> || std::is_same_v<From, wchar_t>) &&

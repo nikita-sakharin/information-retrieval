@@ -38,6 +38,9 @@ public:
     constexpr void operator()(std::basic_string_view<From>) noexcept( // enable_if
         std::is_nothrow_invocable_r_v<void, Invocable, To>); // string_view of span
 */
+    constexpr Invocable get_invocable() const noexcept(
+        std::is_nothrow_copy_assignable_v<Invocable>);
+
 private:
     static_assert(
         (std::is_same_v<From, char> || std::is_same_v<From, wchar_t>) &&
@@ -87,6 +90,12 @@ constexpr void encoder<From, To, Invocable>::operator()(
         for_each(s.cbegin(), s.cbegin() + returns, invocable_);
     } else
         invocable_(from);
+}
+
+template<typename From, typename To, typename Invocable>
+constexpr Invocable encoder<From, To, Invocable>::get_invocable(
+) const noexcept(std::is_nothrow_copy_assignable_v<Invocable>) {
+    return invocable_;
 }
 
 #endif

@@ -30,7 +30,7 @@ public:
         std::string_view::const_iterator
     );
 
-    constexpr Invocable invocable() const noexcept(
+    constexpr Invocable get_invocable() const noexcept(
         std::is_nothrow_copy_assignable_v<Invocable>);
 
 private:
@@ -88,6 +88,13 @@ constexpr std::string_view::const_iterator str_parser<Invocable>::operator()(
     assert(!is_escape && *first == '\"');
 
     return first + 1;
+}
+
+template<typename Invocable>
+constexpr Invocable str_parser<Invocable>::get_invocable() const noexcept(
+    std::is_nothrow_copy_assignable_v<Invocable>
+) {
+    return invocable_;
 }
 
 template<typename Invocable>

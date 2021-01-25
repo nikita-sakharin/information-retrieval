@@ -7,7 +7,7 @@
 #include <cstddef> // size_t
 #include <cwchar> // mbrtowc, mbstate_t, wcrtomb
 
-#include <algorithm> // foreach
+#include <algorithm> // for_each
 #include <system_error> // generic_category, system_error
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v, is_same_v
 
@@ -32,7 +32,7 @@ public:
     constexpr ~encoder() noexcept(
         std::is_nothrow_destructible_v<Invocable>) = default;
 
-    constexpr void operator()(From) noexcept( // enable_if
+    constexpr void operator()(From) noexcept(
         std::is_nothrow_invocable_r_v<void, Invocable, To>);
 /*
     constexpr void operator()(std::basic_string_view<From>) noexcept( // enable_if
@@ -59,42 +59,35 @@ constexpr encoder<From, To, Invocable>::encoder(
 ) noexcept(
     std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {
-    std::setlocale(LC_ALL, "en_US.utf8");
+    if (std::setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
+        throw std::logic_error("encoder::encoder: unable to set locale");
 }
 
 template<typename From, typename To, typename Invocable>
 constexpr void encoder<From, To, Invocable>::operator()(
     const From from
 ) noexcept(std::is_nothrow_invocable_r_v<void, Invocable, To>) {
-    invocable_(from);
-}
+    using std::array, std::for_each, std::generic_category, std::is_same_v,
+        std::mbrtowc, std::size_t, std::system_error, std::wcrtomb;
+    constexpr const char *what = "encoder::operator()";
 
-template<typename Invocable>
-constexpr void encoder<char, wchar_t, Invocable>::operator()(
-    const char from
-) noexcept(std::is_nothrow_invocable_r_v<void, Invocable, wchar_t>) {
-    using std::generic_category, std::size_t, std::system_error;
-
-    wchar_t wc;
-    const size_t returns = std::mbrtowc(&wc, &from, 1U, &state);
-    if (returns == static_cast<size_t>(-1)) [[unlikely]]
-        throw system_error(errno, generic_category(), "encoder::operator()");
-    if (returns == static_cast<size_t>(-2))
-        return;
-    invocable_(wc);
-}
-
-template<typename Invocable>
-constexpr void encoder<wchar_t, char, Invocable>::operator()(
-    const wchar_t from
-) noexcept(std::is_nothrow_invocable_r_v<void, Invocable, char>) {
-    using std::generic_category, std::size_t, std::system_error;
-
-    std::array<char, MB_LEN_MAX> s;
-    const size_t returns = std::wcrtomb(s.data(), from, &state);
-    if (returns == static_cast<size_t>(-1)) [[unlikely]]
-        throw system_error(errno, generic_category(), "encoder::operator()");
-    std::foreach(s.cbegin(), s.cbegin() + returns, invocable_);
+    if constexpr (is_same_v<From, char> && is_same_v<To, wchar_t>) {
+        wchar_t wc;
+        const size_t returns = mbrtowc(&wc, &from, 1U, &state);
+        if (returns == static_cast<size_t>(-1)) [[unlikely]]
+            throw system_error(errno, generic_category(), what);
+        if (returns == static_cast<size_t>(-2))
+            return;
+        invocable_(wc);
+    } else if constexpr (is_same_v<From, wchar_t> && is_same_v<To, char>) {
+        array<char, MB_LEN_MAX> s;
+        const size_t returns = wcrtomb(s.data(), from, &state);
+        if (returns == static_cast<size_t>(-1)) [[unlikely]]
+            throw system_error(errno, generic_category(), what);
+        std::cout << returns << '\n';
+        for_each(s.cbegin(), s.cbegin() + returns, invocable_);
+    } else
+        invocable_(from);
 }
 
 #endif

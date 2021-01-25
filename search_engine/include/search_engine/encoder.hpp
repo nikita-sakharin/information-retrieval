@@ -84,7 +84,6 @@ constexpr void encoder<From, To, Invocable>::operator()(
         const size_t returns = wcrtomb(s.data(), from, &state);
         if (returns == static_cast<size_t>(-1)) [[unlikely]]
             throw system_error(errno, generic_category(), what);
-        std::cout << returns << '\n';
         for_each(s.cbegin(), s.cbegin() + returns, invocable_);
     } else
         invocable_(from);

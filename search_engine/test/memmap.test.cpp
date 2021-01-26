@@ -1,4 +1,3 @@
-#include <array> // array
 #include <fstream> // ofstream
 #include <iostream> // ios_base
 #include <string_view> // string_view
@@ -7,7 +6,7 @@
 
 #include <search_engine/memmap.hpp>
 
-using std::array, std::ios_base, std::ofstream, std::string_view;
+using std::ios_base, std::ofstream, std::string_view;
 
 TEST(MemmapTest, Empty) {
     static constexpr const char *filename = "empty.txt";
@@ -21,21 +20,20 @@ TEST(MemmapTest, Empty) {
 }
 
 TEST(MemmapTest, Pangram) {
-    static constexpr array<char, 145> data{
+    static constexpr string_view data =
         "The quick brown fox jumps over the lazy dog.\n"
-        "Съешь еще этих мягких французских булок, да выпей чаю.\n"
-    };
+        "Съешь еще этих мягких французских булок, да выпей чаю.\n";
     static constexpr const char *filename = "pangram.txt";
     ofstream(
         filename,
         ios_base::binary | ios_base::out | ios_base::trunc
-    ).write(data.data(), data.size() - 1);
+    ).write(data.data(), data.size());
 
     const memmap map(filename);
     ASSERT_NE(map.data(), nullptr);
     ASSERT_STREQ(map.data(), data.data());
     ASSERT_FALSE(map.empty());
     ASSERT_TRUE(map.is_open());
-    ASSERT_EQ(static_cast<string_view>(map), string_view(data.data()));
-    ASSERT_EQ(map.size(), data.size() - 1);
+    ASSERT_EQ(static_cast<string_view>(map), data);
+    ASSERT_EQ(map.size(), data.size());
 }

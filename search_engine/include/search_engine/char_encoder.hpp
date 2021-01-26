@@ -74,20 +74,19 @@ constexpr void char_encoder<From, To, Invocable>::operator()(
 
     if constexpr (is_same_v<From, char> && is_same_v<To, wchar_t>) {
         wchar_t wc;
-        const size_t returns = mbrtowc(&wc, &from, 1U, &state_);
-        if (returns == static_cast<size_t>(-1)) [[unlikely]]
+        const size_t size = mbrtowc(&wc, &from, 1U, &state_);
+        if (size == static_cast<size_t>(-1)) [[unlikely]]
             throw system_error(errno, generic_category(), what);
-        if (returns == static_cast<size_t>(-2))
+        if (size == static_cast<size_t>(-2))
             return;
         invocable_(wc);
     } else if constexpr (is_same_v<From, wchar_t> && is_same_v<To, char>) {
         array<char, MB_LEN_MAX> s;
-        const size_t returns = wcrtomb(s.data(), from, &state_);
-        if (returns == static_cast<size_t>(-1)) [[unlikely]]
+        const size_t size = wcrtomb(s.data(), from, &state_);
+        if (size == static_cast<size_t>(-1)) [[unlikely]]
             throw system_error(errno, generic_category(), what);
-        for_each(s.cbegin(), s.cbegin() + returns, invocable_);
-    } else
-        invocable_(from);
+        for_each(s.cbegin(), s.cbegin() + size, invocable_);
+    } else invocable_(from);
 }
 
 template<typename From, typename To, typename Invocable>

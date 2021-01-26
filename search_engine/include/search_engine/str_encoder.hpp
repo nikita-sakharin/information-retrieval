@@ -1,14 +1,11 @@
 #ifndef SEARCH_ENGINE_STR_ENCODER_HPP
 #define SEARCH_ENGINE_STR_ENCODER_HPP
 
-#include <climits> // MB_LEN_MAX
 #include <clocale> // LC_ALL, setlocale
 #include <cstddef> // size_t
-#include <cwchar> // mbrtowc, mbstate_t, wcrtomb
+#include <cwchar> // mbstowcs, wcstombs
 
-#include <algorithm> // for_each
 #include <string> // basic_string
-#include <string_view> // basic_string_view
 #include <system_error> // generic_category, system_error
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v, is_same_v
 
@@ -32,7 +29,7 @@ public:
     constexpr ~str_encoder() noexcept(
         std::is_nothrow_destructible_v<Invocable>) = default;
 
-    constexpr void operator()(std::basic_string_view<From>);
+    constexpr void operator()(const std::basic_string<From> &);
 
     constexpr Invocable get_invocable() const noexcept(
         std::is_nothrow_copy_assignable_v<Invocable>);
@@ -51,7 +48,6 @@ private:
     static constexpr std::size_t capacity = 1UL << 16;
 
     std::basic_string<To> buffer(capacity, static_cast<To>('\0'));
-    std::mbstate_t state{};
     Invocable invocable_{};
 };
 
@@ -62,23 +58,40 @@ constexpr str_encoder<From, To, Invocable>::str_encoder(
     std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {
     using std::logic_error, std::setlocale;
+    constexpr const char *locale = "en_US.utf8";
 
-    if (setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
+    if (setlocale(LC_ALL, locale) == nullptr) [[unlikely]]
         throw logic_error("str_encoder::str_encoder: unable to set locale");
 }
 
 template<typename From, typename To, typename Invocable>
 constexpr void str_encoder<From, To, Invocable>::operator()(
-    std::basic_string_view<From> from
+    const std::basic_string<From> &from
 ) {
-    using std::array, std::for_each, std::generic_category, std::is_same_v,
-        std::mbrtowc, std::size_t, std::system_error, std::wcrtomb;
+    using std::generic_category, std::is_same_v, std::mbstowcs, std::size_t,
+        std::system_error, std::wcstombs;
     constexpr const char *what = "str_encoder::operator()";
 
     if constexpr (is_same_v<From, char> && is_same_v<To, wchar_t>) {
+        const size_t max_size = from.size();
+        buffer.resize(max_size);
+        const size_t size = mbstowcs(buffer.data(), from.c_str(), max_size);
+        if (size == static_cast<size_t>(-1)) [[unlikely]]
+            throw system_error(errno, generic_category(), what);
+        buffer.resize(size);
+        invocable_(buffer);
     } else if constexpr (is_same_v<From, wchar_t> && is_same_v<To, char>) {
-    } else
-        invocable_(from);
+        const size_t max_size = from.size() * MB_CUR_MAX;
+        buffer.resize(max_size);
+        const size_t size = wcstombs(buffer.data(), from.c_str(), max_size);
+        if (size == static_cast<size_t>(-1)) [[unlikely]]
+            throw system_error(errno, generic_category(), what);
+        buffer.resize(size);
+        invocable_(buffer);
+    } else {
+        buffer = from;
+        invocable_(buffer);
+    }
 }
 
 template<typename From, typename To, typename Invocable>

@@ -59,8 +59,8 @@ TEST(StrParserTest, ParseEscape) {
 }
 
 TEST(StrParserTest, Throw) {
-    ASSERT_THROW(parse_string("\"\\"), logic_error);
-    ASSERT_THROW(parse_string("\"\\\""), logic_error);
+    ASSERT_THROW(parse_string(       "\"\\"), logic_error);
+    ASSERT_THROW(parse_string(     "\"\\\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u0008\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u0009\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u000a\""), logic_error);

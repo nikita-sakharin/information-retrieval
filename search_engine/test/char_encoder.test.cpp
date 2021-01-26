@@ -42,6 +42,7 @@ TEST(CharEncoderTest, EncodeString) {
         "Съешь еще этих мягких французских булок, да выпей чаю."
         )), L"Съешь еще этих мягких французских булок, да выпей чаю."
     );
+    ASSERT_EQ((convert<char, wchar_t>("\U00010000")), L"\U00010000");
 }
 
 TEST(CharEncoderTest, EncodeWstring) {
@@ -53,6 +54,7 @@ TEST(CharEncoderTest, EncodeWstring) {
         L"Съешь еще этих мягких французских булок, да выпей чаю."
         )), "Съешь еще этих мягких французских булок, да выпей чаю."
     );
+    ASSERT_EQ((convert<wchar_t, char>(L"\U00010000")), "\U00010000");
 }
 
 TEST(CharEncoderTest, Throw) {

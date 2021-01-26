@@ -59,8 +59,9 @@ constexpr char_encoder<From, To, Invocable>::char_encoder(
     std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {
     using std::logic_error, std::setlocale;
+    constexpr const char *locale = "en_US.utf8";
 
-    if (setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
+    if (setlocale(LC_ALL, locale) == nullptr) [[unlikely]]
         throw logic_error("char_encoder::char_encoder: unable to set locale");
 }
 

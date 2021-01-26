@@ -48,7 +48,7 @@ private:
         "invocable must have signature void(To)"
     );
 
-    std::mbstate_t state{};
+    std::mbstate_t state_{};
     Invocable invocable_{};
 };
 
@@ -74,7 +74,7 @@ constexpr void char_encoder<From, To, Invocable>::operator()(
 
     if constexpr (is_same_v<From, char> && is_same_v<To, wchar_t>) {
         wchar_t wc;
-        const size_t returns = mbrtowc(&wc, &from, 1U, &state);
+        const size_t returns = mbrtowc(&wc, &from, 1U, &state_);
         if (returns == static_cast<size_t>(-1)) [[unlikely]]
             throw system_error(errno, generic_category(), what);
         if (returns == static_cast<size_t>(-2))
@@ -82,7 +82,7 @@ constexpr void char_encoder<From, To, Invocable>::operator()(
         invocable_(wc);
     } else if constexpr (is_same_v<From, wchar_t> && is_same_v<To, char>) {
         array<char, MB_LEN_MAX> s;
-        const size_t returns = wcrtomb(s.data(), from, &state);
+        const size_t returns = wcrtomb(s.data(), from, &state_);
         if (returns == static_cast<size_t>(-1)) [[unlikely]]
             throw system_error(errno, generic_category(), what);
         for_each(s.cbegin(), s.cbegin() + returns, invocable_);

@@ -1,20 +1,18 @@
 #include <algorithm> // for_each
 #include <functional> // function
 #include <string> // basic_string
-#include <string_view> // basic_string_view
 #include <system_error> // system_error
 
 #include <gtest/gtest.h>
 
 #include <search_engine/char_encoder.hpp>
 
-using std::for_each, std::function, std::basic_string, std::basic_string_view,
-    std::system_error;
+using std::for_each, std::function, std::basic_string, std::system_error;
 
 template<typename From, typename To>
-static basic_string<To> convert(basic_string_view<From>);
+static basic_string<To> convert(const basic_string<From> &);
 
-TEST(CharEncoderTest, Identity) {
+TEST(StrEncoderTest, Identity) {
     ASSERT_EQ((convert<char, char>(
         "The quick brown fox jumps over the lazy dog."
         )), "The quick brown fox jumps over the lazy dog."
@@ -33,7 +31,7 @@ TEST(CharEncoderTest, Identity) {
     );
 }
 
-TEST(CharEncoderTest, EncodeString) {
+TEST(StrEncoderTest, EncodeString) {
     ASSERT_EQ((convert<char, wchar_t>(
         "The quick brown fox jumps over the lazy dog."
         )), L"The quick brown fox jumps over the lazy dog."
@@ -48,7 +46,7 @@ TEST(CharEncoderTest, EncodeString) {
     );
 }
 
-TEST(CharEncoderTest, EncodeWstring) {
+TEST(StrEncoderTest, EncodeWstring) {
     ASSERT_EQ((convert<wchar_t, char>(
         L"The quick brown fox jumps over the lazy dog."
         )), "The quick brown fox jumps over the lazy dog."
@@ -63,7 +61,7 @@ TEST(CharEncoderTest, EncodeWstring) {
     );
 }
 
-TEST(CharEncoderTest, Throw) {
+TEST(StrEncoderTest, Throw) {
     ASSERT_THROW((convert<char, wchar_t>("\x80")), system_error);
     ASSERT_THROW((convert<char, wchar_t>("\xC0\x80")), system_error);
     ASSERT_THROW((convert<char, wchar_t>("\xE0\x80\x80")), system_error);
@@ -71,7 +69,7 @@ TEST(CharEncoderTest, Throw) {
 }
 
 template<typename From, typename To>
-static basic_string<To> convert(const basic_string_view<From> str) {
+static basic_string<To> convert(const basic_string<From> &str) {
     basic_string<To> buffer;
     char_encoder<From, To, function<void(To)>> encoder(
         [&buffer](const To c) constexpr -> void {

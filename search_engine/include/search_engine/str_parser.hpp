@@ -5,7 +5,7 @@
 #include <string_view> // string_view
 #include <type_traits> // is_invocable_r_v
 
-#include <search_engine/header.hpp>
+#include <search_engine/common.hpp>
 
 template<typename Invocable>
 class str_parser final {

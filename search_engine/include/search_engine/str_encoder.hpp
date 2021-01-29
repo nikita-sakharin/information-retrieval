@@ -45,9 +45,10 @@ private:
         "invocable must have signature void(std::basic_string<To> &)"
     );
 
-    static constexpr std::size_t capacity = 1UL << 16;
+    static constexpr std::size_t capacity = 1U << 12;
 
-    std::basic_string<To> buffer(capacity, static_cast<To>('\0'));
+    std::basic_string<To> buffer =
+        std::basic_string<To>(capacity, static_cast<To>('\0'));
     Invocable invocable_{};
 };
 

@@ -12,7 +12,7 @@ class index final {
 public:
     using doc_id = std::uint32_t;
 
-    inline index() noexcept = default;
+    constexpr index();
     inline index(const index &) noexcept = default;
     inline index(index &&) noexcept = default;
     inline index &operator=(const index &) noexcept = default;
@@ -26,8 +26,14 @@ public:
     friend std::ostream &operator<<(std::ostream &, const index &);
 
 private:
+    static constexpr std::size_t capacity = 1UL << 21;
+
     std::map<std::string_view, std::vector<doc_id>> posting;
-    std::vector<char> dictionary;
+    std::vector<char> dictionary{};
 };
+
+constexpr index::index() {
+    dictionary.reserve(capacity);
+}
 
 #endif

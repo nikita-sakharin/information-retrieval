@@ -1,13 +1,12 @@
-#include <algorithm> // for_each
 #include <functional> // function
 #include <string> // basic_string
 #include <system_error> // system_error
 
 #include <gtest/gtest.h>
 
-#include <search_engine/char_encoder.hpp>
+#include <search_engine/str_encoder.hpp>
 
-using std::for_each, std::function, std::basic_string, std::system_error;
+using std::function, std::basic_string, std::system_error;
 
 template<typename From, typename To>
 static basic_string<To> convert(const basic_string<From> &);
@@ -71,12 +70,12 @@ TEST(StrEncoderTest, Throw) {
 template<typename From, typename To>
 static basic_string<To> convert(const basic_string<From> &str) {
     basic_string<To> buffer;
-    char_encoder<From, To, function<void(To)>> encoder(
-        [&buffer](const To c) constexpr -> void {
-            buffer.push_back(c);
+    str_encoder<From, To, function<void(basic_string<To> &)>> encoder(
+        [&buffer](basic_string<To> &s) constexpr -> void {
+            buffer = s;
         }
     );
-    for_each(str.cbegin(), str.cend(), encoder);
+    encoder(str);
 
     return buffer;
 }

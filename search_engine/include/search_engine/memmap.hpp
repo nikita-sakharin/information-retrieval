@@ -4,6 +4,8 @@
 #include <cassert> // assert
 #include <cstddef> // size_t
 
+#include <exception> // exception
+#include <iostream> // cerr, endl
 #include <limits> // numeric_limits
 #include <stdexcept> // logic_error
 #include <utility> // move, swap
@@ -97,6 +99,18 @@ constexpr memmap::file &memmap::file::operator=(file &&rhs) {
 
     swap(rhs);
     return *this;
+}
+
+constexpr memmap::file::~file() noexcept {
+    if (is_open())
+        try {
+            close();
+        } catch (const std::exception &except) {
+#           ifndef NDEBUG
+            std::cerr << except.what() << std::endl;
+#           endif
+        }
+    assert(fildes_ == -1);
 }
 
 constexpr int memmap::file::fildes() const {

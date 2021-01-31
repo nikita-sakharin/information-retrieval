@@ -1,7 +1,5 @@
 #include <cerrno> // errno
 
-#include <exception> // exception
-#include <iostream> // cerr
 #include <system_error> // generic_category, system_error
 
 #include <fcntl.h> // O_RDONLY, open
@@ -129,18 +127,6 @@ void memmap::open(const char * const filename) {
         (addr_ != MAP_FAILED && size_ > 0)
     );
     assert(size_ != size_limits::max() && file_.is_open());
-}
-
-constexpr memmap::file::~file() noexcept {
-    if (is_open())
-        try {
-            close();
-        } catch (const exception &except) {
-#           ifndef NDEBUG
-            cerr << except.what() << endl;
-#           endif
-        }
-    assert(fildes_ == -1);
 }
 
 void memmap::file::close() {

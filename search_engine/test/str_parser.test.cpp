@@ -73,9 +73,6 @@ TEST(StrParserTest, Throw) {
 }
 
 static string parse_string(const string_view str) {
-    if (setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
-        throw runtime_error("make_index: unable to set locale");
-
     string buffer;
     str_parser parser([&buffer](const char c) constexpr -> void {
         buffer.push_back(c);

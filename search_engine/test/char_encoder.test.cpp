@@ -2,6 +2,7 @@
 
 #include <algorithm> // for_each
 #include <functional> // function
+#include <stdexcept> // runtime_error
 #include <string> // basic_string
 #include <string_view> // basic_string_view
 #include <system_error> // system_error

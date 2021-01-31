@@ -1,6 +1,7 @@
 #include <clocale> // LC_ALL, setlocale
 
 #include <functional> // function
+#include <stdexcept> // runtime_error
 #include <string> // basic_string
 #include <system_error> // system_error
 

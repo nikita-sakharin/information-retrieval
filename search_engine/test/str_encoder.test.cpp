@@ -77,7 +77,7 @@ static basic_string<To> convert(const basic_string<From> &str) {
         throw runtime_error("convert: unable to set locale");
 
     basic_string<To> buffer;
-    str_encoder<From, To, function<void (basic_string<To> &)>> encoder(
+    str_encoder<From, To, function<void(basic_string<To> &)>> encoder(
         [&buffer](basic_string<To> &s) constexpr -> void {
             buffer = s;
         }

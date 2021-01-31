@@ -1,3 +1,5 @@
+#include <clocale> // LC_ALL, setlocale
+
 #include <functional> // function
 #include <string> // basic_string
 #include <system_error> // system_error
@@ -6,7 +8,7 @@
 
 #include <search_engine/str_encoder.hpp>
 
-using std::function, std::basic_string, std::system_error;
+using std::basic_string, std::function, std::setlocale, std::system_error;
 
 template<typename From, typename To>
 static basic_string<To> convert(const basic_string<From> &);
@@ -69,6 +71,9 @@ TEST(StrEncoderTest, Throw) {
 
 template<typename From, typename To>
 static basic_string<To> convert(const basic_string<From> &str) {
+    if (setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
+        throw runtime_error("make_index: unable to set locale");
+
     basic_string<To> buffer;
     str_encoder<From, To, function<void(basic_string<To> &)>> encoder(
         [&buffer](basic_string<To> &s) constexpr -> void {

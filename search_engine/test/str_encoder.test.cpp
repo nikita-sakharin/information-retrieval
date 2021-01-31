@@ -9,7 +9,8 @@
 
 #include <search_engine/str_encoder.hpp>
 
-using std::basic_string, std::function, std::setlocale, std::system_error;
+using std::basic_string, std::function, std::runtime_error, std::setlocale,
+    std::system_error;
 
 template<typename From, typename To>
 static basic_string<To> convert(const basic_string<From> &);

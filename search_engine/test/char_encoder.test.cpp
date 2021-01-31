@@ -12,7 +12,7 @@
 #include <search_engine/char_encoder.hpp>
 
 using std::basic_string, std::basic_string_view, std::for_each, std::function,
-    std::setlocale, std::system_error;
+    std::runtime_error, std::setlocale, std::system_error;
 
 template<typename From, typename To>
 static basic_string<To> convert(basic_string_view<From>);

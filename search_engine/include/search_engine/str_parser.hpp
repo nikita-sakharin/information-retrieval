@@ -1,6 +1,8 @@
 #ifndef SEARCH_ENGINE_STR_PARSER_HPP
 #define SEARCH_ENGINE_STR_PARSER_HPP
 
+#include <cassert> // assert
+
 #include <stdexcept> // logic_error
 #include <string_view> // string_view
 #include <type_traits> // is_invocable_r_v

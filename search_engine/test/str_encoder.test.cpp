@@ -72,7 +72,7 @@ TEST(StrEncoderTest, Throw) {
 template<typename From, typename To>
 static basic_string<To> convert(const basic_string<From> &str) {
     if (setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
-        throw runtime_error("make_index: unable to set locale");
+        throw runtime_error("convert: unable to set locale");
 
     basic_string<To> buffer;
     str_encoder<From, To, function<void(basic_string<To> &)>> encoder(

@@ -64,7 +64,7 @@ template<typename From, typename To, typename Invocable>
 constexpr void str_encoder<From, To, Invocable>::operator()(
     const std::basic_string<From> &from
 ) {
-    using std::is_same_v, std::mbstowcs, std::wcstombs; // cstdlib
+    using std::is_same_v, std::mbstowcs, std::wcstombs;
 
     if constexpr (is_same_v<From, char> && is_same_v<To, wchar_t>)
         encode(from, mbstowcs);

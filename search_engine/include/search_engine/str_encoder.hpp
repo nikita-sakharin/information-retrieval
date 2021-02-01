@@ -1,8 +1,9 @@
 #ifndef SEARCH_ENGINE_STR_ENCODER_HPP
 #define SEARCH_ENGINE_STR_ENCODER_HPP
 
+#include <climits> // MB_LEN_MAX
 #include <cstddef> // size_t
-#include <cstdlib> // mbstowcs, wcstombs
+#include <cstdlib> // MB_CUR_MAX, mbstowcs, wcstombs
 
 #include <bit> // bit_ceil
 #include <string> // basic_string
@@ -48,8 +49,8 @@ private:
     template<typename Encoder>
     constexpr void encode(const std::basic_string<From> &, Encoder);
 
-    std::basic_string<To> buffer =
-        std::basic_string<To>(1U << 12, static_cast<To>('\0'));
+    std::basic_string<To> buffer_ =
+        std::basic_string<To>(4096U * MB_LEN_MAX, static_cast<To>('\0'));
     Invocable invocable_{};
 };
 
@@ -70,7 +71,7 @@ constexpr void str_encoder<From, To, Invocable>::operator()(
         encode(from, mbstowcs);
     else if constexpr (is_same_v<From, wchar_t> && is_same_v<To, char>)
         encode(from, wcstombs);
-    else invocable_(buffer = from);
+    else invocable_(buffer_ = from);
 }
 
 template<typename From, typename To, typename Invocable>
@@ -92,13 +93,12 @@ constexpr void str_encoder<From, To, Invocable>::encode(
     static_assert(is_invocable_r_v<size_t, Encoder, To *, const From *, size_t>,
         "encoder must have signature size_t(To *, const From *, size_t)");
 
-    const size_t max_size = bit_ceil(from.size() * MB_CUR_MAX); // TODO
-    buffer.resize(max_size);
-    const size_t size = encoder(buffer.data(), from.c_str(), max_size);
+    buffer_.resize(bit_ceil(from.size() * MB_CUR_MAX));
+    const size_t size = encoder(buffer_.data(), from.c_str(), buffer_.size());
     if (size == static_cast<size_t>(-1)) [[unlikely]]
         throw system_error(errno, generic_category(), "str_encoder::encode");
-    buffer.resize(size);
-    invocable_(buffer);
+    buffer_.resize(size);
+    invocable_(buffer_);
 }
 
 #endif

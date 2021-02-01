@@ -3,8 +3,12 @@
 
 class stemmer final {
 public:
-    static inline constexpr char *stem(char *) noexcept;
-    static char *tolower(char *, const char *, size_t) noexcept;
+    constexpr string &stem(string &) const noexcept;
 };
+
+constexpr wstring &stemmer::stem(std::wstring &token) noexcept {
+    if (token.ends_with())
+    return token;
+}
 
 #endif

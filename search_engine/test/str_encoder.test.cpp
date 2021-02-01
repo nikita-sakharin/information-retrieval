@@ -47,10 +47,6 @@ TEST(StrEncoderTest, EncodeString) {
         "\U00010000\U00010001\U00010002\U00010003"
         )), L"\U00010000\U00010001\U00010002\U00010003"
     );
-    ASSERT_EQ((convert<char, wchar_t>(
-        string("0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
-        )), wstring(L"0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
-    );
 }
 
 TEST(StrEncoderTest, EncodeWstring) {
@@ -66,16 +62,13 @@ TEST(StrEncoderTest, EncodeWstring) {
         L"\U00010000\U00010001\U00010002\U00010003"
         )), "\U00010000\U00010001\U00010002\U00010003"
     );
-    ASSERT_EQ((convert<wchar_t, char>(
-        wstring(L"0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
-        )), string("0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
-    );
 }
 
 TEST(StrEncoderTest, Throw) {
     ASSERT_THROW((convert<char, wchar_t>("\x80")), system_error);
     ASSERT_THROW((convert<char, wchar_t>("\xC0\x80")), system_error);
     ASSERT_THROW((convert<char, wchar_t>("\xE0\x80\x80")), system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\xF0\x80\x80\x80")), system_error);
     ASSERT_THROW((convert<char, wchar_t>("\xF0\x80\x80\x80")), system_error);
 }
 

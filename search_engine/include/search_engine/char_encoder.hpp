@@ -7,6 +7,7 @@
 #include <cwchar> // mbrtowc, mbstate_t, wcrtomb
 
 #include <algorithm> // for_each
+#include <array> // array
 #include <system_error> // generic_category, system_error
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v, is_same_v
 

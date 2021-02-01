@@ -69,7 +69,7 @@ TEST(StrEncoderTest, Throw) {
     ASSERT_THROW((convert<char, wchar_t>("\xC0\x80")), system_error);
     ASSERT_THROW((convert<char, wchar_t>("\xE0\x80\x80")), system_error);
     ASSERT_THROW((convert<char, wchar_t>("\xF0\x80\x80\x80")), system_error);
-    ASSERT_THROW((convert<char, wchar_t>("\xF0\x80\x80\x80")), system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\xFF")), system_error);
 }
 
 template<typename From, typename To>

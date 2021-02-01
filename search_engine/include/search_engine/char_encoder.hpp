@@ -3,7 +3,6 @@
 
 #include <cerrno> // errno
 #include <climits> // MB_LEN_MAX
-#include <clocale> // LC_ALL, setlocale
 #include <cstddef> // size_t
 #include <cwchar> // mbrtowc, mbstate_t, wcrtomb
 
@@ -57,13 +56,7 @@ constexpr char_encoder<From, To, Invocable>::char_encoder(
     const Invocable &invocable
 ) noexcept(
     std::is_nothrow_copy_constructible_v<Invocable>
-) : invocable_(invocable) {
-    using std::logic_error, std::setlocale;
-    constexpr const char *locale = "en_US.utf8";
-
-    if (setlocale(LC_ALL, locale) == nullptr) [[unlikely]]
-        throw logic_error("char_encoder::char_encoder: unable to set locale");
-}
+) : invocable_(invocable) {}
 
 template<typename From, typename To, typename Invocable>
 constexpr void char_encoder<From, To, Invocable>::operator()(

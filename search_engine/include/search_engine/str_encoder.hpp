@@ -17,14 +17,11 @@ template<typename From, typename To, typename Invocable>
 class str_encoder final {
 public:
     constexpr str_encoder() = default;
-    constexpr str_encoder(const Invocable &invocable) noexcept(
-        std::is_nothrow_copy_constructible_v<Invocable>);
-    constexpr str_encoder(const str_encoder &) noexcept(
-        std::is_nothrow_copy_constructible_v<Invocable>) = default;
+    constexpr str_encoder(const Invocable &invocable);
+    constexpr str_encoder(const str_encoder &) = default;
     constexpr str_encoder(str_encoder &&) noexcept(
         std::is_nothrow_move_constructible_v<Invocable>) = default;
-    constexpr str_encoder &operator=(const str_encoder &) noexcept(
-        std::is_nothrow_copy_assignable_v<Invocable>) = default;
+    constexpr str_encoder &operator=(const str_encoder &) = default;
     constexpr str_encoder &operator=(str_encoder &&) noexcept(
         std::is_nothrow_move_assignable_v<Invocable>) = default;
     constexpr ~str_encoder() noexcept(
@@ -57,8 +54,6 @@ private:
 template<typename From, typename To, typename Invocable>
 constexpr str_encoder<From, To, Invocable>::str_encoder(
     const Invocable &invocable
-) noexcept(
-    std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {}
 
 template<typename From, typename To, typename Invocable>

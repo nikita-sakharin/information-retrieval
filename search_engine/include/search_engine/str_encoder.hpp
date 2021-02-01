@@ -2,7 +2,7 @@
 #define SEARCH_ENGINE_STR_ENCODER_HPP
 
 #include <cstddef> // size_t
-#include <cwchar> // mbstowcs, wcstombs
+#include <cstdlib> // mbstowcs, wcstombs
 
 #include <bit> // bit_ceil
 #include <string> // basic_string
@@ -64,14 +64,13 @@ template<typename From, typename To, typename Invocable>
 constexpr void str_encoder<From, To, Invocable>::operator()(
     const std::basic_string<From> &from
 ) {
-    using std::is_same_v, std::mbstowcs, std::wcstombs;
+    using std::is_same_v, std::mbstowcs, std::wcstombs; // cstdlib
 
     if constexpr (is_same_v<From, char> && is_same_v<To, wchar_t>)
         encode(from, mbstowcs);
     else if constexpr (is_same_v<From, wchar_t> && is_same_v<To, char>)
         encode(from, wcstombs);
-    else
-        invocable_(buffer = from);
+    else invocable_(buffer = from);
 }
 
 template<typename From, typename To, typename Invocable>

@@ -4,7 +4,7 @@
 #include <functional> // function
 #include <stdexcept> // runtime_error
 #include <string> // basic_string
-#include <string_view> // basic_string_view
+#include <string_view> // basic_string_view, string_view, wstring_view
 #include <system_error> // system_error
 
 #include <gtest/gtest.h>
@@ -12,7 +12,8 @@
 #include <search_engine/char_encoder.hpp>
 
 using std::basic_string, std::basic_string_view, std::for_each, std::function,
-    std::runtime_error, std::setlocale, std::system_error;
+    std::runtime_error, std::setlocale, std::string_view, std::system_error,
+    std::wstring_view;
 
 template<typename From, typename To>
 static basic_string<To> convert(basic_string_view<From>);
@@ -49,6 +50,10 @@ TEST(CharEncoderTest, EncodeString) {
         "\U00010000\U00010001\U00010002\U00010003"
         )), L"\U00010000\U00010001\U00010002\U00010003"
     );
+    ASSERT_EQ((convert<char, wchar_t>(
+        string_view("0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
+        )), wstring_view(L"0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
+    );
 }
 
 TEST(CharEncoderTest, EncodeWstring) {
@@ -63,6 +68,10 @@ TEST(CharEncoderTest, EncodeWstring) {
     ASSERT_EQ((convert<wchar_t, char>(
         L"\U00010000\U00010001\U00010002\U00010003"
         )), "\U00010000\U00010001\U00010002\U00010003"
+    );
+    ASSERT_EQ((convert<wchar_t, char>(
+        wstring_view(L"0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
+        )), string_view("0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
     );
 }
 

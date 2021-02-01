@@ -2,7 +2,7 @@
 
 #include <functional> // function
 #include <stdexcept> // runtime_error
-#include <string> // basic_string
+#include <string> // basic_string, string, wstring
 #include <system_error> // system_error
 
 #include <gtest/gtest.h>
@@ -10,7 +10,7 @@
 #include <search_engine/str_encoder.hpp>
 
 using std::basic_string, std::function, std::runtime_error, std::setlocale,
-    std::system_error;
+    std::string, std::system_error, std::wstring;
 
 template<typename From, typename To>
 static basic_string<To> convert(const basic_string<From> &);
@@ -47,6 +47,10 @@ TEST(StrEncoderTest, EncodeString) {
         "\U00010000\U00010001\U00010002\U00010003"
         )), L"\U00010000\U00010001\U00010002\U00010003"
     );
+    ASSERT_EQ((convert<char, wchar_t>(
+        string("0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
+        )), wstring(L"0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
+    );
 }
 
 TEST(StrEncoderTest, EncodeWstring) {
@@ -61,6 +65,10 @@ TEST(StrEncoderTest, EncodeWstring) {
     ASSERT_EQ((convert<wchar_t, char>(
         L"\U00010000\U00010001\U00010002\U00010003"
         )), "\U00010000\U00010001\U00010002\U00010003"
+    );
+    ASSERT_EQ((convert<wchar_t, char>(
+        wstring(L"0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
+        )), string("0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
     );
 }
 

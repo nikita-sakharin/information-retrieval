@@ -37,15 +37,18 @@ ForwardIter binary_search(ForwardIter first, ForwardIter last,
 }
 
 template<class RandomAccessIter, class Compare>
-void pop_heap(const RandomAccessIter first, RandomAccessIter last, Compare comp)
-{
+void pop_heap(
+    const RandomAccessIter first,
+    RandomAccessIter last,
+    const Compare comp
+) {
     std::swap(*first, *--last);
-    const std::ptrdiff_t size_2 = (last - first) / 2;
+    const std::ptrdiff_t half = (last - first) / 2;
     for (RandomAccessIter parent = first, child = first;
-        parent - first < size_2; parent = child)
+        parent - first < half; parent = child)
     {
         child += parent - first + 1;
-        if ((child + 1) != last && comp(*child, *(child + 1)))
+        if (child + 1 != last && comp(*child, *(child + 1)))
             ++child;
         if (comp(*child, *parent))
             break;
@@ -54,34 +57,46 @@ void pop_heap(const RandomAccessIter first, RandomAccessIter last, Compare comp)
 }
 
 template<class RandomAccessIter, class Compare>
-void push_heap(const RandomAccessIter first, RandomAccessIter last, Compare comp)
-{
+void push_heap(
+    const RandomAccessIter first,
+    RandomAccessIter last,
+    const Compare comp
+) {
     --last;
-    for (RandomAccessIter parent; first != last &&
-        comp(*(parent = first + (last - first - 1) / 2), *last); last = parent)
+    for (RandomAccessIter parent; first != last; last = parent) {
+        parent = first + (last - first - 1) / 2;
+        if (!comp(*parent, *last))
+            break;
         std::swap(*parent, *last);
+    }
 }
 
 template<class RandomAccessIter, class Compare>
-void make_heap(const RandomAccessIter first, const RandomAccessIter last,
-    Compare comp)
-{
+void make_heap(
+    const RandomAccessIter first,
+    const RandomAccessIter last,
+    const Compare comp
+) {
     for (RandomAccessIter current = first; current != last; )
         push_heap(first, ++current, comp);
 }
 
 template<class RandomAccessIter, class Compare>
-void sort_heap(const RandomAccessIter first, const RandomAccessIter last,
-    Compare comp)
-{
+void sort_heap(
+    const RandomAccessIter first,
+    const RandomAccessIter last,
+    const Compare comp
+) {
     for (RandomAccessIter current = last; current != first; --current)
         pop_heap(first, current, comp);
 }
 
 template<class RandomAccessIter, class Compare>
-void sort(const RandomAccessIter first, const RandomAccessIter last,
-    Compare comp)
-{
+void sort(
+    const RandomAccessIter first,
+    const RandomAccessIter last,
+    const Compare comp
+) {
     make_heap(first, last, comp);
     sort_heap(first, last, comp);
 }

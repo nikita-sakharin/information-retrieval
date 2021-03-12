@@ -4,7 +4,7 @@ set -o nounset
 set -o pipefail
 set -o posix
 
-DIRNAME="$(dirname "$0")"
+readonly DIRNAME="$(dirname "$0")"
 cat "$DIRNAME"/texts.json/texts.json* > "$TEMP"/texts.json
 rm -frd "$DIRNAME"/texts.json
 mv "$TEMP"/texts.json "$DIRNAME"/texts.json

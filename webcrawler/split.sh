@@ -1,10 +1,10 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 set -o errexit
 set -o nounset
 set -o pipefail
 set -o posix
 
-DIRNAME="$(dirname "$0")"
+readonly DIRNAME="$(dirname "$0")"
 md5sum -b "$DIRNAME"/texts.json > "$DIRNAME"/texts.json.md5
 sha1sum -b "$DIRNAME"/texts.json > "$DIRNAME"/texts.json.sha1
 mkdir "$TEMP"/texts.json

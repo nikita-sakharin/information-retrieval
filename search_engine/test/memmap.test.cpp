@@ -11,7 +11,7 @@ using std::ios_base, std::ofstream, std::string_view;
 TEST(MemmapTest, Empty) {
     static constexpr const char *filename = "empty.txt";
     ofstream(filename, ios_base::binary | ios_base::out | ios_base::trunc);
-    const memmap map("empty.txt");
+    const memmap map(filename);
     ASSERT_EQ(map.data(), nullptr);
     ASSERT_TRUE(map.empty());
     ASSERT_TRUE(map.is_open());

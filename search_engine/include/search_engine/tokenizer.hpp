@@ -40,8 +40,8 @@ private:
 
     constexpr std::size_t get_end_index() noexcept;
 
-    std::wstring buffer;
-    std::size_t position = 0;
+    std::wstring buffer_;
+    std::size_t position_ = 0;
     Invocable invocable_{};
 };
 
@@ -54,11 +54,11 @@ template<typename Invocable>
 constexpr void tokenizer<Invocable>::operator()(const wchar_t value) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
 ) {
-    buffer[index++] = value;
+    buffer_.push_back(value);
     if (const std::size_t end_index = get_end_index(); end_index <= index) {
         if (index > 1) {
-            invocable_(position++, buffer);
-            std::move(buffer.cbegin() + , buffer.cbegin() + , buffer.begin());
+            invocable_(position++, buffer_);
+            std::move(buffer_.cbegin() + , buffer_.cbegin() + , buffer_.begin());
         }
         index = 0;
     }
@@ -75,11 +75,15 @@ constexpr Invocable &tokenizer<Invocable>::invocable() noexcept {
 }
 
 constexpr void reset() noexcept {
+    if (!buffer_.empty())
+        invocable_(position, buffer_); // TODO
+    buffer_.clear();
+    position = 0;
 }
 
 constexpr std::size_t tokenizer::get_end_index() noexcept {
     assert(index > 0);
-    const wchar_t wc = buffer[index - 1];
+    const wchar_t wc = buffer_[index - 1];
     if (std::isalnum(wc) || wc)
         return;
 

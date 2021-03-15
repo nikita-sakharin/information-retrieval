@@ -66,13 +66,13 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) noexcept(
     }
 }
 
+template<typename Invocable>
+constexpr Invocable tokenizer<Invocable>::get_invocable(
+) const noexcept(std::is_nothrow_copy_assignable_v<Invocable>) {
+    return invocable_;
+}
+
 constexpr void reset() noexcept {
-/*
-    if (index != 0)
-        invocable_(make_pair(position, buffer.first(index)));
-    index = 0;
-    position = 0;
-*/
 }
 
 constexpr std::size_t tokenizer::get_end_index() noexcept {

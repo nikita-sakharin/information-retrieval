@@ -41,7 +41,7 @@ private:
     );
 
     template<typename Encoder>
-    constexpr void encode(const std::basic_string<From> &, Encoder);
+    constexpr void encode(const std::basic_string<From> &, Encoder, size_t);
 
     std::basic_string<To> buffer_ =
         std::basic_string<To>(4096U * MB_LEN_MAX, static_cast<To>('\0'));

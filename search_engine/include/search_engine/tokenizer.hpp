@@ -14,7 +14,7 @@ template<typename Invocable>
 class tokenizer final {
 public:
     constexpr tokenizer();
-    constexpr tokenizer(const Invocable &invocable);
+    constexpr tokenizer(const Invocable &);
     constexpr tokenizer(const tokenizer &) = default;
     constexpr tokenizer(tokenizer &&) noexcept(
         std::is_nothrow_move_constructible_v<Invocable>) = default;
@@ -48,8 +48,6 @@ private:
 template<typename Invocable>
 constexpr tokenizer<Invocable>::tokenizer(
     const Invocable &invocable
-) noexcept(
-    std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {}
 
 template<typename Invocable>

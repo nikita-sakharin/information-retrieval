@@ -14,7 +14,7 @@ template<typename From, typename To, typename Invocable>
 class str_encoder final {
 public:
     constexpr str_encoder() = default;
-    constexpr str_encoder(const Invocable &invocable);
+    constexpr str_encoder(const Invocable &);
     constexpr str_encoder(const str_encoder &) = default;
     constexpr str_encoder(str_encoder &&) noexcept(
         std::is_nothrow_move_constructible_v<Invocable>) = default;

@@ -2,10 +2,6 @@ cmake_minimum_required(VERSION 3.17.0)
 
 project(search_engine VERSION 1.0.0 LANGUAGES CXX)
 
-if (CYGWIN)
-    set(CMAKE_AR "/usr/bin/gcc-ar.exe")
-endif()
-
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

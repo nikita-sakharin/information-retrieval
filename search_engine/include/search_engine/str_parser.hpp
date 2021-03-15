@@ -32,8 +32,8 @@ public:
         std::string_view::const_iterator
     );
 
-    constexpr Invocable get_invocable() const noexcept(
-        std::is_nothrow_copy_assignable_v<Invocable>);
+    constexpr const Invocable &invocable() const noexcept;
+    constexpr Invocable &invocable() noexcept;
 
 private:
     static_assert(
@@ -93,9 +93,12 @@ constexpr std::string_view::const_iterator str_parser<Invocable>::operator()(
 }
 
 template<typename Invocable>
-constexpr Invocable str_parser<Invocable>::get_invocable() const noexcept(
-    std::is_nothrow_copy_assignable_v<Invocable>
-) {
+constexpr const Invocable &str_parser<Invocable>::invocable() const noexcept {
+    return invocable_;
+}
+
+template<typename Invocable>
+constexpr Invocable &str_parser<Invocable>::invocable() noexcept {
     return invocable_;
 }
 

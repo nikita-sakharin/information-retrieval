@@ -27,8 +27,8 @@ public:
     constexpr void operator()(wchar_t) noexcept(std::is_nothrow_invocable_r_v<
         void, Invocable, std::size_t, std::wstring &>);
 
-    constexpr Invocable get_invocable() const noexcept(
-        std::is_nothrow_copy_assignable_v<Invocable>);
+    constexpr const Invocable &invocable() const noexcept;
+    constexpr Invocable &invocable() noexcept;
 
     constexpr void reset() noexcept;
 
@@ -65,8 +65,12 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) noexcept(
 }
 
 template<typename Invocable>
-constexpr Invocable tokenizer<Invocable>::get_invocable(
-) const noexcept(std::is_nothrow_copy_assignable_v<Invocable>) {
+constexpr const Invocable &tokenizer<Invocable>::invocable() const noexcept {
+    return invocable_;
+}
+
+template<typename Invocable>
+constexpr Invocable &tokenizer<Invocable>::invocable() noexcept {
     return invocable_;
 }
 

@@ -31,8 +31,8 @@ public:
 
     constexpr void operator()(From);
 
-    constexpr Invocable get_invocable() const noexcept(
-        std::is_nothrow_copy_assignable_v<Invocable>);
+    constexpr const Invocable &invocable() const noexcept;
+    constexpr Invocable &invocable() noexcept;
 
 private:
     static_assert(
@@ -82,8 +82,13 @@ constexpr void char_encoder<From, To, Invocable>::operator()(
 }
 
 template<typename From, typename To, typename Invocable>
-constexpr Invocable char_encoder<From, To, Invocable>::get_invocable(
-) const noexcept(std::is_nothrow_copy_assignable_v<Invocable>) {
+constexpr const Invocable &char_encoder<From, To, Invocable>::invocable(
+) const noexcept {
+    return invocable_;
+}
+
+template<typename From, typename To, typename Invocable>
+constexpr Invocable &char_encoder<From, To, Invocable>::invocable() noexcept {
     return invocable_;
 }
 

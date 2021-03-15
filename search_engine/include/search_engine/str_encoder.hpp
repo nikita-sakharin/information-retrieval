@@ -26,8 +26,8 @@ public:
 
     constexpr void operator()(const std::basic_string<From> &);
 
-    constexpr Invocable get_invocable() const noexcept(
-        std::is_nothrow_copy_assignable_v<Invocable>);
+    constexpr const Invocable &invocable() const noexcept;
+    constexpr Invocable &invocable() noexcept;
 
 private:
     static_assert(
@@ -68,8 +68,13 @@ constexpr void str_encoder<From, To, Invocable>::operator()(
 }
 
 template<typename From, typename To, typename Invocable>
-constexpr Invocable str_encoder<From, To, Invocable>::get_invocable(
-) const noexcept(std::is_nothrow_copy_assignable_v<Invocable>) {
+constexpr const Invocable &str_encoder<From, To, Invocable>::invocable(
+) const noexcept {
+    return invocable_;
+}
+
+template<typename From, typename To, typename Invocable>
+constexpr Invocable &str_encoder<From, To, Invocable>::invocable() noexcept {
     return invocable_;
 }
 

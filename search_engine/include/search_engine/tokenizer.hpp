@@ -2,7 +2,7 @@
 #define SEARCH_ENGINE_TOKENIZER_HPP
 
 #include <cstddef> // size_t
-#include <cwctype> // iswalnum
+#include <cwctype> // iswalnum, iswspace
 
 #include <string> // wstring
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
@@ -38,8 +38,6 @@ private:
         "invocable must have signature void(size_t, wstring &)"
     );
 
-    constexpr std::size_t get_end_index() noexcept;
-
     std::wstring buffer_;
     std::size_t position_ = 0;
     Invocable invocable_{};
@@ -54,14 +52,14 @@ template<typename Invocable>
 constexpr void tokenizer<Invocable>::operator()(const wchar_t value) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
 ) {
-    buffer_.push_back(value);
-    if (const std::size_t end_index = get_end_index(); end_index <= index) {
-        if (index > 1) {
+    if (iswspace(value) || /*ispunct() */) {
+        if (!buffer_.empty()) {
             invocable_(position++, buffer_);
-            std::move(buffer_.cbegin() + , buffer_.cbegin() + , buffer_.begin());
+            buffer_.clear();
         }
-        index = 0;
     }
+
+    buffer_.push_back(value);
 }
 
 template<typename Invocable>
@@ -90,11 +88,4 @@ constexpr std::size_t tokenizer::get_end_index() noexcept {
     return std::numeric_limits<std::size_t>::max();
 }
 
-/*
-если в тексте есть тире
-инженер-механик co-education
-или точки
-C.A.T. U.S.A.
-то они обрабатываются в токенизаторе, а не нормализаторе
-*/
 #endif

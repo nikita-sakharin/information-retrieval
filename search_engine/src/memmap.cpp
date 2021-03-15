@@ -81,9 +81,11 @@ void memmap::close() {
     } catch (const exception &except) {
         if (errnum == 0)
             errnum = errno;
-#       ifndef NDEBUG
-        cerr << except.what() << endl;
-#       endif
+        else {
+#           ifndef NDEBUG
+            cerr << except.what() << endl;
+#           endif
+        }
     }
     assert(
         addr_ == MAP_FAILED &&

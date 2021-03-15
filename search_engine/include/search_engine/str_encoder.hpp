@@ -10,9 +10,6 @@
 #include <system_error> // generic_category, system_error
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v, is_same_v
 
-static_assert(__STDC_ISO_10646__ >= 201103L,
-    "Unicode version 2011 or later required");
-
 template<typename From, typename To, typename Invocable>
 class str_encoder final {
 public:
@@ -63,10 +60,11 @@ constexpr void str_encoder<From, To, Invocable>::operator()(
     using std::is_same_v, std::mbstowcs, std::wcstombs;
 
     if constexpr (is_same_v<From, char> && is_same_v<To, wchar_t>)
-        encode(from, mbstowcs);
+        encode(from, mbstowcs, 1U);
     else if constexpr (is_same_v<From, wchar_t> && is_same_v<To, char>)
-        encode(from, wcstombs);
-    else invocable_(buffer_ = from);
+        encode(from, wcstombs, MB_CUR_MAX);
+    else buffer_ = from;
+    invocable_(buffer_);
 }
 
 template<typename From, typename To, typename Invocable>
@@ -79,7 +77,8 @@ template<typename From, typename To, typename Invocable>
 template<typename Encoder>
 constexpr void str_encoder<From, To, Invocable>::encode(
     const std::basic_string<From> &from,
-    const Encoder encoder
+    const Encoder encoder,
+    const size_t max_len
 ) {
     using std::bit_ceil, std::generic_category, std::is_invocable_r_v,
         std::is_same_v, std::size_t, std::system_error;
@@ -88,12 +87,11 @@ constexpr void str_encoder<From, To, Invocable>::encode(
     static_assert(is_invocable_r_v<size_t, Encoder, To *, const From *, size_t>,
         "encoder must have signature size_t(To *, const From *, size_t)");
 
-    buffer_.resize(bit_ceil(from.size() * MB_CUR_MAX));
+    buffer_.resize(bit_ceil(from.size() * max_len));
     const size_t size = encoder(buffer_.data(), from.c_str(), buffer_.size());
     if (size == static_cast<size_t>(-1)) [[unlikely]]
         throw system_error(errno, generic_category(), "str_encoder::encode");
     buffer_.resize(size);
-    invocable_(buffer_);
 }
 
 #endif

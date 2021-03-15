@@ -7,6 +7,9 @@
 #include <string> // wstring
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
 
+static_assert(__STDC_ISO_10646__ >= 201103L,
+    "Unicode version 2011 or later required");
+
 template<typename Invocable>
 class tokenizer final {
 public:

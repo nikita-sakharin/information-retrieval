@@ -54,7 +54,7 @@ private:
     using size_limits = std::numeric_limits<size_t>;
 
     const void *addr_;
-    std::size_t size_;
+    std::size_t size_ = size_limits::max();
     file file_{};
 };
 

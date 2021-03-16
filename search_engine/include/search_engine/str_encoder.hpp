@@ -6,7 +6,7 @@
 #include <cstdlib> // MB_CUR_MAX, mbstowcs, wcstombs
 
 #include <bit> // bit_ceil
-#include <string> // basic_string, string, wstring
+#include <string> // basic_string
 #include <system_error> // generic_category, system_error
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v, is_same_v
 

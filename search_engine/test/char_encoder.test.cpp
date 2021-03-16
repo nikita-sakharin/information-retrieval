@@ -19,38 +19,58 @@ static basic_string<To> convert(basic_string_view<From>);
 
 TEST(CharEncoderTest, EncodeString) {
     ASSERT_EQ((convert<char, wchar_t>(
-        "The quick brown fox jumps over the lazy dog."
+            "The quick brown fox jumps over the lazy dog."
         )), L"The quick brown fox jumps over the lazy dog."
     );
     ASSERT_EQ((convert<char, wchar_t>(
-        "Съешь еще этих мягких французских булок, да выпей чаю."
+            "Съешь еще этих мягких французских булок, да выпей чаю."
         )), L"Съешь еще этих мягких французских булок, да выпей чаю."
     );
     ASSERT_EQ((convert<char, wchar_t>(
-        "\U00010000\U00010001\U00010002\U00010003"
-        )), L"\U00010000\U00010001\U00010002\U00010003"
+            "いろはにほへと\nちりぬるを\nわかよたれそ\nつねならむ\nうゐのおくやま\nけふこえて\n"
+            "あさきゆめみし\nゑひもせす\n"
+        )),
+        L"いろはにほへと\nちりぬるを\nわかよたれそ\nつねならむ\nうゐのおくやま\nけふこえて\n"
+        L"あさきゆめみし\nゑひもせす\n"
     );
     ASSERT_EQ((convert<char, wchar_t>(
-        string_view("0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
+            "\U00010000\U00010001\U00010002\U00010003"
+            "\U00010004\U00010005\U00010006\U00010007"
+        )),
+        L"\U00010000\U00010001\U00010002\U00010003"
+        L"\U00010004\U00010005\U00010006\U00010007"
+    );
+    ASSERT_EQ((convert<char, wchar_t>(
+            string_view("0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
         )), wstring_view(L"0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
     );
 }
 
 TEST(CharEncoderTest, EncodeWstring) {
     ASSERT_EQ((convert<wchar_t, char>(
-        L"The quick brown fox jumps over the lazy dog."
+            L"The quick brown fox jumps over the lazy dog."
         )), "The quick brown fox jumps over the lazy dog."
     );
     ASSERT_EQ((convert<wchar_t, char>(
-        L"Съешь еще этих мягких французских булок, да выпей чаю."
+            L"Съешь еще этих мягких французских булок, да выпей чаю."
         )), "Съешь еще этих мягких французских булок, да выпей чаю."
     );
     ASSERT_EQ((convert<wchar_t, char>(
-        L"\U00010000\U00010001\U00010002\U00010003"
-        )), "\U00010000\U00010001\U00010002\U00010003"
+            L"いろはにほへと\nちりぬるを\nわかよたれそ\nつねならむ\nうゐのおくやま\nけふこえて\n"
+            L"あさきゆめみし\nゑひもせす\n"
+        )),
+        "いろはにほへと\nちりぬるを\nわかよたれそ\nつねならむ\nうゐのおくやま\nけふこえて\n"
+        "あさきゆめみし\nゑひもせす\n"
     );
     ASSERT_EQ((convert<wchar_t, char>(
-        wstring_view(L"0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
+            L"\U00010000\U00010001\U00010002\U00010003"
+            L"\U00010004\U00010005\U00010006\U00010007"
+        )),
+        "\U00010000\U00010001\U00010002\U00010003"
+        "\U00010004\U00010005\U00010006\U00010007"
+    );
+    ASSERT_EQ((convert<wchar_t, char>(
+            wstring_view(L"0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
         )), string_view("0123456789\0abcdef\0ghijklmnopqrstuvwxyz", 38)
     );
 }

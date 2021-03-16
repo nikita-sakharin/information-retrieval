@@ -77,14 +77,14 @@ constexpr Invocable &tokenizer<Invocable>::invocable() noexcept {
 template<typename Invocable>
 constexpr void tokenizer<Invocable>::reserve(
     const std::size_t capacity
-) noexcept(
-    std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
 ) {
     buffer_.reserve(capacity);
 }
 
 template<typename Invocable>
-constexpr void tokenizer<Invocable>::reset() noexcept {
+constexpr void tokenizer<Invocable>::reset() noexcept(
+    std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
+) {
     if (!buffer_.empty())
         invocable_(position_, buffer_); // TODO
     buffer_.clear();

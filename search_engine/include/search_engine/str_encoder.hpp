@@ -2,7 +2,6 @@
 #define SEARCH_ENGINE_STR_ENCODER_HPP
 
 #include <cerrno> // errno
-#include <climits> // MB_LEN_MAX
 #include <cstddef> // size_t
 #include <cstdlib> // MB_CUR_MAX, mbstowcs, wcstombs
 

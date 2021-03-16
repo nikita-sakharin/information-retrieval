@@ -36,8 +36,7 @@ public:
     constexpr Invocable &invocable() noexcept;
 
 private:
-    static_assert(
-        std::is_invocable_r_v<void, Invocable, char>,
+    static_assert(std::is_invocable_r_v<void, Invocable, char>,
         "invocable must have signature void(char)"
     );
 
@@ -63,10 +62,11 @@ constexpr std::string_view::const_iterator str_parser<Invocable>::operator()(
     std::string_view::const_iterator first,
     const std::string_view::const_iterator last
 ) {
+    using std::logic_error;
     assert(first < last);
 
     if (*first != '\"') [[unlikely]]
-        throw std::logic_error("str_parser::operator(): invalid string");
+        throw logic_error("str_parser::operator(): invalid string");
     ++first;
 
     bool is_escape = false;
@@ -84,7 +84,7 @@ constexpr std::string_view::const_iterator str_parser<Invocable>::operator()(
     }
 
     assert(first <= last);
-    if (first == last) [[unlikely]] throw std::logic_error(
+    if (first == last) [[unlikely]] throw logic_error(
         "str_parser::operator(): string not properly ended"
     );
     assert(!is_escape && *first == '\"');
@@ -104,12 +104,14 @@ constexpr Invocable &str_parser<Invocable>::invocable() noexcept {
 
 template<typename Invocable>
 constexpr uint str_parser<Invocable>::hex_digit(const char c) {
+    using std::logic_error;
+
     if (c >= '0' && c <= '9') [[likely]]
         return c - '0';
     else if (c >= 'a' && c <= 'f') [[likely]] // upper hex not permitted
         return c - 'a' + 10U;
     else [[unlikely]]
-        throw std::logic_error("str_parser::hex_digit: invalid hex digit");
+        throw logic_error("str_parser::hex_digit: invalid hex digit");
 }
 
 template<typename Invocable>
@@ -117,6 +119,7 @@ constexpr std::string_view::const_iterator str_parser<Invocable>::parse_escape(
     const std::string_view::const_iterator first,
     const std::string_view::const_iterator last
 ) {
+    using std::logic_error;
     constexpr const char *what =
         "str_parser::parse_escape: invalid escape sequence";
     assert(first < last);
@@ -131,15 +134,15 @@ constexpr std::string_view::const_iterator str_parser<Invocable>::parse_escape(
         [[likely]]   case  't': invocable_('\t'); return first + 1;
         [[unlikely]] case  'u': {
             if (first + 4 >= last || first[1] != '0' || first[2] != '0')
-                [[unlikely]] throw std::logic_error(what);
+                [[unlikely]] throw logic_error(what);
             const uint value = hex_digit(first[3]) * 16 + hex_digit(first[4]);
             if (value >= 8 && value != 11 &&
                 (value < 14 || value >= 32) && value != 127
-            ) [[unlikely]] throw std::logic_error(what);
+            ) [[unlikely]] throw logic_error(what);
             invocable_(value);
             return first + 5;
         }
-        [[unlikely]] default: throw std::logic_error(what);
+        [[unlikely]] default: throw logic_error(what);
     }
 }
 

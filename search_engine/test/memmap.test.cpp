@@ -22,7 +22,9 @@ TEST(MemmapTest, Empty) {
 TEST(MemmapTest, Pangram) {
     static constexpr string_view data =
         "The quick brown fox jumps over the lazy dog.\n"
-        "Съешь еще этих мягких французских булок, да выпей чаю.\n";
+        "Съешь еще этих мягких французских булок, да выпей чаю.\n"
+        "いろはにほへと\nちりぬるを\nわかよたれそ\nつねならむ\nうゐのおくやま\nけふこえて\n"
+        "あさきゆめみし\nゑひもせす\n";
     static constexpr const char *filename = "pangram.txt";
     ofstream(
         filename,

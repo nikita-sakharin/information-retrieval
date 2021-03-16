@@ -6,7 +6,7 @@
 #include <cstdlib> // MB_CUR_MAX, mbstowcs, wcstombs
 
 #include <bit> // bit_ceil
-#include <string> // basic_string
+#include <string> // basic_string, string, wstring
 #include <system_error> // generic_category, system_error
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v, is_same_v
 
@@ -35,8 +35,11 @@ private:
         (std::is_same_v<To, char> || std::is_same_v<To, wchar_t>),
         "template arguments From and To must both have type char or wchar_t"
     );
+    static_assert(!std::is_same_v<From, To>,
+        "template arguments From and To must have different types"
+    );
     static_assert(
-        std::is_invocable_r_v<void, Invocable, std::basic_string<To> &>,
+        std::is_invocable_r_v<void, Invocable, const std::basic_string<To> &>,
         "invocable must have signature void(std::basic_string<To> &)"
     );
 
@@ -59,11 +62,10 @@ constexpr void str_encoder<From, To, Invocable>::operator()(
 ) {
     using std::is_same_v, std::mbstowcs, std::wcstombs;
 
-    if constexpr (is_same_v<From, char> && is_same_v<To, wchar_t>)
+    if constexpr (is_same_v<From, char>)
         encode(from, mbstowcs, 1U);
-    else if constexpr (is_same_v<From, wchar_t> && is_same_v<To, char>)
+    else
         encode(from, wcstombs, MB_CUR_MAX);
-    else buffer_ = from;
     invocable_(buffer_);
 }
 
@@ -86,14 +88,13 @@ constexpr void str_encoder<From, To, Invocable>::encode(
     const size_t max_len
 ) {
     using std::bit_ceil, std::generic_category, std::is_invocable_r_v,
-        std::is_same_v, std::size_t, std::system_error;
-    static_assert(!is_same_v<From, To>,
-        "template arguments From and To must have different types");
+        std::size_t, std::system_error;
     static_assert(is_invocable_r_v<size_t, Encoder, To *, const From *, size_t>,
-        "encoder must have signature size_t(To *, const From *, size_t)");
+        "Encoder must have signature size_t(To *, const From *, size_t)");
 
-    buffer_.resize(bit_ceil(from.size() * max_len));
-    const size_t size = encoder(buffer_.data(), from.c_str(), buffer_.size());
+    const size_t len = bit_ceil(from.size() * max_len);
+    buffer_.resize(len);
+    const size_t size = encoder(buffer_.data(), from.c_str(), len);
     if (size == static_cast<size_t>(-1)) [[unlikely]]
         throw system_error(errno, generic_category(), "str_encoder::encode");
     buffer_.resize(size);

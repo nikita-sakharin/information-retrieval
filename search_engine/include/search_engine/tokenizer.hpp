@@ -35,10 +35,10 @@ public:
 private:
     static_assert(
         std::is_invocable_r_v<void, Invocable, std::size_t, std::wstring &>,
-        "invocable must have signature void(size_t, wstring &)"
+        "Invocable must have signature void(size_t, wstring &)"
     );
 
-    std::wstring buffer_;
+    std::wstring buffer_ = std::wstring(4096U, L'\0');
     std::size_t position_ = 0;
     Invocable invocable_{};
 };

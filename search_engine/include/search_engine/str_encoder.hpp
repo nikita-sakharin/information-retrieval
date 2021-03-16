@@ -41,7 +41,7 @@ private:
     );
     static_assert(
         std::is_invocable_r_v<void, Invocable, const std::basic_string<To> &>,
-        "invocable must have signature void(std::basic_string<To> &)"
+        "Invocable must have signature void(std::basic_string<To> &)"
     );
 
     template<typename Encoder>

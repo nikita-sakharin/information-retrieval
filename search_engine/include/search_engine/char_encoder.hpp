@@ -45,7 +45,7 @@ private:
     );
     static_assert(
         std::is_invocable_r_v<void, Invocable, To>,
-        "invocable must have signature void(To)"
+        "Invocable must have signature void(To)"
     );
 
     std::mbstate_t state_{};

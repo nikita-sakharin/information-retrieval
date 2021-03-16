@@ -37,7 +37,7 @@ public:
 
 private:
     static_assert(std::is_invocable_r_v<void, Invocable, char>,
-        "invocable must have signature void(char)"
+        "Invocable must have signature void(char)"
     );
 
     static constexpr uint hex_digit(char);

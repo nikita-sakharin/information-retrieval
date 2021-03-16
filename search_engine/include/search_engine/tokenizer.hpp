@@ -2,7 +2,7 @@
 #define SEARCH_ENGINE_TOKENIZER_HPP
 
 #include <cstddef> // size_t
-#include <cwctype> // iswalnum, iswspace
+#include <cwctype> // iswalnum, iswpunct, iswspace,
 
 #include <string> // wstring
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
@@ -30,7 +30,10 @@ public:
     constexpr const Invocable &invocable() const noexcept;
     constexpr Invocable &invocable() noexcept;
 
-    constexpr void reset() noexcept;
+    constexpr void reset() noexcept(std::is_nothrow_invocable_r_v<
+        void, Invocable, std::size_t, std::wstring &>);
+
+    constexpr void reserve(std::size_t);
 
 private:
     static_assert(
@@ -38,7 +41,7 @@ private:
         "Invocable must have signature void(size_t, wstring &)"
     );
 
-    std::wstring buffer_ = std::wstring(4096U, L'\0');
+    std::wstring buffer_{};
     std::size_t position_ = 0;
     Invocable invocable_{};
 };
@@ -52,14 +55,13 @@ template<typename Invocable>
 constexpr void tokenizer<Invocable>::operator()(const wchar_t value) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
 ) {
-    if (iswspace(value) || /*ispunct() */) {
-        if (!buffer_.empty()) {
-            invocable_(position++, buffer_);
-            buffer_.clear();
-        }
+    // iswspace(value), iswpunct(value)
+    if (iswalnum(value))
+        buffer_.push_back(value);
+    else if (!buffer_.empty()) {
+        invocable_(position_++, buffer_);
+        buffer_.clear();
     }
-
-    buffer_.push_back(value);
 }
 
 template<typename Invocable>
@@ -72,20 +74,21 @@ constexpr Invocable &tokenizer<Invocable>::invocable() noexcept {
     return invocable_;
 }
 
-constexpr void reset() noexcept {
-    if (!buffer_.empty())
-        invocable_(position, buffer_); // TODO
-    buffer_.clear();
-    position = 0;
+template<typename Invocable>
+constexpr void tokenizer<Invocable>::reserve(
+    const std::size_t capacity
+) noexcept(
+    std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
+) {
+    buffer_.reserve(capacity);
 }
 
-constexpr std::size_t tokenizer::get_end_index() noexcept {
-    assert(index > 0);
-    const wchar_t wc = buffer_[index - 1];
-    if (std::isalnum(wc) || wc)
-        return;
-
-    return std::numeric_limits<std::size_t>::max();
+template<typename Invocable>
+constexpr void tokenizer<Invocable>::reset() noexcept {
+    if (!buffer_.empty())
+        invocable_(position_, buffer_); // TODO
+    buffer_.clear();
+    position_ = 0;
 }
 
 #endif

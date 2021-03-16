@@ -30,6 +30,8 @@ public:
     constexpr const Invocable &invocable() const noexcept;
     constexpr Invocable &invocable() noexcept;
 
+    constexpr void reserve(std::size_t);
+
 private:
     static_assert(
         (std::is_same_v<From, char> || std::is_same_v<From, wchar_t>) &&
@@ -47,8 +49,7 @@ private:
     template<typename Encoder>
     constexpr void encode(const std::basic_string<From> &, Encoder, size_t);
 
-    std::basic_string<To> buffer_ =
-        std::basic_string<To>(4096U * MB_LEN_MAX, static_cast<To>('\0'));
+    std::basic_string<To> buffer_{};
     Invocable invocable_{};
 };
 
@@ -79,6 +80,13 @@ constexpr const Invocable &str_encoder<From, To, Invocable>::invocable(
 template<typename From, typename To, typename Invocable>
 constexpr Invocable &str_encoder<From, To, Invocable>::invocable() noexcept {
     return invocable_;
+}
+
+template<typename From, typename To, typename Invocable>
+constexpr void str_encoder<From, To, Invocable>::reserve(
+    const std::size_t capacity
+) {
+    buffer_.reserve(capacity);
 }
 
 template<typename From, typename To, typename Invocable>

@@ -40,6 +40,9 @@ private:
         (std::is_same_v<To, char> || std::is_same_v<To, wchar_t>),
         "template arguments From and To must both have type char or wchar_t"
     );
+    static_assert(!std::is_same_v<From, To>,
+        "template arguments From and To must have different types"
+    );
     static_assert(
         std::is_invocable_r_v<void, Invocable, To>,
         "invocable must have signature void(To)"
@@ -64,7 +67,7 @@ constexpr void char_encoder<From, To, Invocable>::operator()(
         std::mbrtowc, std::size_t, std::system_error, std::wcrtomb;
     constexpr const char *what = "char_encoder::operator()";
 
-    if constexpr (is_same_v<From, char> && is_same_v<To, wchar_t>) {
+    if constexpr (is_same_v<From, char>) {
         wchar_t wc;
         const size_t size = mbrtowc(&wc, &from, 1U, &state_);
         if (size == static_cast<size_t>(-1)) [[unlikely]]
@@ -72,13 +75,13 @@ constexpr void char_encoder<From, To, Invocable>::operator()(
         if (size == static_cast<size_t>(-2))
             return;
         invocable_(wc);
-    } else if constexpr (is_same_v<From, wchar_t> && is_same_v<To, char>) {
+    } else {
         array<char, MB_LEN_MAX> s;
         const size_t size = wcrtomb(s.data(), from, &state_);
         if (size == static_cast<size_t>(-1)) [[unlikely]]
             throw system_error(errno, generic_category(), what);
         for_each(s.cbegin(), s.cbegin() + size, invocable_);
-    } else invocable_(from);
+    }
 }
 
 template<typename From, typename To, typename Invocable>

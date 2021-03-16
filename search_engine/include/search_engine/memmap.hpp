@@ -13,7 +13,7 @@
 class memmap final {
 public:
     memmap() noexcept;
-    explicit memmap(const char *);
+    inline explicit memmap(const char *);
     constexpr memmap(const memmap &) noexcept = delete;
     memmap(memmap &&);
     constexpr memmap &operator=(const memmap &) noexcept = delete;
@@ -58,6 +58,10 @@ private:
     file file_{};
 };
 
+inline memmap::memmap(const char * const filename) : memmap() {
+    open(filename);
+}
+
 constexpr bool memmap::empty() const {
     return size() == 0;
 }
@@ -84,7 +88,6 @@ constexpr void memmap::swap(memmap &rhs) noexcept {
 
 inline memmap::file::file(const char * const filename) {
     open(filename);
-    assert(fildes_ >= 0);
 }
 
 constexpr memmap::file::file(file &&rhs) {

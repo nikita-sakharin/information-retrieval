@@ -14,15 +14,6 @@ using std::cerr, std::endl, std::exception, std::generic_category,
 
 memmap::memmap() noexcept : addr_(MAP_FAILED) {}
 
-memmap::memmap(const char * const filename) : memmap() {
-    open(filename);
-    assert(
-        (addr_ == MAP_FAILED && size_ == 0) ||
-        (addr_ != MAP_FAILED && size_ > 0)
-    );
-    assert(size_ != size_limits::max() && file_.is_open());
-}
-
 memmap::memmap(memmap &&rhs) : memmap() {
     *this = move(rhs);
     assert(

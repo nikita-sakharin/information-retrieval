@@ -2,7 +2,7 @@
 #define SEARCH_ENGINE_TOKENIZER_HPP
 
 #include <cstddef> // size_t
-#include <cwctype> // iswalnum, iswpunct, iswspace,
+#include <cwctype> // iswalnum, iswpunct, iswspace
 
 #include <string> // wstring
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v

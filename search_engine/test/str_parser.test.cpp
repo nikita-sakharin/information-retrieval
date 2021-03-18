@@ -12,11 +12,11 @@ static string parse_string(string_view);
 
 TEST(StrParserTest, Pangram) {
     ASSERT_EQ(parse_string(
-        "\"The quick brown fox jumps over the lazy dog.\""
+            "\"The quick brown fox jumps over the lazy dog.\""
         ), "The quick brown fox jumps over the lazy dog."
     );
     ASSERT_EQ(parse_string(
-        "\"Съешь еще этих мягких французских булок, да выпей чаю.\""
+            "\"Съешь еще этих мягких французских булок, да выпей чаю.\""
         ), "Съешь еще этих мягких французских булок, да выпей чаю."
     );
     ASSERT_EQ(parse_string(

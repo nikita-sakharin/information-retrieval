@@ -96,5 +96,15 @@ template<typename From, typename To, typename Invocable>
 constexpr Invocable &char_encoder<From, To, Invocable>::invocable() noexcept {
     return invocable_;
 }
+/*
+// EILSEQ, mbsinit
+template<typename From, typename To, typename Invocable>
+constexpr void char_encoder<From, To, Invocable>::is_init_or_except() const {
+    using std::mbsinit;
+    constexpr const char *what = "char_encoder::is_init_or_except";
 
+    if (mbsinit(&state_) == 0) [[unlikely]]
+        throw system_error(EILSEQ, generic_category(), what);
+}
+*/
 #endif

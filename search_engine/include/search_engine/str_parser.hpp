@@ -63,8 +63,10 @@ constexpr std::string_view::const_iterator str_parser<Invocable>::operator()(
     const std::string_view::const_iterator last
 ) {
     using std::logic_error;
-    assert(first < last);
 
+    if (first >= last) [[unlikely]] throw logic_error(
+        "str_parser::operator(): first must be less than last"
+    );
     if (*first != '\"') [[unlikely]]
         throw logic_error("str_parser::operator(): invalid string");
     ++first;

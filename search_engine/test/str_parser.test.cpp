@@ -19,6 +19,13 @@ TEST(StrParserTest, Pangram) {
         "\"Съешь еще этих мягких французских булок, да выпей чаю.\""
         ), "Съешь еще этих мягких французских булок, да выпей чаю."
     );
+    ASSERT_EQ(parse_string(
+            "\"いろはにほへと\\nちりぬるを\\nわかよたれそ\\nつねならむ\\nうゐのおくやま\\n"
+            "けふこえて\\nあさきゆめみし\\nゑひもせす\\n\""
+        ),
+        "いろはにほへと\nちりぬるを\nわかよたれそ\nつねならむ\nうゐのおくやま\n"
+        "けふこえて\nあさきゆめみし\nゑひもせす\n"
+    );
 }
 
 TEST(StrParserTest, ParseEscape) {
@@ -59,6 +66,8 @@ TEST(StrParserTest, ParseEscape) {
 }
 
 TEST(StrParserTest, Throw) {
+    ASSERT_THROW(parse_string(           ""), logic_error);
+    ASSERT_THROW(parse_string(         "\""), logic_error);
     ASSERT_THROW(parse_string(       "\"\\"), logic_error);
     ASSERT_THROW(parse_string(     "\"\\\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u0008\""), logic_error);

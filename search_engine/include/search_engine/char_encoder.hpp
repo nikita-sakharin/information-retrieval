@@ -77,7 +77,7 @@ constexpr void char_encoder<From, To, Invocable>::operator()(
         invocable_(wc);
     } else {
         array<char, MB_LEN_MAX> s;
-        constexpr char *data = s.data();
+        char * const data = s.data();
         const size_t size = wcrtomb(data, from, &state_);
         if (size == static_cast<size_t>(-1)) [[unlikely]]
             throw system_error(errno, generic_category(), what);

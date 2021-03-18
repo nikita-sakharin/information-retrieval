@@ -6,8 +6,8 @@
 #include <cstddef> // size_t
 #include <cwchar> // mbrtowc, mbstate_t, wcrtomb
 
-#include <algorithm> // for_each
 #include <array> // array
+#include <string_view> // string_view
 #include <system_error> // generic_category, system_error
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v, is_same_v
 
@@ -63,8 +63,8 @@ template<typename From, typename To, typename Invocable>
 constexpr void char_encoder<From, To, Invocable>::operator()(
     const From from
 ) {
-    using std::array, std::for_each, std::generic_category, std::is_same_v,
-        std::mbrtowc, std::size_t, std::system_error, std::wcrtomb;
+    using std::array, std::generic_category, std::is_same_v, std::mbrtowc,
+        std::size_t, std::string_view, std::system_error, std::wcrtomb;
     constexpr const char *what = "char_encoder::operator()";
 
     if constexpr (is_same_v<From, char>) {
@@ -77,7 +77,7 @@ constexpr void char_encoder<From, To, Invocable>::operator()(
         invocable_(wc);
     } else {
         array<char, MB_LEN_MAX> s;
-        char * const data = s.data();
+        constexpr char *data = s.data();
         const size_t size = wcrtomb(data, from, &state_);
         if (size == static_cast<size_t>(-1)) [[unlikely]]
             throw system_error(errno, generic_category(), what);

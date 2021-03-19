@@ -12,7 +12,7 @@
 #include <search_engine/char_encoder.hpp>
 
 using std::basic_string, std::basic_string_view, std::string_view,
-    std::wstring_view;
+    std::system_error, std::wstring_view;
 
 template<typename From, typename To>
 static basic_string<To> convert(basic_string_view<From>);
@@ -76,8 +76,6 @@ TEST(CharEncoderTest, EncodeWstring) {
 }
 
 TEST(CharEncoderTest, Throw) {
-    using std::system_error;
-
     ASSERT_THROW((convert<char, wchar_t>("\x80")),             system_error);
     ASSERT_THROW((convert<char, wchar_t>("\xC0\x80")),         system_error);
     ASSERT_THROW((convert<char, wchar_t>("\xE0\x80\x80")),     system_error);
@@ -95,7 +93,7 @@ TEST(CharEncoderTest, Throw) {
 template<typename From, typename To>
 static basic_string<To> convert(const basic_string_view<From> str) {
     using std::function, std::generic_category, std::runtime_error,
-        std::setlocale, std::system_error;
+        std::setlocale;
 
     if (setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
         throw runtime_error("convert: unable to set locale");

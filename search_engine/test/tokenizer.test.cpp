@@ -1,30 +1,22 @@
+#include <cstddef> // size_t
+#include <clocale> // LC_ALL, setlocale
+
+#include <functional> // function
+#include <stdexcept> // runtime_error
 #include <string> // wstring
 #include <string_view> // wstring_view
 #include <vector> // vector
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-// #include <search_engine/tokenizer.hpp>
+#include <search_engine/tokenizer.hpp>
 
 using std::vector, std::wstring, std::wstring_view;
 
 static vector<wstring> tokenize(wstring_view);
-
+/*
 TEST(TokenizerTest, English) {
-    ASSERT_EQ(tokenize(L"!"), {});
-    ASSERT_EQ(tokenize(L"\""), {});
-    ASSERT_EQ(tokenize(L"&"), {});
-    ASSERT_EQ(tokenize(L"'"), {});
-    ASSERT_EQ(tokenize(L","), {});
-    ASSERT_EQ(tokenize(L"-"), {});
-    ASSERT_EQ(tokenize(L"."), {});
-    ASSERT_EQ(tokenize(L":"), {});
-    ASSERT_EQ(tokenize(L";"), {});
-    ASSERT_EQ(tokenize(L"?"), {});
-    ASSERT_EQ(tokenize(L"\\"), {});
-    ASSERT_EQ(tokenize(L"!\"&',-.:;?\\"), {});
-
-
     ASSERT_EQ(tokenize(L"The pi number approximately is 3.141592653589793."), {
         L"The", L"pi", L"number", L"approximately", L"is", L"3,141592653589793"
     });
@@ -44,13 +36,11 @@ TEST(TokenizerTest, English) {
     "The SARS-CoV-2 end";
 }
 
-/*
-если в тексте есть тире
-инженер-механик co-education
-или точки
-C.A.T. U.S.A.
-то они обрабатываются в токенизаторе, а не нормализаторе
-*/
+// если в тексте есть тире
+// инженер-механик co-education
+// или точки
+// C.A.T. U.S.A.
+// то они обрабатываются в токенизаторе, а не нормализаторе
 
 TEST(TokenizerTest, Russian) {
     ASSERT_EQ(tokenize(L"слово"), { L"слово" });
@@ -69,13 +59,33 @@ TEST(TokenizerTest, Russian) {
         L"Популярные", L"языки", L"программирования", L"Java", L"C", L"Python"
     });
 }
+*/
+TEST(TokenizerTest, Punctuation) {
+    ASSERT_THAT(tokenize(L"!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"),
+        testing::IsEmpty()
+    );
+}
 
-static vector<wstring> tokenize(const wstring_view str) {
+static vector<wstring> tokenize(const wstring_view wcs) {
+    using std::function, std::runtime_error, std::setlocale, std::size_t;
+
+    if (setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
+        throw runtime_error("convert: unable to set locale");
+
     vector<wstring> tokens;
-    for ()
-    tokenizer tokenizer([&tokens](const size_t position, wstring &wcs) constexpr -> void {
-        buffer.push_back(c);
-    });
-    for_each(str.cbegin(), str.cend(), tokenizer);
+    tokenizer<function<void(size_t, wstring &)>> str_tokenizer(
+        [&tokens, n = static_cast<size_t>(0)](
+            const size_t position,
+            wstring &wcs
+        ) mutable -> void {
+            ASSERT_EQ(position, n);
+            ++n;
+            tokens.push_back(wcs);
+        }
+    );
+    for (const wchar_t wc : wcs)
+        str_tokenizer(wc);
+    str_tokenizer.reset();
+
     return tokens;
 }

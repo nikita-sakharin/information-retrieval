@@ -1,5 +1,5 @@
-#include <cstddef> // size_t
 #include <clocale> // LC_ALL, setlocale
+#include <cstddef> // size_t
 
 #include <functional> // function
 #include <stdexcept> // runtime_error

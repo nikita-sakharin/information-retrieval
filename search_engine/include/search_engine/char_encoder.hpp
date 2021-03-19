@@ -4,7 +4,7 @@
 #include <cerrno> // errno
 #include <climits> // MB_LEN_MAX
 #include <cstddef> // size_t
-#include <cwchar> // mbrtowc, mbstate_t, wcrtomb
+#include <cwchar> // mbrtowc, mbsinit, mbstate_t, wcrtomb
 
 #include <array> // array
 #include <string_view> // string_view
@@ -31,8 +31,12 @@ public:
 
     constexpr void operator()(From);
 
+    constexpr void clear_state() noexcept;
+
     constexpr const Invocable &invocable() const noexcept;
     constexpr Invocable &invocable() noexcept;
+
+    constexpr bool is_init_state() const noexcept;
 
 private:
     static_assert(
@@ -72,9 +76,8 @@ constexpr void char_encoder<From, To, Invocable>::operator()(
         const size_t size = mbrtowc(&wc, &from, 1U, &state_);
         if (size == static_cast<size_t>(-1)) [[unlikely]]
             throw system_error(errno, generic_category(), what);
-        if (size == static_cast<size_t>(-2))
-            return;
-        invocable_(wc);
+        if (size != static_cast<size_t>(-2))
+            invocable_(wc);
     } else {
         array<char, MB_LEN_MAX> str;
         char * const data = str.data();
@@ -87,6 +90,11 @@ constexpr void char_encoder<From, To, Invocable>::operator()(
 }
 
 template<typename From, typename To, typename Invocable>
+constexpr void char_encoder<From, To, Invocable>::clear_state() noexcept {
+    state_ = {};
+}
+
+template<typename From, typename To, typename Invocable>
 constexpr const Invocable &char_encoder<From, To, Invocable>::invocable(
 ) const noexcept {
     return invocable_;
@@ -96,15 +104,13 @@ template<typename From, typename To, typename Invocable>
 constexpr Invocable &char_encoder<From, To, Invocable>::invocable() noexcept {
     return invocable_;
 }
-/*
-// EILSEQ, mbsinit
-template<typename From, typename To, typename Invocable>
-constexpr void char_encoder<From, To, Invocable>::is_init_or_except() const {
-    using std::mbsinit;
-    constexpr const char *what = "char_encoder::is_init_or_except";
 
-    if (mbsinit(&state_) == 0) [[unlikely]]
-        throw system_error(EILSEQ, generic_category(), what);
+template<typename From, typename To, typename Invocable>
+constexpr bool char_encoder<From, To, Invocable>::is_init_state(
+) const noexcept {
+    using std::mbsinit;
+
+    return mbsinit(&state_) != 0;
 }
-*/
+
 #endif

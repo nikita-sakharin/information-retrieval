@@ -1,11 +1,11 @@
+#include <cerrno> // EILSEQ
 #include <clocale> // LC_ALL, setlocale
 
-#include <algorithm> // for_each
 #include <functional> // function
 #include <stdexcept> // runtime_error
 #include <string> // basic_string
 #include <string_view> // basic_string_view, string_view, wstring_view
-#include <system_error> // system_error
+#include <system_error> // generic_category, system_error
 
 #include <gtest/gtest.h>
 
@@ -91,7 +91,8 @@ TEST(CharEncoderTest, Throw) {
 
 template<typename From, typename To>
 static basic_string<To> convert(const basic_string_view<From> str) {
-    using std::for_each, std::function, std::runtime_error, std::setlocale;
+    using std::function, std::generic_category, std::runtime_error,
+        std::setlocale, std::system_error;
 
     if (setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
         throw runtime_error("convert: unable to set locale");
@@ -102,7 +103,10 @@ static basic_string<To> convert(const basic_string_view<From> str) {
             buffer.push_back(c);
         }
     );
-    for_each(str.cbegin(), str.cend(), encoder);
+    for (const From c : str)
+        encoder(c);
+    if (!encoder.is_init_state())
+        throw system_error(EILSEQ, generic_category(), "convert");
 
     return buffer;
 }

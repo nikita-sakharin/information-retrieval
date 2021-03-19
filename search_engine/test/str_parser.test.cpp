@@ -29,7 +29,7 @@ TEST(StrParserTest, Pangram) {
 }
 
 TEST(StrParserTest, ParseEscape) {
-    ASSERT_EQ(parse_string("\"\""), "");
+    ASSERT_EQ(parse_string("\"\""),            "");
     ASSERT_EQ(parse_string("\"\\u0000\""), string(1, '\0'));
     ASSERT_EQ(parse_string("\"\\u0001\""), "\x01");
     ASSERT_EQ(parse_string("\"\\u0002\""), "\x02");
@@ -38,12 +38,12 @@ TEST(StrParserTest, ParseEscape) {
     ASSERT_EQ(parse_string("\"\\u0005\""), "\x05");
     ASSERT_EQ(parse_string("\"\\u0006\""), "\x06");
     ASSERT_EQ(parse_string("\"\\u0007\""), "\x07");
-    ASSERT_EQ(parse_string(    "\"\\b\""),   "\b");
-    ASSERT_EQ(parse_string(    "\"\\t\""),   "\t");
-    ASSERT_EQ(parse_string(    "\"\\n\""),   "\n");
+    ASSERT_EQ(parse_string("\"\\b\""),       "\b");
+    ASSERT_EQ(parse_string("\"\\t\""),       "\t");
+    ASSERT_EQ(parse_string("\"\\n\""),       "\n");
     ASSERT_EQ(parse_string("\"\\u000b\""), "\x0B");
-    ASSERT_EQ(parse_string(    "\"\\f\""),   "\f");
-    ASSERT_EQ(parse_string(    "\"\\r\""),   "\r");
+    ASSERT_EQ(parse_string("\"\\f\""),       "\f");
+    ASSERT_EQ(parse_string("\"\\r\""),       "\r");
     ASSERT_EQ(parse_string("\"\\u000e\""), "\x0E");
     ASSERT_EQ(parse_string("\"\\u000f\""), "\x0F");
     ASSERT_EQ(parse_string("\"\\u0010\""), "\x10");
@@ -66,10 +66,10 @@ TEST(StrParserTest, ParseEscape) {
 }
 
 TEST(StrParserTest, Throw) {
-    ASSERT_THROW(parse_string(           ""), logic_error);
-    ASSERT_THROW(parse_string(         "\""), logic_error);
-    ASSERT_THROW(parse_string(       "\"\\"), logic_error);
-    ASSERT_THROW(parse_string(     "\"\\\""), logic_error);
+    ASSERT_THROW(parse_string(""),            logic_error);
+    ASSERT_THROW(parse_string("\""),          logic_error);
+    ASSERT_THROW(parse_string("\"\\"),        logic_error);
+    ASSERT_THROW(parse_string("\"\\\""),      logic_error);
     ASSERT_THROW(parse_string("\"\\u0008\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u0009\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u000a\""), logic_error);

@@ -78,15 +78,18 @@ TEST(CharEncoderTest, EncodeWstring) {
 TEST(CharEncoderTest, Throw) {
     using std::system_error;
 
-    ASSERT_THROW((convert<char, wchar_t>("\x80")), system_error);
-    ASSERT_THROW((convert<char, wchar_t>("\xC0\x80")), system_error);
-    ASSERT_THROW((convert<char, wchar_t>("\xE0\x80\x80")), system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\x80")),             system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\xC0\x80")),         system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\xE0\x80\x80")),     system_error);
     ASSERT_THROW((convert<char, wchar_t>("\xF0\x80\x80\x80")), system_error);
-    ASSERT_THROW((convert<char, wchar_t>("\xFF")), system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\xFF")),             system_error);
 
-    ASSERT_THROW((convert<char, wchar_t>("\xC0")), system_error);
-    ASSERT_THROW((convert<char, wchar_t>("\xE0")), system_error);
-    ASSERT_THROW((convert<char, wchar_t>("\xF0")), system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\xC0")),             system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\xE0")),             system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\xE0\xBF")),         system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\xF0")),             system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\xF0\xBF")),         system_error);
+    ASSERT_THROW((convert<char, wchar_t>("\xF0\xBF\xBF")),     system_error);
 }
 
 template<typename From, typename To>

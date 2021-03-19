@@ -14,7 +14,23 @@
 
 using std::vector, std::wstring, std::wstring_view;
 
+using testing::ElementsAre;
+
 static vector<wstring> tokenize(wstring_view);
+
+TEST(TokenizerTest, Digit) {
+    ASSERT_THAT(tokenize(L"1234567890,"), ElementsAre(L"1234567890"));
+    ASSERT_THAT(tokenize(L"1234567890."), ElementsAre(L"1234567890"));
+/*
+    ASSERT_THAT(tokenize(L"3,141592653589793"),
+        ElementsAre(L"3,141592653589793")
+    );
+    ASSERT_THAT(tokenize(L"3.141592653589793"),
+        ElementsAre(L"3.141592653589793")
+    );
+    // ISBN
+*/
+}
 /*
 TEST(TokenizerTest, English) {
     ASSERT_EQ(tokenize(L"The pi number approximately is 3.141592653589793."), {
@@ -35,16 +51,18 @@ TEST(TokenizerTest, English) {
 
     "The SARS-CoV-2 end";
 }
-
 // если в тексте есть тире
 // инженер-механик co-education
 // или точки
 // C.A.T. U.S.A.
 // то они обрабатываются в токенизаторе, а не нормализаторе
-
+*/
 TEST(TokenizerTest, Russian) {
-    ASSERT_EQ(tokenize(L"слово"), { L"слово" });
-    ASSERT_EQ(tokenize(L"инженер-механик"), { L"инженер", L"механик" });
+    ASSERT_THAT(tokenize(L"слово"), ElementsAre(L"слово"));
+    ASSERT_THAT(tokenize(L"инженер-механик"),
+        ElementsAre(L"инженер", L"механик")
+    );
+/*
     ASSERT_EQ(tokenize(L"математик-программист"), { L"математик", L"программист" });
     ASSERT_EQ(tokenize(L"инженер, но не механик"), { L"инженер", L"но", L"не", L"механик" });
     ASSERT_EQ(tokenize(L"математик и программист"), { L"математик", L"и", L"программист" });
@@ -58,12 +76,13 @@ TEST(TokenizerTest, Russian) {
     ASSERT_EQ(tokenize(L"Популярные языки программирования: Java, C, Python"), {
         L"Популярные", L"языки", L"программирования", L"Java", L"C", L"Python"
     });
-}
 */
+}
+
 TEST(TokenizerTest, Punctuation) {
-    ASSERT_THAT(tokenize(L"!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"),
-        testing::IsEmpty()
-    );
+    using testing::IsEmpty;
+
+    ASSERT_THAT(tokenize(L"!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"), IsEmpty());
 }
 
 static vector<wstring> tokenize(const wstring_view wcs) {

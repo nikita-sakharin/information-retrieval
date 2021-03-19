@@ -16,4 +16,4 @@ target_include_directories(${BINARY} PRIVATE
     "${PROJECT_SOURCE_DIR}/lib/googletest/googletest/include"
     "${PROJECT_SOURCE_DIR}/include"
 )
-target_link_libraries(${BINARY} gmock_main gtest_main)
+target_link_libraries(${BINARY} PRIVATE gmock_main gtest_main)

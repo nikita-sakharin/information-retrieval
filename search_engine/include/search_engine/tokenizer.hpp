@@ -28,13 +28,13 @@ public:
 
     constexpr void operator()(wchar_t);
 
+    constexpr void flush_buf() noexcept(
+        std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>);
+
     constexpr const Invocable &invocable() const noexcept;
     constexpr Invocable &invocable() noexcept;
 
     constexpr void reserve(std::size_t);
-
-    constexpr void reset() noexcept(
-        std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>);
 
 private:
     static_assert(std::is_invocable_r_v<void, Invocable, std::wstring &>,
@@ -64,6 +64,16 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
 }
 
 template<typename Invocable>
+constexpr void tokenizer<Invocable>::flush_buf() noexcept(
+    std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>
+) {
+    if (buffer_.empty())
+        return;
+    invocable_(buffer_); // TODO
+    buffer_.clear();
+}
+
+template<typename Invocable>
 constexpr const Invocable &tokenizer<Invocable>::invocable() const noexcept {
     return invocable_;
 }
@@ -78,16 +88,6 @@ constexpr void tokenizer<Invocable>::reserve(
     const std::size_t capacity
 ) {
     buffer_.reserve(capacity);
-}
-
-template<typename Invocable>
-constexpr void tokenizer<Invocable>::reset() noexcept(
-    std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>
-) {
-    if (buffer_.empty())
-        return;
-    invocable_(buffer_); // TODO
-    buffer_.clear();
 }
 
 #endif

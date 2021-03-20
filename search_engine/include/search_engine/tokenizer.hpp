@@ -13,8 +13,10 @@ static_assert(__STDC_ISO_10646__ >= 201103L,
 template<typename Invocable>
 class tokenizer final {
 public:
-    constexpr tokenizer();
-    constexpr tokenizer(const Invocable &);
+    constexpr tokenizer() noexcept(
+        std::is_nothrow_default_constructible_v<Invocable>) = default;
+    constexpr tokenizer(const Invocable &) noexcept(
+        std::is_nothrow_copy_constructible_v<Invocable>);
     constexpr tokenizer(const tokenizer &) = default;
     constexpr tokenizer(tokenizer &&) noexcept(
         std::is_nothrow_move_constructible_v<Invocable>) = default;
@@ -22,44 +24,41 @@ public:
     constexpr tokenizer &operator=(tokenizer &&) noexcept(
         std::is_nothrow_move_assignable_v<Invocable>) = default;
     constexpr ~tokenizer() noexcept(
-        std::is_nothrow_destructible_v<Invocable>) = default;
+        std::is_nothrow_destructible_v<Invocable>) = default; // TODO
 
-    constexpr void operator()(wchar_t) noexcept(std::is_nothrow_invocable_r_v<
-        void, Invocable, std::size_t, std::wstring &>);
+    constexpr void operator()(wchar_t);
 
     constexpr const Invocable &invocable() const noexcept;
     constexpr Invocable &invocable() noexcept;
 
     constexpr void reserve(std::size_t);
 
-    constexpr void reset() noexcept(std::is_nothrow_invocable_r_v<
-        void, Invocable, std::size_t, std::wstring &>);
+    constexpr void reset() noexcept(
+        std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>);
 
 private:
-    static_assert(
-        std::is_invocable_r_v<void, Invocable, std::size_t, std::wstring &>,
-        "Invocable must have signature void(size_t, wstring &)"
+    static_assert(std::is_invocable_r_v<void, Invocable, std::wstring &>,
+        "Invocable must have signature void(wstring &)"
     );
 
     std::wstring buffer_{};
-    std::size_t position_ = 0;
     Invocable invocable_{};
 };
 
 template<typename Invocable>
 constexpr tokenizer<Invocable>::tokenizer(
     const Invocable &invocable
+) noexcept(
+    std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {}
 
 template<typename Invocable>
-constexpr void tokenizer<Invocable>::operator()(const wchar_t value) noexcept(
-    std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
-) {
+constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
     // iswspace(value), iswpunct(value)
     if (iswalnum(value))
         buffer_.push_back(value);
     else if (!buffer_.empty()) {
-        invocable_(position_++, buffer_);
+        invocable_(buffer_);
         buffer_.clear();
     }
 }
@@ -83,12 +82,12 @@ constexpr void tokenizer<Invocable>::reserve(
 
 template<typename Invocable>
 constexpr void tokenizer<Invocable>::reset() noexcept(
-    std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
+    std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>
 ) {
-    if (!buffer_.empty())
-        invocable_(position_, buffer_); // TODO
+    if (buffer_.empty())
+        return;
+    invocable_(buffer_); // TODO
     buffer_.clear();
-    position_ = 0;
 }
 
 #endif

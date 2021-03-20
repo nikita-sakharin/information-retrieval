@@ -69,7 +69,7 @@ constexpr void tokenizer<Invocable>::flush_buf() noexcept(
 ) {
     if (buffer_.empty())
         return;
-    invocable_(buffer_); // TODO
+    invocable_(buffer_);
     buffer_.clear();
 }
 

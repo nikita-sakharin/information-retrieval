@@ -1,5 +1,4 @@
 #include <clocale> // LC_ALL, setlocale
-#include <cstddef> // size_t
 
 #include <functional> // function
 #include <stdexcept> // runtime_error
@@ -21,7 +20,6 @@ static vector<wstring> tokenize(wstring_view);
 TEST(TokenizerTest, Digit) {
     ASSERT_THAT(tokenize(L"1234567890,"), ElementsAre(L"1234567890"));
     ASSERT_THAT(tokenize(L"1234567890."), ElementsAre(L"1234567890"));
-/*
     ASSERT_THAT(tokenize(L"3,141592653589793"),
         ElementsAre(L"3,141592653589793")
     );
@@ -29,7 +27,6 @@ TEST(TokenizerTest, Digit) {
         ElementsAre(L"3.141592653589793")
     );
     // ISBN
-*/
 }
 /*
 TEST(TokenizerTest, English) {
@@ -86,13 +83,13 @@ TEST(TokenizerTest, Punctuation) {
 }
 
 static vector<wstring> tokenize(const wstring_view wcs) {
-    using std::function, std::runtime_error, std::setlocale, std::size_t;
+    using std::function, std::runtime_error, std::setlocale;
 
     if (setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
         throw runtime_error("convert: unable to set locale");
 
     vector<wstring> tokens;
-    tokenizer<function<void(size_t, wstring &)>> str_tokenizer(
+    tokenizer<function<void(wstring &)>> str_tokenizer(
         [&tokens](wstring &wcs) constexpr -> void {
             tokens.push_back(wcs);
         }

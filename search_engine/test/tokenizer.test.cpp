@@ -13,7 +13,7 @@
 
 using std::vector, std::wstring, std::wstring_view;
 
-using testing::ElementsAre;
+using testing::ElementsAre, testing::IsEmpty;
 
 static vector<wstring> tokenize(wstring_view);
 
@@ -27,6 +27,10 @@ TEST(TokenizerTest, Digit) {
         ElementsAre(L"3.141592653589793")
     );
     // ISBN
+}
+
+TEST(TokenizerTest, Empty) {
+    ASSERT_THAT(tokenize(L""), IsEmpty());
 }
 /*
 TEST(TokenizerTest, English) {
@@ -77,8 +81,6 @@ TEST(TokenizerTest, Russian) {
 }
 
 TEST(TokenizerTest, Punctuation) {
-    using testing::IsEmpty;
-
     ASSERT_THAT(tokenize(L"!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"), IsEmpty());
 }
 

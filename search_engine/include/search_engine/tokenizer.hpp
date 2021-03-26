@@ -41,7 +41,17 @@ private:
         "Invocable must have signature void(wstring &)"
     );
 
+    enum class token_type : uint {
+        acronym,
+        alphanum,
+        apostrophe,
+        company,
+        host,
+        num
+    };
+
     std::wstring buffer_{};
+    token_type type_{};
     Invocable invocable_{};
 };
 
@@ -60,6 +70,45 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
     else if (!buffer_.empty()) {
         invocable_(buffer_);
         buffer_.clear();
+    }
+    if (buffer_.is_empty()) {
+        if (iswalnum(value)) {
+            buffer_.push_back(value);
+            type_ = token_type::alphanum;
+            if (iswdigit(value))
+                type_ = token_type::num;
+        }
+        return;
+    }
+
+    switch (type_) {
+        case token_type::acronym:
+            break;
+        case token_type::alphanum:
+            if (value == ',')
+                type_ = token_type::num;
+            else if (value == '.')
+                type_ = token_type::host;
+            break;
+        case token_type::apostrophe:
+            break;
+        case token_type::company:
+            break;
+        case token_type::host:
+            break;
+        case token_type::num:
+            if (value == ',' || value == '.') {
+                if (buffer_.back() == ',' || buffer_.back() == '.') {
+                    buffer_.pop_back();
+                    assert(!buffer_.empty() && iswdigit(buffer_.back()));
+                    return flush_buf();
+                }
+                assert(iswdigit(buffer_.back()));
+                buffer_.push_back(value);
+            } else if () {
+            }
+            break;
+        default: assert(false);
     }
 }
 

@@ -62,54 +62,47 @@ constexpr tokenizer<Invocable>::tokenizer(
     std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {}
 
+/* classic:
+[A-Za-Z0-9]([,\.][A-Za-Z0-9])*
+Ограничиться грамматиками для которых не требуется конечный автомат
+hyphen_minus
+*/
+
 template<typename Invocable>
 constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
-    // iswspace(value), iswpunct(value)
-    if (iswalnum(value))
-        buffer_.push_back(value);
-    else if (!buffer_.empty()) {
-        invocable_(buffer_);
-        buffer_.clear();
-    }
-    if (buffer_.is_empty()) {
-        if (iswalnum(value)) {
-            buffer_.push_back(value);
-            type_ = token_type::alphanum;
-            if (iswdigit(value))
-                type_ = token_type::num;
-        }
-        return;
-    }
+    if (iswalnum(value)) {
+        if (buffer_.empty())
+            return buffer_.push_back(value);
 
-    switch (type_) {
-        case token_type::acronym:
-            break;
-        case token_type::alphanum:
-            if (value == ',')
-                type_ = token_type::num;
-            else if (value == '.')
-                type_ = token_type::host;
-            break;
-        case token_type::apostrophe:
-            break;
-        case token_type::company:
-            break;
-        case token_type::host:
-            break;
-        case token_type::num:
-            if (value == ',' || value == '.') {
-                if (buffer_.back() == ',' || buffer_.back() == '.') {
-                    buffer_.pop_back();
-                    assert(!buffer_.empty() && iswdigit(buffer_.back()));
-                    return flush_buf();
-                }
-                assert(iswdigit(buffer_.back()));
-                buffer_.push_back(value);
-            } else if () {
-            }
-            break;
-        default: assert(false);
+        if (const wchar_t last = buffer_.back(); last == ',' || last == '.') {
+            assert(buffer_.size() >= 2);
+            const wchar_t before_last = buffer_[buffer_.size() - 2];
+            if (last == ',' && iswdigit(before_last) && iswdigit(value))
+            else if (
+                (iswalpha(before_last) && iswalpha(value)) ||
+                (iswdigit(before_last) && iswdigit(value))
+            )
+        } else {
+            assert(iswalnum(last));
+            buffer_.push_back(value);
+        }
+    } else if (buffer_.empty())
+        return;
+    const wchar_t last = buffer_.back();
+    assert(last == ',' || last == '.' || iswalnum(last));
+    if (value == ',') {
+        if (iswdigit(last))
+            buffer_.push_back(value);
+        else
+            flush_buf();
+    } else if (value == '.') {
+        if (iswalnum(last))
+            buffer_.push_back(value);
+        else
+            flush_buf();
     }
+    // iswalnum(value), iswalpha(value), iswdigit(value)
+    // iswpunct(value), iswspace(value)
 }
 
 template<typename Invocable>
@@ -118,6 +111,9 @@ constexpr void tokenizer<Invocable>::flush_buf() noexcept(
 ) {
     if (buffer_.empty())
         return;
+    if (buffer_.back() == ',' || buffer_.back() == '.')
+        buffer_.pop_back();
+    assert(!buffer_.empty() && iswalnum(buffer_.back()));
     invocable_(buffer_);
     buffer_.clear();
 }

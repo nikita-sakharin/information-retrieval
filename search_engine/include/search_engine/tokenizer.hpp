@@ -85,10 +85,10 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
             is_before_last_alpha = static_cast<bool>(iswalpha(before_last));
             (last == '\'' && is_value_alpha && is_before_last_alpha) ||
             (last == ',' && !is_value_alpha && !is_before_last_alpha) ||
-            (last == '.' &&
+            (last == '.' && (
                 (is_value_alpha && is_before_last_alpha) ||
                 (!is_value_alpha && !is_before_last_alpha)
-            )
+            ))
         ) return buffer_.push_back(value);
         return flush_buf();
     }

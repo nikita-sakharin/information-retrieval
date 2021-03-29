@@ -18,13 +18,16 @@ using testing::ElementsAre, testing::IsEmpty;
 static vector<wstring> tokenize(wstring_view);
 
 TEST(TokenizerTest, Digit) {
-    ASSERT_THAT(tokenize(L"1234567890,"), ElementsAre(L"1234567890"));
-    ASSERT_THAT(tokenize(L"1234567890."), ElementsAre(L"1234567890"));
+    ASSERT_THAT(tokenize(L"0123456789,"), ElementsAre(L"0123456789"));
+    ASSERT_THAT(tokenize(L"0123456789."), ElementsAre(L"0123456789"));
     ASSERT_THAT(tokenize(L"3,141592653589793"),
         ElementsAre(L"3,141592653589793")
     );
     ASSERT_THAT(tokenize(L"3,141.592.653.589.793"),
         ElementsAre(L"3,141.592.653.589.793")
+    );
+    ASSERT_THAT(tokenize(L"3.141,592,653,589,793"),
+        ElementsAre(L"3.141,592,653,589,793")
     );
     ASSERT_THAT(tokenize(L"3.141592653589793"),
         ElementsAre(L"3.141592653589793")

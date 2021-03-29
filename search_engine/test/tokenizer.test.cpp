@@ -37,8 +37,16 @@ TEST(TokenizerTest, Digit) {
 TEST(TokenizerTest, Empty) {
     ASSERT_THAT(tokenize(L""), IsEmpty());
 }
-/*
+
 TEST(TokenizerTest, English) {
+    ASSERT_THAT(tokenize(
+            L"The quick brown fox jumps over the lazy dog."
+        ),
+        ElementsAre(L"The", L"quick", L"brown", L"fox", L"jumps", L"over",
+            L"the", L"lazy", L"dog"
+        )
+    );
+/*
     ASSERT_EQ(tokenize(L"The pi number approximately is 3.141592653589793."), {
         L"The", L"pi", L"number", L"approximately", L"is", L"3,141592653589793"
     });
@@ -54,10 +62,10 @@ TEST(TokenizerTest, English) {
         L"Karl", L"Witte", L"graduate", L"Ph.D.", L"from", L"University", L"of",
         L"Giessen", L"at", L"age", L"13"
     });
-
     "The SARS-CoV-2 end";
-}
 */
+}
+
 TEST(TokenizerTest, Russian) {
     ASSERT_THAT(tokenize(
             L"Съешь еще этих мягких французских булок, да выпей чаю."

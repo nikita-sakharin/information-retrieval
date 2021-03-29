@@ -28,7 +28,7 @@ public:
 
     constexpr void operator()(wchar_t);
 
-    constexpr void flush_buf() noexcept(
+    constexpr void flush_buffer() noexcept(
         std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>);
 
     constexpr const Invocable &invocable() const noexcept;
@@ -100,11 +100,11 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
         (value == ',' && is_last_digit) ||
         (value == '.' && (is_last_alpha || is_last_digit))
     ) return buffer_.push_back(value);
-    flush_buf();
+    flush_buffer();
 }
 
 template<typename Invocable>
-constexpr void tokenizer<Invocable>::flush_buf() noexcept(
+constexpr void tokenizer<Invocable>::flush_buffer() noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>
 ) {
     if (buffer_.empty())

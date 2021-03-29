@@ -113,7 +113,7 @@ static vector<wstring> tokenize(const wstring_view wcs) {
     );
     for (const wchar_t wc : wcs)
         str_tokenizer(wc);
-    str_tokenizer.flush_buf();
+    str_tokenizer.flush_buffer();
 
     return tokens;
 }

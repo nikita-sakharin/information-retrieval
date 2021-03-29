@@ -79,9 +79,10 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
         }
 
         assert(buffer_.size() >= 2);
-        const bool is_value_alpha = static_cast<bool>(iswalpha(value)),
+        const wchar_t before_last = buffer_[buffer_.size() - 2];
+        assert(iswalnum(before_last));
+        if (const bool is_value_alpha = static_cast<bool>(iswalpha(value)),
             is_before_last_alpha = static_cast<bool>(iswalpha(before_last));
-        if (const wchar_t before_last = buffer_[buffer_.size() - 2];
             (last == '\'' && is_value_alpha && is_before_last_alpha) ||
             (last == ',' && !is_value_alpha && !is_before_last_alpha) ||
             (last == '.' &&
@@ -93,14 +94,13 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
     }
 
     assert(last == '\'' || last == ',' || last == '.' || iswalnum(last));
-    if (value == '\'')
-        ; // TODO
-    else if (value == ',' && iswdigit(last))
-        buffer_.push_back(value);
-    else if (value == '.' && iswalnum(last))
-        buffer_.push_back(value);
-    else
-        flush_buf();
+    if (const bool is_last_alpha = static_cast<bool>(iswalpha(last)),
+        is_last_digit = static_cast<bool>(iswdigit(last));
+        (value == '\'' && is_last_alpha) ||
+        (value == ',' && is_last_digit) ||
+        (value == '.' && (is_last_alpha || is_last_digit))
+    ) return buffer_.push_back(value);
+    flush_buf();
 }
 
 template<typename Invocable>

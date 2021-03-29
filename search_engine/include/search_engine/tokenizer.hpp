@@ -90,7 +90,7 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
                 (!is_value_alpha && !is_before_last_alpha)
             ))
         ) return buffer_.push_back(value);
-        return flush_buf();
+        return flush_buffer();
     }
 
     assert(last == '\'' || last == ',' || last == '.' || iswalnum(last));

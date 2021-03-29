@@ -23,10 +23,12 @@ TEST(TokenizerTest, Digit) {
     ASSERT_THAT(tokenize(L"3,141592653589793"),
         ElementsAre(L"3,141592653589793")
     );
+    ASSERT_THAT(tokenize(L"3,141.592.653.589.793"),
+        ElementsAre(L"3,141.592.653.589.793")
+    );
     ASSERT_THAT(tokenize(L"3.141592653589793"),
         ElementsAre(L"3.141592653589793")
     );
-    // ISBN
 }
 
 TEST(TokenizerTest, Empty) {

@@ -57,13 +57,15 @@ TEST(TokenizerTest, English) {
 
     "The SARS-CoV-2 end";
 }
-// если в тексте есть тире
-// инженер-механик co-education
-// или точки
-// C.A.T. U.S.A.
-// то они обрабатываются в токенизаторе, а не нормализаторе
 */
 TEST(TokenizerTest, Russian) {
+    ASSERT_THAT(tokenize(
+            L"Съешь еще этих мягких французских булок, да выпей чаю."
+        ),
+        ElementsAre(L"Съешь", L"еще", L"этих", L"мягких", L"французских",
+            L"булок", L"да", L"выпей", L"чаю"
+        )
+    );
     ASSERT_THAT(tokenize(L"слово"), ElementsAre(L"слово"));
     ASSERT_THAT(tokenize(L"инженер-механик"),
         ElementsAre(L"инженер", L"механик")

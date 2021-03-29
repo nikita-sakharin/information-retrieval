@@ -112,7 +112,7 @@ constexpr void tokenizer<Invocable>::flush_buf() noexcept(
     const wchar_t last = buffer_.back();
     if (last == '\'' ||  last == ',' || last == '.')
         buffer_.pop_back();
-    assert(!buffer_.empty() && iswalnum(last));
+    assert(!buffer_.empty() && iswalnum(buffer_.back()));
     invocable_(buffer_);
     buffer_.clear();
 }

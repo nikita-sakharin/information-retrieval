@@ -19,12 +19,20 @@ static vector<wstring> tokenize(wstring_view);
 
 TEST(TokenizerTest, Digit) {
     ASSERT_THAT(tokenize(L"0123456789'"), ElementsAre(L"0123456789"));
+    ASSERT_THAT(tokenize(L"0123456789''"), ElementsAre(L"0123456789"));
     ASSERT_THAT(tokenize(L"0123456789,"), ElementsAre(L"0123456789"));
+    ASSERT_THAT(tokenize(L"0123456789,,"), ElementsAre(L"0123456789"));
     ASSERT_THAT(tokenize(L"0123456789-"), ElementsAre(L"0123456789"));
+    ASSERT_THAT(tokenize(L"0123456789--"), ElementsAre(L"0123456789"));
     ASSERT_THAT(tokenize(L"0123456789."), ElementsAre(L"0123456789"));
+    ASSERT_THAT(tokenize(L"0123456789.."), ElementsAre(L"0123456789"));
+    ASSERT_THAT(tokenize(L"123456789''0"), ElementsAre(L"123456789", L"0"));
     ASSERT_THAT(tokenize(L"123456789'0"), ElementsAre(L"123456789", L"0"));
+    ASSERT_THAT(tokenize(L"123456789,,0"), ElementsAre(L"123456789,0"));
     ASSERT_THAT(tokenize(L"123456789,0"), ElementsAre(L"123456789,0"));
+    ASSERT_THAT(tokenize(L"123456789--0"), ElementsAre(L"123456789", L"0"));
     ASSERT_THAT(tokenize(L"123456789-0"), ElementsAre(L"123456789", L"0"));
+    ASSERT_THAT(tokenize(L"123456789..0"), ElementsAre(L"123456789..0"));
     ASSERT_THAT(tokenize(L"123456789.0"), ElementsAre(L"123456789.0"));
 
     ASSERT_THAT(tokenize(L"3,141,592,653,589,793"),

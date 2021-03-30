@@ -48,9 +48,7 @@ private:
 };
 
 template<typename Invocable>
-constexpr tokenizer<Invocable>::tokenizer(
-    const Invocable &invocable
-) noexcept(
+constexpr tokenizer<Invocable>::tokenizer(const Invocable &invocable) noexcept(
     std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {}
 

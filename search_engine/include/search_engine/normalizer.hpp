@@ -10,7 +10,7 @@
 template<typename Invocable>
 class normalizer final {
 public:
-    constexpr void operator()(std::wstring &) noexcept(
+    constexpr void operator()(std::wstring &) noexcept( // one-to-one or one-to-many ???
         std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>);
 
 private:
@@ -23,6 +23,7 @@ private:
 
     static constexpr std::wstring_view possessive_affix = L"'s";
 
+    std::size_t position_ = 0U;
     Invocable invocable_{};
 };
 
@@ -30,9 +31,11 @@ template<typename Invocable>
 constexpr void normalizer::operator()(std::wstring &wcs) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
 ) {
+    using std::towlower;
+
     for (wchar_t &wc : wcs)
         wc = towlower(wc);
-    invocable_(buffer_);
+    invocable_(position_++, buffer_);
 }
 
 #endif

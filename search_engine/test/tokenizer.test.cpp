@@ -112,8 +112,8 @@ static vector<wstring> tokenize(const wstring_view wcs) {
         throw runtime_error("convert: unable to set locale");
 
     vector<wstring> tokens;
-    tokenizer<function<void(wstring &)>> str_tokenizer(
-        [&tokens](wstring &token) constexpr -> void {
+    tokenizer<function<void(const wstring &)>> str_tokenizer(
+        [&tokens](const wstring &token) constexpr -> void {
             tokens.push_back(token);
         }
     );

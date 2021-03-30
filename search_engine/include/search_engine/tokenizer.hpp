@@ -77,8 +77,8 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
         if (last != '\'' && last != ',' && last != '.')
             return buffer_.push_back(value);
 
-        assert(buffer_.size() >= 2);
-        const wchar_t before_last = buffer_[buffer_.size() - 2];
+        assert(buffer_.size() >= 2U);
+        const wchar_t before_last = buffer_[buffer_.size() - 2U];
         assert(iswalnum(before_last));
         if (const bool is_value_alpha = static_cast<bool>(iswalpha(value)),
             is_before_last_alpha = static_cast<bool>(iswalpha(before_last));

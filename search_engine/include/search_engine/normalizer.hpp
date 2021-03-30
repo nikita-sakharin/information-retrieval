@@ -16,7 +16,7 @@ private:
     static_assert(__STDC_ISO_10646__ >= 201103L,
         "Unicode version 2011 or later required"
     );
-    static_assert(std::is_invocable_r_v<void, Invocable, std::wstring &>,
+    static_assert(std::is_invocable_r_v<void, Invocable, std::size_t, std::wstring &>,
         "Invocable must have signature void(wstring &)"
     );
 

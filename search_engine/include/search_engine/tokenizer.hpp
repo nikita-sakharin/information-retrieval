@@ -21,9 +21,11 @@ public:
     constexpr tokenizer &operator=(tokenizer &&) noexcept(
         std::is_nothrow_move_assignable_v<Invocable>) = default;
     constexpr ~tokenizer() noexcept(
-        std::is_nothrow_destructible_v<Invocable>) = default; // TODO
+        std::is_nothrow_destructible_v<Invocable>) = default;
 
     constexpr void operator()(wchar_t);
+
+    constexpr void clear_buffer() noexcept;
 
     constexpr void flush_buffer() noexcept(
         std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>);
@@ -89,6 +91,11 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
         (value == '.' && (is_last_alpha || is_last_digit))
     ) return buffer_.push_back(value);
     flush_buffer();
+}
+
+template<typename Invocable>
+constexpr void tokenizer<Invocable>::clear_buffer() noexcept {
+    buffer_.clear();
 }
 
 template<typename Invocable>

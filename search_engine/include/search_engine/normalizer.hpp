@@ -8,6 +8,7 @@
 #include <string_view> // wstring_view
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
 
+// stop-words, ASCII folding, Possessive affix, Acronym
 template<typename Invocable>
 class normalizer final {
 public:

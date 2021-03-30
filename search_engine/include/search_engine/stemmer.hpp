@@ -6,6 +6,7 @@
 class stemmer final {
 public:
     constexpr string &stem(string &) const noexcept;
+
 private:
     std::array<endings, > = {
         "ое",

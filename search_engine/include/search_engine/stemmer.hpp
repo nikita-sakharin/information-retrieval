@@ -11,7 +11,7 @@ public:
     constexpr std::wstring &stem(std::wstring &) const noexcept;
 
 private:
-    static constexpr std::array<, std::wstring_view> suffixes = { // " = {" or "{" ???
+    static constexpr std::array<std::wstring_view, 13> suffixes = { // " = {" or "{" ???
         L"ое",
         L"ые",
         L"ыми",
@@ -27,7 +27,11 @@ private:
         L"ая"
     };
     static_assert(std::is_sorted(suffixes.cbegin(), suffixes.cend()),
-        "suffixes must be sorted");
+        "suffixes must be sorted"
+    );
+    static_assert(*suffixes.cbegin() != std::wstring_view(),
+        "all suffix must not be empty"
+    );
 };
 
 constexpr std::wstring &stemmer::stem(std::wstring &wcs) const noexcept {

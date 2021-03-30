@@ -41,7 +41,7 @@ TEST(StrParserTest, ParseEscape) {
     ASSERT_EQ(parse_string("\"\\b\""),       "\b");
     ASSERT_EQ(parse_string("\"\\t\""),       "\t");
     ASSERT_EQ(parse_string("\"\\n\""),       "\n");
-    ASSERT_EQ(parse_string("\"\\u000b\""), "\x0B");
+    ASSERT_EQ(parse_string("\"\\u000b\""),   "\v");
     ASSERT_EQ(parse_string("\"\\f\""),       "\f");
     ASSERT_EQ(parse_string("\"\\r\""),       "\r");
     ASSERT_EQ(parse_string("\"\\u000e\""), "\x0E");

@@ -18,22 +18,32 @@ using testing::ElementsAre, testing::IsEmpty;
 static vector<wstring> tokenize(wstring_view);
 
 TEST(TokenizerTest, Digit) {
+    ASSERT_THAT(tokenize(L"0123456789'"), ElementsAre(L"0123456789"));
     ASSERT_THAT(tokenize(L"0123456789,"), ElementsAre(L"0123456789"));
+    ASSERT_THAT(tokenize(L"0123456789-"), ElementsAre(L"0123456789"));
     ASSERT_THAT(tokenize(L"0123456789."), ElementsAre(L"0123456789"));
-    ASSERT_THAT(tokenize(L"3,141592653589793"),
-        ElementsAre(L"3,141592653589793")
+    ASSERT_THAT(tokenize(L"123456789'0"), ElementsAre(L"123456789", L"0"));
+    ASSERT_THAT(tokenize(L"123456789,0"), ElementsAre(L"123456789,0"));
+    ASSERT_THAT(tokenize(L"123456789-0"), ElementsAre(L"123456789", L"0"));
+    ASSERT_THAT(tokenize(L"123456789.0"), ElementsAre(L"123456789.0"));
+
+    ASSERT_THAT(tokenize(L"3,141,592,653,589,793"),
+        ElementsAre(L"3,141,592,653,589,793")
     );
     ASSERT_THAT(tokenize(L"3,141.592.653.589.793"),
         ElementsAre(L"3,141.592.653.589.793")
     );
+    ASSERT_THAT(tokenize(L"3,141592653589793"),
+        ElementsAre(L"3,141592653589793")
+    );
     ASSERT_THAT(tokenize(L"3.141,592,653,589,793"),
         ElementsAre(L"3.141,592,653,589,793")
     );
+    ASSERT_THAT(tokenize(L"3.141.592.653.589.793"),
+        ElementsAre(L"3.141.592.653.589.793")
+    );
     ASSERT_THAT(tokenize(L"3.141592653589793"),
         ElementsAre(L"3.141592653589793")
-    );
-    ASSERT_THAT(tokenize(L"978-5-8459-1623-5"),
-        ElementsAre(L"978", L"5", L"8459", L"1623", L"5")
     );
 }
 
@@ -42,6 +52,15 @@ TEST(TokenizerTest, Empty) {
 }
 
 TEST(TokenizerTest, English) {
+    ASSERT_THAT(tokenize(L"A'B'C'D'E'F'"), ElementsAre(L"A'B'C'D'E'F"));
+    ASSERT_THAT(tokenize(L"A,B,C,D,E,F,"),
+        ElementsAre(L"A", L"B", L"C", L"D", L"E", L"F")
+    );
+    ASSERT_THAT(tokenize(L"A-B-C-D-E-F-"),
+        ElementsAre(L"A", L"B", L"C", L"D", L"E", L"F")
+    );
+    ASSERT_THAT(tokenize(L"A.B.C.D.E.F."), ElementsAre(L"A.B.C.D.E.F"));
+
     ASSERT_THAT(tokenize(
             L"The quick brown fox jumps over the lazy dog."
         ),
@@ -49,24 +68,10 @@ TEST(TokenizerTest, English) {
             L"the", L"lazy", L"dog"
         )
     );
-/*
-    ASSERT_EQ(tokenize(L"The pi number approximately is 3.141592653589793."), {
-        L"The", L"pi", L"number", L"approximately", L"is", L"3,141592653589793"
-    });
-    ASSERT_EQ(tokenize(L"God Bless the U.S.A."), {
-        L"The", L"pi", L"number", L"approximately", L"is", L"3,141592653589793"
-    });
-    ASSERT_EQ(tokenize(L"No. is an abbreviation of Number"), {
-        L"No", L"is", L"an", L"abbreviation", L"of", L"Number"
-    });
-    ASSERT_EQ(tokenize(
-        L"Karl Witte graduate Ph.D. from University of Giessen at age 13."
-    ), {
-        L"Karl", L"Witte", L"graduate", L"Ph.D.", L"from", L"University", L"of",
-        L"Giessen", L"at", L"age", L"13"
-    });
-    "The SARS-CoV-2 end";
-*/
+}
+
+TEST(TokenizerTest, Punctuation) {
+    ASSERT_THAT(tokenize(L"!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"), IsEmpty());
 }
 
 TEST(TokenizerTest, Russian) {
@@ -77,29 +82,10 @@ TEST(TokenizerTest, Russian) {
             L"булок", L"да", L"выпей", L"чаю"
         )
     );
-    ASSERT_THAT(tokenize(L"слово"), ElementsAre(L"слово"));
-    ASSERT_THAT(tokenize(L"инженер-механик"),
-        ElementsAre(L"инженер", L"механик")
-    );
-/*
-    ASSERT_EQ(tokenize(L"математик-программист"), { L"математик", L"программист" });
-    ASSERT_EQ(tokenize(L"инженер, но не механик"), { L"инженер", L"но", L"не", L"механик" });
-    ASSERT_EQ(tokenize(L"математик и программист"), { L"математик", L"и", L"программист" });
-    ASSERT_EQ(tokenize(L"Число Пи приблизительно равно 3,141592653589793."), {
-        L"Число", L"Пи", L"3,141592653589793"
-    });
-    ASSERT_EQ(tokenize(L"м.н.с. - аббревиатура от младший научный сотрудник"), {"м.н.с.", "аббревиатура"});
-    ASSERT_EQ(tokenize(L"Предложение заканчивается точкой."), {
-        L"Предложение", L"заканчивается", L"точкой"
-    });
-    ASSERT_EQ(tokenize(L"Популярные языки программирования: Java, C, Python"), {
-        L"Популярные", L"языки", L"программирования", L"Java", L"C", L"Python"
-    });
-*/
 }
 
-TEST(TokenizerTest, Punctuation) {
-    ASSERT_THAT(tokenize(L"!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"), IsEmpty());
+TEST(TokenizerTest, Space) {
+    ASSERT_THAT(tokenize(L"\t\n\v\f\r "), IsEmpty());
 }
 
 static vector<wstring> tokenize(const wstring_view wcs) {

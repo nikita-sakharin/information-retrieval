@@ -1,6 +1,7 @@
 #ifndef SEARCH_ENGINE_TOKENIZER_HPP
 #define SEARCH_ENGINE_TOKENIZER_HPP
 
+#include <cassert> // assert
 #include <cstddef> // size_t
 #include <cwctype> // iswalnum, iswalpha, iswdigit
 

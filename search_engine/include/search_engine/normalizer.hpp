@@ -29,6 +29,9 @@ public:
     constexpr void operator()(std::wstring &) noexcept( // TODO one-to-one or one-to-many ???
         std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>);
 
+    constexpr const Invocable &invocable() const noexcept;
+    constexpr Invocable &invocable() noexcept;
+
 private:
     static_assert(__STDC_ISO_10646__ >= 201103L,
         "Unicode version 2011 or later required"
@@ -59,6 +62,16 @@ constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
     for (wchar_t &wc : wcs)
         wc = towlower(wc);
     invocable_(position_++, wcs);
+}
+
+template<typename Invocable>
+constexpr const Invocable &normalizer<Invocable>::invocable() const noexcept {
+    return invocable_;
+}
+
+template<typename Invocable>
+constexpr Invocable &normalizer<Invocable>::invocable() noexcept {
+    return invocable_;
 }
 
 #endif

@@ -72,11 +72,10 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
     }
 
     const wchar_t last = buffer_.back();
+    assert(last == '\'' || last == ',' || last == '.' || iswalnum(last));
     if (is_value_alnum) {
-        if (last != '\'' && last != ',' && last != '.') {
-            assert(iswalnum(last));
+        if (last != '\'' && last != ',' && last != '.')
             return buffer_.push_back(value);
-        }
 
         assert(buffer_.size() >= 2);
         const wchar_t before_last = buffer_[buffer_.size() - 2];
@@ -93,7 +92,6 @@ constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
         return flush_buffer();
     }
 
-    assert(last == '\'' || last == ',' || last == '.' || iswalnum(last));
     if (const bool is_last_alpha = static_cast<bool>(iswalpha(last)),
         is_last_digit = static_cast<bool>(iswdigit(last));
         (value == '\'' && is_last_alpha) ||

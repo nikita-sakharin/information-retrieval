@@ -5,6 +5,7 @@
 
 #include <string> // wstring
 
+template<typename Invocable>
 class normalizer final {
 public:
     constexpr wstring &normalize(std::wstring &token) const noexcept;

@@ -1,7 +1,7 @@
 #ifndef SEARCH_ENGINE_STEMMER_HPP
 #define SEARCH_ENGINE_STEMMER_HPP
 
-#include <algorithm> // is_sorted
+#include <algorithm> // is_sorted, lexicographical_compare
 #include <array> // array
 #include <string> // wstring
 #include <string_view> // wstring_view
@@ -26,7 +26,15 @@ private:
         L"ую",
         L"ая"
     };
-    static_assert(std::is_sorted(suffixes.cbegin(), suffixes.cend()),
+    static_assert(std::is_sorted(suffixes.cbegin(), suffixes.cend(),
+            [](
+                const std::wstring_view wcs1, const std::wstring_view wcs2
+            ) constexpr noexcept -> bool {
+                return std::lexicographical_compare(
+                    wcs1.crbegin(), wcs1.crend(), wcs2.crbegin(), wcs2.crend()
+                );
+            }
+        ),
         "suffixes must be sorted"
     );
     static_assert(*suffixes.cbegin() != std::wstring_view(),

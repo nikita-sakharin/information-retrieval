@@ -11,7 +11,7 @@ public:
     constexpr std::wstring &stem(std::wstring &) const noexcept;
 
 private:
-    std::array<, std::wstring_view> suffixes = { // " = {" or "{" ???
+    static constexpr std::array<, std::wstring_view> suffixes = { // " = {" or "{" ???
         L"ое",
         L"ые",
         L"ыми",

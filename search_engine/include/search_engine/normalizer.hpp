@@ -26,11 +26,15 @@ public:
     constexpr ~normalizer() noexcept(
         std::is_nothrow_destructible_v<Invocable>) = default;
 
-    constexpr void operator()(std::wstring &) noexcept( // TODO one-to-one or one-to-many ???
+    constexpr void operator()(std::wstring &) noexcept(
         std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>);
 
     constexpr const Invocable &invocable() const noexcept;
     constexpr Invocable &invocable() noexcept;
+
+    constexpr std::size_t position() const noexcept;
+
+    constexpr void reset_position() noexcept;
 
 private:
     static_assert(__STDC_ISO_10646__ >= 201103L,
@@ -72,6 +76,16 @@ constexpr const Invocable &normalizer<Invocable>::invocable() const noexcept {
 template<typename Invocable>
 constexpr Invocable &normalizer<Invocable>::invocable() noexcept {
     return invocable_;
+}
+
+template<typename Invocable>
+constexpr std::size_t normalizer<Invocable>::position() const noexcept {
+    return position_;
+}
+
+template<typename Invocable>
+constexpr void normalizer<Invocable>::reset_position() noexcept {
+    position_ = 0U;
 }
 
 #endif

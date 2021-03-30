@@ -113,8 +113,8 @@ static vector<wstring> tokenize(const wstring_view wcs) {
 
     vector<wstring> tokens;
     tokenizer<function<void(wstring &)>> str_tokenizer(
-        [&tokens](wstring &wcs) constexpr -> void {
-            tokens.push_back(wcs);
+        [&tokens](wstring &token) constexpr -> void {
+            tokens.push_back(token);
         }
     );
     for (const wchar_t wc : wcs)

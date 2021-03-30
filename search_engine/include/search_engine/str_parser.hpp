@@ -136,9 +136,9 @@ constexpr std::string_view::const_iterator str_parser<Invocable>::parse_escape(
         [[unlikely]] case  'u': {
             if (first + 4 >= last || first[1] != '0' || first[2] != '0')
                 [[unlikely]] throw logic_error(what);
-            const uint value = hex_digit(first[3]) * 16 + hex_digit(first[4]);
-            if (value >= 8 && value != 11 &&
-                (value < 14 || value >= 32) && value != 127
+            const uint value = hex_digit(first[3]) * 16U + hex_digit(first[4]);
+            if (value >= 8U && value != 11U &&
+                (value < 14U || value >= 32U) && value != 127U
             ) [[unlikely]] throw logic_error(what);
             invocable_(value);
             return first + 5;

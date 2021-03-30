@@ -10,7 +10,7 @@ template<typename Invocable>
 class normalizer final {
 public:
     constexpr void operator()(std::wstring &) noexcept(
-        std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>);
+        std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>);
 
 private:
     static_assert(__STDC_ISO_10646__ >= 201103L,

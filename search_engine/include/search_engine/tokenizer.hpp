@@ -2,7 +2,7 @@
 #define SEARCH_ENGINE_TOKENIZER_HPP
 
 #include <cstddef> // size_t
-#include <cwctype> // iswalnum, iswpunct, iswspace
+#include <cwctype> // iswalnum, iswalpha, iswdigit
 
 #include <string> // wstring
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
@@ -56,6 +56,8 @@ constexpr tokenizer<Invocable>::tokenizer(
 
 template<typename Invocable>
 constexpr void tokenizer<Invocable>::operator()(const wchar_t value) {
+    using std::iswalnum, std::iswalpha, std::iswdigit;
+
     const bool is_value_alnum = static_cast<bool>(iswalnum(value));
     if (buffer_.empty()) {
         if (is_value_alnum)

@@ -7,6 +7,7 @@ add_executable(${BINARY}
     char_encoder.test.cpp
     index.test.cpp
     memmap.test.cpp
+    normalizer.test.cpp
     str_encoder.test.cpp
     str_parser.test.cpp
     tokenizer.test.cpp

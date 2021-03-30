@@ -32,6 +32,9 @@ TEST(TokenizerTest, Digit) {
     ASSERT_THAT(tokenize(L"3.141592653589793"),
         ElementsAre(L"3.141592653589793")
     );
+    ASSERT_THAT(tokenize(L"978-5-8459-1623-5"),
+        ElementsAre(L"978", L"5", L"8459", L"1623", L"5")
+    );
 }
 
 TEST(TokenizerTest, Empty) {

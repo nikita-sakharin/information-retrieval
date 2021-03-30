@@ -27,6 +27,7 @@ template<typename Invocable>
 constexpr void normalizer::operator()(std::wstring &wcs) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
 ) {
+    constexpr const
     for (wchar_t &wc : wcs)
         wc = towlower(wc);
     invocable_(buffer_);

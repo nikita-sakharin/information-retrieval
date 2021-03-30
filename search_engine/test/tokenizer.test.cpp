@@ -68,6 +68,15 @@ TEST(TokenizerTest, English) {
         ElementsAre(L"A", L"B", L"C", L"D", L"E", L"F")
     );
     ASSERT_THAT(tokenize(L"A.B.C.D.E.F."), ElementsAre(L"A.B.C.D.E.F"));
+    ASSERT_THAT(tokenize(L"ABC''DEF"), ElementsAre(L"ABC", L"DEF"));
+    ASSERT_THAT(tokenize(L"ABC'DEF"), ElementsAre(L"ABC'DEF"));
+    ASSERT_THAT(tokenize(L"ABC,,DEF"), ElementsAre(L"ABC", L"DEF"));
+    ASSERT_THAT(tokenize(L"ABC,DEF"), ElementsAre(L"ABC", L"DEF"));
+    ASSERT_THAT(tokenize(L"ABC--DEF"), ElementsAre(L"ABC", L"DEF"));
+    ASSERT_THAT(tokenize(L"ABC-DEF"), ElementsAre(L"ABC", L"DEF"));
+    ASSERT_THAT(tokenize(L"ABC..DEF"), ElementsAre(L"ABC", L"DEF"));
+    ASSERT_THAT(tokenize(L"ABC.DEF"), ElementsAre(L"ABC.DEF"));
+    ASSERT_THAT(tokenize(L"ABCDEF"), ElementsAre(L"ABCDEF"));
 
     ASSERT_THAT(tokenize(
             L"The quick brown fox jumps over the lazy dog."

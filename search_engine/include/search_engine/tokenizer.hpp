@@ -41,17 +41,7 @@ private:
         "Invocable must have signature void(wstring &)"
     );
 
-    enum class token_type : uint {
-        acronym,
-        alphanum,
-        apostrophe,
-        company,
-        host,
-        num
-    };
-
     std::wstring buffer_{};
-    token_type type_{};
     Invocable invocable_{};
 };
 

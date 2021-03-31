@@ -11,6 +11,10 @@ public:
     constexpr std::wstring &stem(std::wstring &) const noexcept;
 
 private:
+    static_assert(__STDC_ISO_10646__ >= 201103L,
+        "Unicode version 2011 or later required"
+    );
+
     static constexpr std::array<std::wstring_view, 13> suffixes = { // " = {" or "{" ???
         L"ое",
         L"ые",
@@ -26,7 +30,6 @@ private:
         L"ую",
         L"ая"
     };
-
     static_assert(std::is_sorted(suffixes.cbegin(), suffixes.cend(),
             [](
                 const std::wstring_view wcs1, const std::wstring_view wcs2

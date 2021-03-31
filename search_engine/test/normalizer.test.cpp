@@ -16,6 +16,15 @@ using std::vector, std::wstring, std::wstring_view;
 using testing::ElementsAre, testing::IsEmpty;
 
 static vector<wstring> normalize(wstring_view);
+
+TEST(NormalizerTest, Acronym) {
+    ASSERT_THAT(normalize(L"Q.U.I.C.K"), ElementsAre(L"quick"));
+    ASSERT_THAT(normalize(L"Q.U.I.C.K."), ElementsAre(L"quick"));
+    ASSERT_THAT(normalize(L"Q.u.i.c.k"), ElementsAre(L"quick"));
+    ASSERT_THAT(normalize(L"Q.u.i.c.k."), ElementsAre(L"quick"));
+    ASSERT_THAT(normalize(L"q.u.i.c.k"), ElementsAre(L"quick"));
+    ASSERT_THAT(normalize(L"q.u.i.c.k."), ElementsAre(L"quick"));
+}
 /*
 TEST(NormalizerTest, Empty) { empty allowed ???
     ASSERT_THAT(normalize(L""), IsEmpty());

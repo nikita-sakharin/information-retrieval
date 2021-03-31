@@ -8,7 +8,7 @@
 #include <string_view> // wstring_view
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
 
-// stop-words, ASCII folding, Possessive affix, Acronym
+// stop-words, ASCII folding, Acronym
 template<typename Invocable>
 class normalizer final {
 public:
@@ -66,6 +66,8 @@ constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
 
     for (wchar_t &wc : wcs)
         wc = towlower(wc);
+    if (wcs.ends_with(possessive_affix))
+        wcs.resize(wcs.size() - possessive_affix.size());
     invocable_(position_++, wcs);
 }
 

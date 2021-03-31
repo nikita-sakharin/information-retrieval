@@ -49,6 +49,8 @@ TEST(NormalizerTest, English) {
 }
 
 TEST(NormalizerTest, PossessiveAffix) {
+    ASSERT_THAT(normalize(L"dog'S"), ElementsAre(L"dog"));
+    ASSERT_THAT(normalize(L"dog's"), ElementsAre(L"dog"));
 }
 
 TEST(NormalizerTest, Russian) {

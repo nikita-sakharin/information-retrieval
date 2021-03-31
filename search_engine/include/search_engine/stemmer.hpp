@@ -26,20 +26,19 @@ private:
         L"ую",
         L"ая"
     };
+
     static_assert(std::is_sorted(suffixes.cbegin(), suffixes.cend(),
             [](
                 const std::wstring_view wcs1, const std::wstring_view wcs2
             ) constexpr noexcept -> bool {
                 return std::lexicographical_compare(
                     wcs1.crbegin(), wcs1.crend(), wcs2.crbegin(), wcs2.crend()
-                );
+                ) || wcs1 == wcs2;
             }
         ),
-        "suffixes must be sorted"
+        "suffixes must be unique and sorted"
     );
-    static_assert(*suffixes.cbegin() != std::wstring_view(),
-        "all suffix must not be empty"
-    );
+    static_assert(!suffixes.cbegin()->empty(), "all suffix must not be empty");
 };
 
 constexpr std::wstring &stemmer::stem(std::wstring &wcs) const noexcept {

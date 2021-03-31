@@ -16,6 +16,10 @@ private:
     );
 
     static constexpr std::array<std::wstring_view, 13> suffixes = { // " = {" or "{" ???
+        L"ing",
+        L"es",
+        L"ness",
+        L"ly", // ???
         L"ое",
         L"ые",
         L"ыми",
@@ -23,6 +27,7 @@ private:
         L"ый",
         L"ом",
         L"ым",
+        L"о",
         L"ого",
         L"ому",
         L"ых",

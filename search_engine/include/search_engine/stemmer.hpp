@@ -15,7 +15,7 @@ private:
         "Unicode version 2011 or later required"
     );
 
-    static constexpr std::array<std::wstring_view, 13> suffixes = { // " = {" or "{" ???
+    static constexpr std::array<std::wstring_view, 18> suffixes = { // " = {" or "{" ???
         L"ing",
         L"es",
         L"ness",

@@ -2,19 +2,16 @@
 #include <clocale> // LC_ALL, setlocale
 #include <cstddef> // size_t
 
-#include <array> // array
-#include <stdexcept> // runtime_error
-#include <string> // string
+#include <stdexcept> // logic_error, runtime_error
 #include <string_view> // string_view
 
 #include <search_engine/index.hpp>
 #include <search_engine/indexer.hpp>
 #include <search_engine/memmap.hpp>
 
-using std::array, std::logic_error, std::runtime_error, std::setlocale,
-    std::size_t, std::string_view,
-
 index make_index(const char * const texts_file) {
+    using std::logic_error, std::runtime_error, std::setlocale, std::size_t,
+        std::string_view;
     static constexpr const char
         *invalid = "make_index: invalid JSON",
         *empty = "make_index: empty string";

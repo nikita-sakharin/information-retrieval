@@ -17,8 +17,7 @@ ForwardIter binary_search(
     using std::ptrdiff_t;
 
     ptrdiff_t count = std::distance(first, last);
-    for (ForwardIter iter; iter = first, count > 0; )
-    {
+    for (ForwardIter iter; iter = first, count > 0; ) {
         const std::ptrdiff_t step = count / 2;
         std::advance(iter, step);
         if (comp(*iter, value)) {
@@ -36,6 +35,7 @@ ForwardIter binary_search(
 template<class ForwardIter, class T>
 ForwardIter binary_search(ForwardIter first, ForwardIter last, const T &value) {
     using std::less;
+
     return binary_search(first, last, value, less<T>());
 }
 
@@ -50,8 +50,8 @@ void pop_heap(
     swap(*first, *--last);
     const ptrdiff_t half = (last - first) / 2;
     for (RandomAccessIter parent = first, child = first;
-        parent - first < half; parent = child)
-    {
+        parent - first < half; parent = child
+    ) {
         child += parent - first + 1;
         if (child + 1 != last && comp(*child, *(child + 1)))
             ++child;

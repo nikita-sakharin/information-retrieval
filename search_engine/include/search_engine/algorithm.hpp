@@ -77,8 +77,8 @@ void make_heap(
     const RandomAccessIter last,
     const Compare comp
 ) {
-    for (RandomAccessIter current = first; current != last; )
-        push_heap(first, ++current, comp);
+    for (RandomAccessIter current = first; current != last; ++current)
+        push_heap(first, current, comp);
 }
 
 template<class RandomAccessIter, class Compare>

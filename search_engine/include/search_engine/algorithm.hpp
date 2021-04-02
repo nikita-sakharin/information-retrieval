@@ -18,7 +18,7 @@ ForwardIter binary_search(
 
     ptrdiff_t count = std::distance(first, last);
     for (ForwardIter iter; iter = first, count > 0; ) {
-        const std::ptrdiff_t step = count / 2;
+        const ptrdiff_t step = count / 2;
         std::advance(iter, step);
         if (comp(*iter, value)) {
             first = ++iter;

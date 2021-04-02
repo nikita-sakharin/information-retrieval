@@ -50,7 +50,7 @@ void pop_heap(
         child += parent - first + 1;
         if (child + 1 != last && comp(*child, *(child + 1)))
             ++child;
-        if (comp(*child, *parent))
+        if (!comp(*parent, *child))
             break;
         std::swap(*child, *parent);
     }

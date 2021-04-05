@@ -8,6 +8,7 @@
 #include <iostream> // cerr, endl
 #include <limits> // numeric_limits
 #include <stdexcept> // logic_error
+#include <string_view> // string_view
 #include <utility> // move, swap
 
 class memmap final {

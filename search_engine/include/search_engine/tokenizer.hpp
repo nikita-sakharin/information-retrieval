@@ -13,7 +13,7 @@ class tokenizer final {
 public:
     constexpr tokenizer() noexcept(
         std::is_nothrow_default_constructible_v<Invocable>) = default;
-    constexpr tokenizer(const Invocable &) noexcept(
+    constexpr explicit tokenizer(const Invocable &) noexcept(
         std::is_nothrow_copy_constructible_v<Invocable>);
     constexpr tokenizer(const tokenizer &) = default;
     constexpr tokenizer(tokenizer &&) noexcept(

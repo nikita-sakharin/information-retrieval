@@ -15,7 +15,7 @@ class str_encoder final {
 public:
     constexpr str_encoder() noexcept(
         std::is_nothrow_default_constructible_v<Invocable>) = default;
-    constexpr str_encoder(const Invocable &) noexcept(
+    constexpr explicit str_encoder(const Invocable &) noexcept(
         std::is_nothrow_copy_constructible_v<Invocable>);
     constexpr str_encoder(const str_encoder &) = default;
     constexpr str_encoder(str_encoder &&) noexcept(

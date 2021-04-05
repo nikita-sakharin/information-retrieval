@@ -31,7 +31,9 @@ public:
 
     template<bool StopWords = false>
     constexpr void operator()(std::wstring &) noexcept(
-        std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>);
+        std::is_nothrow_invocable_r_v<void, Invocable,
+            std::size_t, std::wstring &>
+    );
 
     constexpr const Invocable &invocable() const noexcept;
     constexpr Invocable &invocable() noexcept;
@@ -50,7 +52,7 @@ private:
     );
 
     static constexpr std::wstring_view possessive_affix = L"'s";
-/**/
+
     static constexpr std::array<std::wstring_view, 184> stop_words {
         L"a", L"an", L"and", L"are", L"as", L"at", L"be", L"but", L"by", L"for",
         L"if", L"in", L"into", L"is", L"it", L"no", L"not", L"of", L"on", L"or",
@@ -85,7 +87,7 @@ private:
     static_assert(!stop_words.empty() && !stop_words.front().empty(),
         "all stop words must not be empty"
     );
-/**/
+
     std::size_t position_ = 0U;
     Invocable invocable_{};
 };

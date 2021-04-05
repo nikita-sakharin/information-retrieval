@@ -15,7 +15,7 @@ private:
         "Unicode version 2011 or later required"
     );
 
-    static constexpr std::array<std::wstring_view, 18> suffixes = { // " = {" or "{" ???
+    static constexpr std::array<std::wstring_view, 18> suffixes {
         L"ing",
         L"es",
         L"ness",
@@ -35,7 +35,8 @@ private:
         L"ую",
         L"ая"
     };
-    static_assert(std::is_sorted(suffixes.cbegin(), suffixes.cend(),
+    static_assert(
+        std::is_sorted(suffixes.cbegin(), suffixes.cend(),
             [](
                 const std::wstring_view wcs1, const std::wstring_view wcs2
             ) constexpr noexcept -> bool {
@@ -46,7 +47,9 @@ private:
         ),
         "suffixes must be unique and sorted"
     );
-    static_assert(!suffixes.cbegin()->empty(), "all suffix must not be empty");
+    static_assert(!suffixes.empty() && !suffixes.front().empty(),
+        "all suffix must not be empty"
+    );
 };
 
 constexpr std::wstring &stemmer::stem(std::wstring &wcs) const noexcept {

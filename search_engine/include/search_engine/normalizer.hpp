@@ -1,11 +1,12 @@
 #ifndef SEARCH_ENGINE_NORMALIZER_HPP
 #define SEARCH_ENGINE_NORMALIZER_HPP
 
-#include <algorithm> // copy_if, is_sorted
 #include <cstddef> // size_t
 #include <cwctype> // iswalpha, towlower
 
+#include <algorithm> // copy_if, is_sorted
 #include <array> // array
+#include <functional> // less_equal
 #include <string> // wstring
 #include <string_view> // wstring_view
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
@@ -79,7 +80,7 @@ private:
         std::is_sorted(stop_words.cbegin(), stop_words.cend(), less_equal()),
         "stop words must be unique and sorted"
     );
-    static_assert(!suffixes.cbegin()->empty(),
+    static_assert(!stop_words.empty() && !stop_words.front().empty(),
         "all stop words must not be empty"
     );
 /**/

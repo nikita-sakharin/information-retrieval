@@ -78,7 +78,7 @@ private:
     };
     static_assert(
         std::is_sorted(stop_words.cbegin(), stop_words.cend(),
-            std::less_equal<std::wstring_view>()
+            std::less_equal()
         ),
         "stop words must be unique and sorted"
     );

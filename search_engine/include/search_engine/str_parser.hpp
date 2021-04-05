@@ -14,7 +14,7 @@ class str_parser final {
 public:
     constexpr str_parser() noexcept(
         std::is_nothrow_default_constructible_v<Invocable>) = default;
-    constexpr str_parser(const Invocable &) noexcept(
+    constexpr explicit str_parser(const Invocable &) noexcept(
         std::is_nothrow_copy_constructible_v<Invocable>);
     constexpr str_parser(const str_parser &) noexcept(
         std::is_nothrow_copy_constructible_v<Invocable>) = default;

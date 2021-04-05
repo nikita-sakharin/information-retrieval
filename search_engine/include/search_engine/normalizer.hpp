@@ -3,8 +3,9 @@
 
 #include <algorithm> // copy_if, is_sorted
 #include <cstddef> // size_t
-#include <cwctype> // towlower
+#include <cwctype> // iswalpha, towlower
 
+#include <array> // array
 #include <string> // wstring
 #include <string_view> // wstring_view
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
@@ -98,7 +99,7 @@ template<bool StopWords>
 constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
 ) {
-    using std::towlower, std::wstring;
+    using std::copy_if, std::iswalpha, std::size_t, std::towlower, std::wstring;
 
     bool is_acronym = true;
     for (size_t i = 0U; i < wcs.size(); ++i) {

@@ -1,6 +1,7 @@
 #ifndef SEARCH_ENGINE_NORMALIZER_HPP
 #define SEARCH_ENGINE_NORMALIZER_HPP
 
+#include <algorithm> // copy_if, is_sorted
 #include <cstddef> // size_t
 #include <cwctype> // towlower
 
@@ -8,13 +9,12 @@
 #include <string_view> // wstring_view
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
 
-// stop-words, ASCII folding, Acronym
 template<typename Invocable>
 class normalizer final {
 public:
     constexpr normalizer() noexcept(
         std::is_nothrow_default_constructible_v<Invocable>) = default;
-    constexpr normalizer(const Invocable &) noexcept(
+    constexpr explicit normalizer(const Invocable &) noexcept(
         std::is_nothrow_copy_constructible_v<Invocable>);
     constexpr normalizer(const normalizer &) noexcept(
         std::is_nothrow_copy_constructible_v<Invocable>) = default;
@@ -27,6 +27,7 @@ public:
     constexpr ~normalizer() noexcept(
         std::is_nothrow_destructible_v<Invocable>) = default;
 
+    template<bool StopWords = false>
     constexpr void operator()(std::wstring &) noexcept(
         std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>);
 
@@ -41,12 +42,46 @@ private:
     static_assert(__STDC_ISO_10646__ >= 201103L,
         "Unicode version 2011 or later required"
     );
-    static_assert(std::is_invocable_r_v<void, Invocable, std::size_t, std::wstring &>,
+    static_assert(
+        std::is_invocable_r_v<void, Invocable, std::size_t, std::wstring &>,
         "Invocable must have signature void(size_t, wstring &)"
     );
 
     static constexpr std::wstring_view possessive_affix = L"'s";
-
+/**/
+    static constexpr std::array<std::wstring_view, 184> stop_words {
+        L"a", L"an", L"and", L"are", L"as", L"at", L"be", L"but", L"by", L"for",
+        L"if", L"in", L"into", L"is", L"it", L"no", L"not", L"of", L"on", L"or",
+        L"such", L"that", L"the", L"their", L"then", L"there", L"these",
+        L"they", L"this", L"to", L"was", L"will", L"with",
+        L"а", L"без", L"более", L"больше", L"будет", L"будто", L"бы", L"был",
+        L"была", L"были", L"было", L"быть", L"в", L"вам", L"вас", L"вдруг",
+        L"ведь", L"во", L"вот", L"впрочем", L"все", L"всегда", L"всего",
+        L"всех", L"всю", L"вы", L"где", L"да", L"даже", L"два", L"для", L"до",
+        L"другой", L"его", L"ее", L"ей", L"ему", L"если", L"есть", L"еще", L"ж",
+        L"же", L"за", L"зачем", L"здесь", L"и", L"из", L"или", L"им", L"иногда",
+        L"их", L"к", L"как", L"какая", L"какой", L"когда", L"конечно", L"кто",
+        L"куда", L"ли", L"лучше", L"между", L"меня", L"мне", L"много", L"может",
+        L"можно", L"мой", L"моя", L"мы", L"на", L"над", L"надо", L"наконец",
+        L"нас", L"не", L"него", L"нее", L"ней", L"нельзя", L"нет", L"ни",
+        L"нибудь", L"никогда", L"ним", L"них", L"ничего", L"но", L"ну", L"о",
+        L"об", L"один", L"он", L"она", L"они", L"опять", L"от", L"перед", L"по",
+        L"под", L"после", L"потом", L"потому", L"почти", L"при", L"про", L"раз",
+        L"разве", L"с", L"сам", L"свою", L"себе", L"себя", L"сейчас", L"со",
+        L"совсем", L"так", L"такой", L"там", L"тебя", L"тем", L"теперь", L"то",
+        L"тогда", L"того", L"тоже", L"только", L"том", L"тот", L"три", L"тут",
+        L"ты", L"у", L"уж", L"уже", L"хорошо", L"хоть", L"чего", L"чем",
+        L"через", L"что", L"чтоб", L"чтобы", L"чуть", L"эти", L"этого", L"этой",
+        L"этом", L"этот", L"эту", L"я"
+    };
+    static_assert(
+        std::is_sorted(stop_words.cbegin(), stop_words.cend(), less_equal()),
+        "stop words must be unique and sorted"
+    );
+    static_assert(!suffixes.cbegin()->empty(),
+        "all stop words must not be empty"
+    );
+/**/
     std::size_t position_ = 0U;
     Invocable invocable_{};
 };
@@ -59,13 +94,35 @@ constexpr normalizer<Invocable>::normalizer(
 ) : invocable_(invocable) {}
 
 template<typename Invocable>
-constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
+template<bool StopWords>
+constexpr void normalizer<Invocable>::operator()(
+    std::wstring &wcs
+) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
 ) {
-    using std::towlower;
+    using std::towlower, std::wstring;
 
-    for (wchar_t &wc : wcs)
-        wc = towlower(wc);
+    bool is_acronym = true;
+    for (size_t i = 0U; i < wcs.size(); ++i) {
+        wcs[i] = towlower(wcs[i]);
+        if (wcs[i] == L'ё') [[unlikely]]
+            wcs[i] = L'е';
+        if (is_acronym && (
+                (i % 2U == 0U && !iswalpha(wcs[i])) ||
+                (i % 2U == 1U && wcs[i] != L'.')
+            )
+        ) is_acronym = false;
+    }
+    if (is_acronym) [[unlikely]] {
+        const wstring::iterator pos = copy_if(
+            wcs.cbegin(), wcs.cend(), wcs.begin(),
+            [](const wchar_t wc) constexpr noexcept -> bool {
+                return wc != L'.';
+            }
+        );
+        wcs.erase(pos, wcs.end());
+    }
+
     if (wcs.ends_with(possessive_affix))
         wcs.resize(wcs.size() - possessive_affix.size());
     invocable_(position_++, wcs);

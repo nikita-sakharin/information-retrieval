@@ -77,7 +77,9 @@ private:
         L"этом", L"этот", L"эту", L"я"
     };
     static_assert(
-        std::is_sorted(stop_words.cbegin(), stop_words.cend(), less_equal()),
+        std::is_sorted(stop_words.cbegin(), stop_words.cend(),
+            std::less_equal<std::wstring_view>()
+        ),
         "stop words must be unique and sorted"
     );
     static_assert(!stop_words.empty() && !stop_words.front().empty(),

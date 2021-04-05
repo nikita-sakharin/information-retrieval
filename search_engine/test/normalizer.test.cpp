@@ -25,6 +25,12 @@ TEST(NormalizerTest, Acronym) {
     ASSERT_THAT(normalize(L"q.u.i.c.k"), ElementsAre(L"quick"));
     ASSERT_THAT(normalize(L"q.u.i.c.k."), ElementsAre(L"quick"));
 }
+
+TEST(NormalizerTest, CyrillicIo) {
+    ASSERT_THAT(normalize(L"ЕЩЁ"), ElementsAre(L"еще"));
+    ASSERT_THAT(normalize(L"Ещё"), ElementsAre(L"еще"));
+    ASSERT_THAT(normalize(L"ещё"), ElementsAre(L"еще"));
+}
 /*
 TEST(NormalizerTest, Empty) { empty allowed ???
     ASSERT_THAT(normalize(L""), IsEmpty());

@@ -7,6 +7,7 @@
 #include <algorithm> // copy_if, is_sorted
 #include <array> // array
 #include <functional> // less_equal
+#include <stdexcept> // logic_error
 #include <string> // wstring
 #include <string_view> // wstring_view
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
@@ -105,7 +106,11 @@ template<bool StopWords>
 constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
 ) {
-    using std::copy_if, std::iswalpha, std::size_t, std::towlower, std::wstring;
+    using std::copy_if, std::iswalpha, std::logic_error, std::size_t,
+        std::towlower, std::wstring;
+
+    if (wcs.empty()) [[unlikely]]
+        throw logic_error("normalizer::operator(): empty token");
 
     bool is_acronym = true;
     for (size_t i = 0U; i < wcs.size(); ++i) {

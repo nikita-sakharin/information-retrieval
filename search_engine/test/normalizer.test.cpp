@@ -33,7 +33,7 @@ TEST(NormalizerTest, CyrillicIo) {
 }
 
 TEST(NormalizerTest, Empty) {
-    using std::vector, std::wstring, std::wstring_view;
+    using std::logic_error;
 
     ASSERT_THROW(normalize(L""), logic_error);
 }

@@ -1,7 +1,7 @@
 #include <clocale> // LC_ALL, setlocale
 
 #include <functional> // function
-#include <stdexcept> // runtime_error
+#include <stdexcept> // logic_error, runtime_error
 #include <string> // wstring
 #include <string_view> // wstring_view
 #include <vector> // vector
@@ -33,6 +33,8 @@ TEST(NormalizerTest, CyrillicIo) {
 }
 
 TEST(NormalizerTest, Empty) {
+    using std::vector, std::wstring, std::wstring_view;
+
     ASSERT_THROW(normalize(L""), logic_error);
 }
 

@@ -58,6 +58,7 @@ private:
         L"if", L"in", L"into", L"is", L"it", L"no", L"not", L"of", L"on", L"or",
         L"such", L"that", L"the", L"their", L"then", L"there", L"these",
         L"they", L"this", L"to", L"was", L"will", L"with",
+
         L"а", L"без", L"более", L"больше", L"будет", L"будто", L"бы", L"был",
         L"была", L"были", L"было", L"быть", L"в", L"вам", L"вас", L"вдруг",
         L"ведь", L"во", L"вот", L"впрочем", L"все", L"всегда", L"всего",
@@ -118,13 +119,13 @@ constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
         ) is_acronym = false;
     }
     if (is_acronym) [[unlikely]] {
-        const wstring::iterator pos = copy_if(
+        const wstring::iterator last = copy_if(
             wcs.cbegin(), wcs.cend(), wcs.begin(),
             [](const wchar_t wc) constexpr noexcept -> bool {
                 return wc != L'.';
             }
         );
-        wcs.erase(pos, wcs.end());
+        wcs.erase(last, wcs.end());
     }
 
     if (wcs.ends_with(possessive_affix))

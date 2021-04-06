@@ -6,7 +6,7 @@
 
 #include <search_engine/str_parser.hpp>
 
-using std::logic_error, std::string, std::string_view;
+using std::string, std::string_view;
 
 static string parse_string(string_view);
 
@@ -66,6 +66,8 @@ TEST(StrParserTest, ParseEscape) {
 }
 
 TEST(StrParserTest, Throw) {
+    using std::logic_error;
+
     ASSERT_THROW(parse_string(""),            logic_error);
     ASSERT_THROW(parse_string("\""),          logic_error);
     ASSERT_THROW(parse_string("\"\\"),        logic_error);

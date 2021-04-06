@@ -31,11 +31,11 @@ TEST(NormalizerTest, CyrillicIo) {
     ASSERT_THAT(normalize(L"Ещё"), ElementsAre(L"еще"));
     ASSERT_THAT(normalize(L"ещё"), ElementsAre(L"еще"));
 }
-/*
-TEST(NormalizerTest, Empty) { empty allowed ???
-    ASSERT_THAT(normalize(L""), IsEmpty());
+
+TEST(NormalizerTest, Empty) {
+    ASSERT_THROW(normalize(L""), logic_error);
 }
-*/
+
 TEST(NormalizerTest, English) {
     ASSERT_THAT(normalize(L"THE"), ElementsAre(L"the"));
     ASSERT_THAT(normalize(L"The"), ElementsAre(L"the"));

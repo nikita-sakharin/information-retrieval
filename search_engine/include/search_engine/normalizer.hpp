@@ -123,7 +123,6 @@ constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
             )
         ) is_acronym = false;
     }
-
     if (wcs.ends_with(possessive_affix))
         wcs.resize(wcs.size() - possessive_affix.size());
 

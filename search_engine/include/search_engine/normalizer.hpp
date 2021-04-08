@@ -124,6 +124,9 @@ constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
         ) is_acronym = false;
     }
 
+    if (wcs.ends_with(possessive_affix))
+        wcs.resize(wcs.size() - possessive_affix.size());
+
     if constexpr (StopWords)
         if (binary_search(stop_words.cbegin(), stop_words.cend(), wcs))
             return;
@@ -138,8 +141,6 @@ constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
         wcs.erase(last, wcs.end());
     }
 
-    if (wcs.ends_with(possessive_affix))
-        wcs.resize(wcs.size() - possessive_affix.size());
     invocable_(position_++, wcs);
 }
 

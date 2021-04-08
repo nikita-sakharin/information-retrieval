@@ -71,6 +71,9 @@ TEST(NormalizerTest, English) {
     );
 }
 
+TEST(NormalizerTest, EnglishStopWords) {
+}
+
 TEST(NormalizerTest, PossessiveAffix) {
     static const auto expected = ElementsAre(Pair(0U, L"dog"));
 
@@ -106,7 +109,7 @@ TEST(NormalizerTest, Russian) {
     );
 }
 
-TEST(NormalizerTest, StopWords) {
+TEST(NormalizerTest, RussianStopWords) {
 }
 
 template<bool StopWords>

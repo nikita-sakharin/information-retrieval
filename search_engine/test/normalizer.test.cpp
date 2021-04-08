@@ -123,7 +123,6 @@ static vector<pair<size_t, wstring>> normalize(
             tokens.emplace_back(position, token);
         }
     );
-
     wstring buffer;
     for (const wstring_view wcs : init) {
         buffer = wcs;

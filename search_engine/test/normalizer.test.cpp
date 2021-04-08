@@ -106,6 +106,9 @@ TEST(NormalizerTest, Russian) {
     );
 }
 
+TEST(NormalizerTest, StopWords) {
+}
+
 template<bool StopWords>
 static vector<pair<size_t, wstring>> normalize(
     const initializer_list<wstring_view> init

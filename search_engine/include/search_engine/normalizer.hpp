@@ -54,7 +54,7 @@ private:
 
     static constexpr std::wstring_view possessive_affix = L"'s";
 
-    static constexpr std::array<std::wstring_view, 184> stop_words {
+    static constexpr std::array<std::wstring_view, 184U> stop_words {
         L"a", L"an", L"and", L"are", L"as", L"at", L"be", L"but", L"by", L"for",
         L"if", L"in", L"into", L"is", L"it", L"no", L"not", L"of", L"on", L"or",
         L"such", L"that", L"the", L"their", L"then", L"there", L"these",
@@ -123,6 +123,11 @@ constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
             )
         ) is_acronym = false;
     }
+
+    if constexpr (StopWords)
+        if (binary_search(stop_words.cbegin(), stop_words.cend(), wcs))
+            return;
+
     if (is_acronym) [[unlikely]] {
         const wstring::iterator last = copy_if(
             wcs.cbegin(), wcs.cend(), wcs.begin(),

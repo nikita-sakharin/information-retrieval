@@ -3,6 +3,7 @@
 
 #include <algorithm> // is_sorted, lexicographical_compare
 #include <array> // array
+#include <stdexcept> // logic_error
 #include <string> // wstring
 #include <string_view> // wstring_view
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
@@ -40,7 +41,7 @@ private:
         "Invocable must have signature void(wstring &)"
     );
 
-    static constexpr std::array<std::wstring_view, 18> suffixes {
+    static constexpr std::array<std::wstring_view, 18U> suffixes {
         L"ing",
         L"es",
         L"ness",
@@ -89,7 +90,27 @@ template<typename Invocable>
 constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>
 ) {
+    using std::equal_range, std::lexicographical_compare, std::logic_error,
+        std::wstring_view;
+
+    if (wcs.empty()) [[unlikely]]
+        throw logic_error("stemmer::operator(): empty token");
+
+    array::const_iterator first = suffixes.cbegin(), last = suffixes.cend();
+    for (size_t i = 0; ; ++i) {
+        [first, last] = equal_range(first, last, wcs,
+            [](
+                const wstring_view wcs1, const wstring_view wcs2
+            ) constexpr -> bool {
+            }
+        );
+    }
     invocable_(wcs);
+/*
+    equal_range(suffixes.cbegin(), suffixes.cend(), lexicographical_compare(
+        wcs1.crbegin(), wcs1.crend(), wcs2.crbegin(), wcs2.crend()
+    ));
+*/
 }
 
 template<typename Invocable>

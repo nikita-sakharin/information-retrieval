@@ -2,6 +2,7 @@
 #define SEARCH_ENGINE_STEMMER_HPP
 
 #include <cassert> // assert
+#include <cstddef> // size_t
 
 #include <algorithm> // is_sorted, lexicographical_compare
 #include <array> // array
@@ -104,7 +105,8 @@ template<typename Invocable>
 constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>
 ) {
-    using std::array, std::equal_range, std::logic_error, std::wstring_view;
+    using std::array, std::equal_range, std::logic_error, std::size_t,
+        std::wstring_view;
 
     if (wcs.empty()) [[unlikely]]
         throw logic_error("stemmer::operator(): empty token");

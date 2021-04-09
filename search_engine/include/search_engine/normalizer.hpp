@@ -12,7 +12,7 @@
 #include <string_view> // wstring_view
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
 
-template<typename Invocable>
+template<typename Invocable, bool StopWords = false>
 class normalizer final {
 public:
     constexpr normalizer() noexcept(
@@ -30,7 +30,6 @@ public:
     constexpr ~normalizer() noexcept(
         std::is_nothrow_destructible_v<Invocable>) = default;
 
-    template<bool StopWords = false>
     constexpr void operator()(std::wstring &) noexcept(
         std::is_nothrow_invocable_r_v<void, Invocable,
             std::size_t, std::wstring &>
@@ -94,16 +93,17 @@ private:
     Invocable invocable_{};
 };
 
-template<typename Invocable>
-constexpr normalizer<Invocable>::normalizer(
+template<typename Invocable, bool StopWords>
+constexpr normalizer<Invocable, StopWords>::normalizer(
     const Invocable &invocable
 ) noexcept(
     std::is_nothrow_copy_constructible_v<Invocable>
 ) : invocable_(invocable) {}
 
-template<typename Invocable>
-template<bool StopWords>
-constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
+template<typename Invocable, bool StopWords>
+constexpr void normalizer<Invocable, StopWords>::operator()(
+    std::wstring &wcs
+) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::size_t, std::wstring &>
 ) {
     using std::copy_if, std::iswalpha, std::logic_error, std::size_t,
@@ -143,23 +143,25 @@ constexpr void normalizer<Invocable>::operator()(std::wstring &wcs) noexcept(
     invocable_(position_++, wcs);
 }
 
-template<typename Invocable>
-constexpr const Invocable &normalizer<Invocable>::invocable() const noexcept {
+template<typename Invocable, bool StopWords>
+constexpr const Invocable &normalizer<Invocable, StopWords>::invocable(
+) const noexcept {
     return invocable_;
 }
 
-template<typename Invocable>
-constexpr Invocable &normalizer<Invocable>::invocable() noexcept {
+template<typename Invocable, bool StopWords>
+constexpr Invocable &normalizer<Invocable, StopWords>::invocable() noexcept {
     return invocable_;
 }
 
-template<typename Invocable>
-constexpr std::size_t normalizer<Invocable>::position() const noexcept {
+template<typename Invocable, bool StopWords>
+constexpr std::size_t normalizer<Invocable, StopWords>::position(
+) const noexcept {
     return position_;
 }
 
-template<typename Invocable>
-constexpr void normalizer<Invocable>::reset_position() noexcept {
+template<typename Invocable, bool StopWords>
+constexpr void normalizer<Invocable, StopWords>::reset_position() noexcept {
     position_ = 0U;
 }
 

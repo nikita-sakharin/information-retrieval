@@ -64,9 +64,7 @@ constexpr char_encoder<From, To, Invocable>::char_encoder(
 ) : invocable_(invocable) {}
 
 template<typename From, typename To, typename Invocable>
-constexpr void char_encoder<From, To, Invocable>::operator()(
-    const From from
-) {
+constexpr void char_encoder<From, To, Invocable>::operator()(const From from) {
     using std::array, std::generic_category, std::is_same_v, std::mbrtowc,
         std::size_t, std::string_view, std::system_error, std::wcrtomb;
     constexpr const char *what = "char_encoder::operator()";

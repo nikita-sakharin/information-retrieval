@@ -81,10 +81,12 @@ private:
     static_assert(
         std::is_sorted(suffixes.cbegin(), suffixes.cend(),
             [](
-                const std::wstring_view wcs1, const std::wstring_view wcs2
+                const std::wstring_view wcs1,
+                const std::wstring_view wcs2
             ) constexpr noexcept -> bool {
                 return std::lexicographical_compare(
-                    wcs1.crbegin(), wcs1.crend(), wcs2.crbegin(), wcs2.crend()
+                    wcs1.crbegin(), wcs1.crend(),
+                    wcs2.crbegin(), wcs2.crend()
                 ) || wcs1 == wcs2;
             }
         ),
@@ -119,7 +121,7 @@ constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
             [i](
                 const wstring_view wcs1,
                 const wstring_view wcs2
-            ) constexpr -> bool {
+            ) constexpr noexcept -> bool {
                 assert(i <= wcs1.size() && i <= wcs2.size() &&
                     (i < wcs1.size() || i < wcs2.size())
                 );

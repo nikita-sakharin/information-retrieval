@@ -149,7 +149,7 @@ static vector<pair<size_t, wstring>> normalize(
         throw runtime_error("normalize: unable to set locale");
 
     vector<pair<size_t, wstring>> tokens;
-    normalizer<function<void(size_t, const wstring &)>, StopWords> str_normalizer(
+    normalizer<function<void(size_t, const wstring &)>, StopWords> invocable(
         [&tokens](
             const size_t position, const wstring &token
         ) constexpr -> void {
@@ -159,7 +159,7 @@ static vector<pair<size_t, wstring>> normalize(
     wstring buffer;
     for (const wstring_view wcs : init) {
         buffer = wcs;
-        str_normalizer(buffer);
+        invocable(buffer);
     }
 
     return tokens;

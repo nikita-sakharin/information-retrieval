@@ -1,6 +1,8 @@
 #ifndef SEARCH_ENGINE_STEMMER_HPP
 #define SEARCH_ENGINE_STEMMER_HPP
 
+#include <cassert> // assert
+
 #include <algorithm> // is_sorted, lexicographical_compare
 #include <array> // array
 #include <stdexcept> // logic_error
@@ -102,27 +104,29 @@ template<typename Invocable>
 constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>
 ) {
-    using std::equal_range, std::lexicographical_compare, std::logic_error,
-        std::wstring_view;
+    using std::array, std::equal_range, std::logic_error, std::wstring_view;
 
     if (wcs.empty()) [[unlikely]]
         throw logic_error("stemmer::operator(): empty token");
 
+    const size_t size = wcs.size();
     array::const_iterator first = suffixes.cbegin(), last = suffixes.cend();
-    for (size_t i = 0; ; ++i) {
+    for (size_t i = 0; i < size; ++i) {
         [first, last] = equal_range(first, last, wcs,
-            [](
+            [i](
                 const wstring_view wcs1, const wstring_view wcs2
             ) constexpr -> bool {
+                assert(i < wcs1.size() || i < wcs2.size());
+                assert(i == 0 || wcs1[wcs1.size() - i] == wcs2[wcs2.size() - i]);
+                if (i >= wcs1.size())
+                    return true;
+                if (i >= wcs2.size())
+                    return false;
+                return wcs1[wcs1.size() - i - 1U] < wcs2[wcs2.size() - i - 1U];
             }
         );
     }
     invocable_(wcs);
-/*
-    equal_range(suffixes.cbegin(), suffixes.cend(), lexicographical_compare(
-        wcs1.crbegin(), wcs1.crend(), wcs2.crbegin(), wcs2.crend()
-    ));
-*/
 }
 
 template<typename Invocable>

@@ -4,7 +4,7 @@
 #include <cassert> // assert
 #include <cstddef> // size_t
 
-#include <algorithm> // is_sorted, lexicographical_compare
+#include <algorithm> // is_sorted, lexicographical_compare, min
 #include <array> // array
 #include <stdexcept> // logic_error
 #include <string> // wstring
@@ -46,6 +46,7 @@ private:
 
     static constexpr std::array<std::wstring_view, 30U> suffixes {
         L"ing",
+        L"s",
         L"es",
         L"ness",
         L"ly", // ???
@@ -105,7 +106,7 @@ template<typename Invocable>
 constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>
 ) {
-    using std::array, std::equal_range, std::logic_error, std::size_t,
+    using std::array, std::equal_range, std::logic_error, std::min, std::size_t,
         std::wstring_view;
 
     if (wcs.empty()) [[unlikely]]
@@ -116,17 +117,25 @@ constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
     for (size_t i = 0; i < size; ++i) {
         [first, last] = equal_range(first, last, wcs,
             [i](
-                const wstring_view wcs1, const wstring_view wcs2
+                const wstring_view wcs1,
+                const wstring_view wcs2
             ) constexpr -> bool {
-                assert(i < wcs1.size() || i < wcs2.size());
-                assert(i == 0 || wcs1[wcs1.size() - i] == wcs2[wcs2.size() - i]);
-                if (i >= wcs1.size())
-                    return true;
-                if (i >= wcs2.size())
-                    return false;
+                assert(i <= wcs1.size() && i <= wcs2.size() &&
+                    (i < wcs1.size() || i < wcs2.size())
+                );
+                assert(i == 0 ||
+                    wcs1[wcs1.size() - i] == wcs2[wcs2.size() - i]
+                );
+                if (i >= min(wcs1.size(), wcs2.size()))
+                    return wcs1.size() < wcs2.size();
                 return wcs1[wcs1.size() - i - 1U] < wcs2[wcs2.size() - i - 1U];
             }
         );
+        if (first == last)
+            break;
+        if (first + 1 == last && i + 1 == first->size() && ) {
+            break;
+        }
     }
     invocable_(wcs);
 }

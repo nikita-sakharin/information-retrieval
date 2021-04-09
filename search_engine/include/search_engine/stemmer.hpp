@@ -41,19 +41,25 @@ private:
         "Invocable must have signature void(wstring &)"
     );
 
-    static constexpr std::array<std::wstring_view, 18U> suffixes {
+    static constexpr std::array<std::wstring_view, 30U> suffixes {
         L"ing",
         L"es",
         L"ness",
         L"ly", // ???
 
         L"а",
+        L"ах",
+        L"е",
         L"ое",
         L"ые",
+        L"и",
+        L"ами",
         L"ыми",
+        L"ей",
         L"ой",
         L"ый",
         L"ам",
+        L"ем",
         L"ом",
         L"ым",
         L"о",
@@ -62,8 +68,10 @@ private:
         L"ому",
         L"их",
         L"ых",
+        L"ю",
         L"ою",
         L"ую",
+        L"я",
         L"ая"
     };
     static_assert(

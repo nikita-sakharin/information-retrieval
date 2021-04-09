@@ -72,16 +72,31 @@ TEST(NormalizerTest, English) {
 }
 
 TEST(NormalizerTest, EnglishStopWords) {
+    static const auto expected = ElementsAre(Pair(0U, L"the"));
+
+    ASSERT_THAT(normalize<true>({ L"T.H.E." }), expected);
+    ASSERT_THAT(normalize<true>({ L"T.h.e." }), expected);
+    ASSERT_THAT(normalize<true>({ L"t.h.e." }), expected);
+
+    ASSERT_THAT(normalize<true>({ L"THE" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"THE'S" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"THE's" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"The" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"The'S" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"The's" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"the" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"the'S" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"the's" }), IsEmpty());
 }
 
 TEST(NormalizerTest, PossessiveAffix) {
     static const auto expected = ElementsAre(Pair(0U, L"dog"));
 
     ASSERT_THAT(normalize({ L"DOG'S" }), expected);
-    ASSERT_THAT(normalize({ L"Dog'S" }), expected);
-    ASSERT_THAT(normalize({ L"dog'S" }), expected);
     ASSERT_THAT(normalize({ L"DOG's" }), expected);
+    ASSERT_THAT(normalize({ L"Dog'S" }), expected);
     ASSERT_THAT(normalize({ L"Dog's" }), expected);
+    ASSERT_THAT(normalize({ L"dog'S" }), expected);
     ASSERT_THAT(normalize({ L"dog's" }), expected);
 }
 
@@ -110,6 +125,18 @@ TEST(NormalizerTest, Russian) {
 }
 
 TEST(NormalizerTest, RussianStopWords) {
+    static const auto expected = ElementsAre(Pair(0U, L"еще"));
+
+    ASSERT_THAT(normalize<true>({ L"Е.Щ.Ё." }), expected);
+    ASSERT_THAT(normalize<true>({ L"Е.щ.ё." }), expected);
+    ASSERT_THAT(normalize<true>({ L"е.щ.ё." }), expected);
+
+    ASSERT_THAT(normalize<true>({ L"ЕЩЁ" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"ЕЩЕ" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"Еще" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"Ещё" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"еще" }), IsEmpty());
+    ASSERT_THAT(normalize<true>({ L"ещё" }), IsEmpty());
 }
 
 template<bool StopWords>
@@ -132,7 +159,7 @@ static vector<pair<size_t, wstring>> normalize(
     wstring buffer;
     for (const wstring_view wcs : init) {
         buffer = wcs;
-        str_normalizer(buffer);
+        str_normalizer.operator()<StopWords>(buffer);
     }
 
     return tokens;

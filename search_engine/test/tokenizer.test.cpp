@@ -112,14 +112,14 @@ static vector<wstring> tokenize(const wstring_view wcs) {
         throw runtime_error("convert: unable to set locale");
 
     vector<wstring> tokens;
-    tokenizer<function<void(const wstring &)>> str_tokenizer(
+    tokenizer<function<void(const wstring &)>> invocable(
         [&tokens](const wstring &token) constexpr -> void {
             tokens.push_back(token);
         }
     );
     for (const wchar_t wc : wcs)
-        str_tokenizer(wc);
-    str_tokenizer.flush_buffer();
+        invocable(wc);
+    invocable.flush_buffer();
 
     return tokens;
 }

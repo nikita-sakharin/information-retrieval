@@ -35,13 +35,13 @@ static vector<wstring> stem(const wstring_view wcs) {
         throw runtime_error("stem: unable to set locale");
 
     vector<wstring> tokens;
-    stemmer<function<void(const wstring &)>> str_stemmer(
+    stemmer<function<void(const wstring &)>> invocable(
         [&tokens](const wstring &token) constexpr -> void {
             tokens.push_back(token);
         }
     );
     wstring buffer(wcs);
-    str_stemmer(buffer);
+    invocable(buffer);
 
     return tokens;
 }

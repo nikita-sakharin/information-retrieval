@@ -99,14 +99,14 @@ static basic_string<To> convert(const basic_string_view<From> str) {
         throw runtime_error("convert: unable to set locale");
 
     basic_string<To> buffer;
-    char_encoder<From, To, function<void(To)>> encoder(
+    char_encoder<From, To, function<void(To)>> invocable(
         [&buffer](const To c) constexpr -> void {
             buffer.push_back(c);
         }
     );
     for (const From c : str)
-        encoder(c);
-    if (!encoder.is_init_state())
+        invocable(c);
+    if (!invocable.is_init_state())
         throw system_error(EILSEQ, generic_category(), "convert");
 
     return buffer;

@@ -85,10 +85,10 @@ TEST(StrParserTest, Throw) {
 
 static string parse_string(const string_view str) {
     string buffer;
-    str_parser parser([&buffer](const char c) constexpr -> void {
+    str_parser invocable([&buffer](const char c) constexpr -> void {
         buffer.push_back(c);
     });
-    parser(str.cbegin(), str.cend());
+    invocable(str.cbegin(), str.cend());
 
     return buffer;
 }

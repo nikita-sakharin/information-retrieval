@@ -22,10 +22,10 @@ TEST(StemmerTest, English) {
 }
 
 TEST(StemmerTest, Russian) {
-    ASSERT_THAT(stem(L"красная"), ElementsAre(L"красн"));
-    ASSERT_THAT(stem(L"красное"), ElementsAre(L"красн"));
-    ASSERT_THAT(stem(L"красные"), ElementsAre(L"красн"));
-    ASSERT_THAT(stem(L"красный"), ElementsAre(L"красн"));
+    ASSERT_THAT(stem(L"мягкая"), ElementsAre(L"мягк"));
+    ASSERT_THAT(stem(L"мягкое"), ElementsAre(L"мягк"));
+    ASSERT_THAT(stem(L"мягкые"), ElementsAre(L"мягк"));
+    ASSERT_THAT(stem(L"мягкый"), ElementsAre(L"мягк"));
 }
 
 static vector<wstring> stem(const wstring_view wcs) {

@@ -109,7 +109,9 @@ constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
         );
         if (first == last)
             break;
-        if (first + 1 == last && i + 1 == first->size() && ) {
+        if (first + 1 == last && i + 1U == first->size()) {
+            if (size >= first->size() + 1000U)
+                ;
             break;
         }
     }

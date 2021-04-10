@@ -26,7 +26,7 @@ public:
     friend std::ostream &operator<<(std::ostream &, const index &);
 
 private:
-    std::unordered_map<std::string_view, std::vector<doc_id>> posting;
+    std::unordered_map<std::string_view, std::vector<doc_id>> posting{};
     std::vector<char> dictionary{};
 };
 

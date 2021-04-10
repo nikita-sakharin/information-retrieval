@@ -10,11 +10,13 @@
 #include <search_engine/memmap.hpp>
 
 using std::cerr, std::endl, std::exception, std::generic_category,
-    std::logic_error, std::move, std::size_t, std::system_error;
+    std::logic_error, std::size_t, std::system_error;
 
 memmap::memmap() noexcept : addr_(MAP_FAILED) {}
 
 memmap::memmap(memmap &&rhs) : memmap() {
+    using std::move;
+
     *this = move(rhs);
     assert(
         rhs.addr_ == MAP_FAILED &&

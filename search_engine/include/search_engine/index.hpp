@@ -4,8 +4,8 @@
 #include <cstdint> // uint32_t
 
 #include <iostream> // istream, ostream
-#include <map> // map
 #include <string_view> // string_view
+#include <unordered_map> // unordered_map
 #include <vector> // vector
 
 class index final {
@@ -26,9 +26,7 @@ public:
     friend std::ostream &operator<<(std::ostream &, const index &);
 
 private:
-    static constexpr std::size_t capacity = 1UL << 21;
-
-    std::map<std::string_view, std::vector<doc_id>> posting;
+    std::unordered_map<std::string_view, std::vector<doc_id>> posting;
     std::vector<char> dictionary{};
 };
 

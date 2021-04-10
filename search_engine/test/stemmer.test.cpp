@@ -13,19 +13,37 @@
 
 using std::vector, std::wstring, std::wstring_view;
 
-using testing::ElementsAre, testing::IsEmpty;
+using testing::ElementsAre;
 
 static vector<wstring> stem(wstring_view);
 
 TEST(StemmerTest, English) {
-    ASSERT_THAT(stem(L"traditional"), ElementsAre(L"tradition"));
+    ASSERT_THAT(stem(L"traditional"), ElementsAre(L"tradit")); // ???
+    ASSERT_THAT(stem(L"traditional"), ElementsAre(L"tradition")); // ???
 }
 
 TEST(StemmerTest, Russian) {
-    ASSERT_THAT(stem(L"мягкая"), ElementsAre(L"мягк"));
-    ASSERT_THAT(stem(L"мягкое"), ElementsAre(L"мягк"));
-    ASSERT_THAT(stem(L"мягкые"), ElementsAre(L"мягк"));
-    ASSERT_THAT(stem(L"мягкый"), ElementsAre(L"мягк"));
+    static const auto expected = ElementsAre(L"мягк");
+
+    ASSERT_THAT(stem(L"мягка"), expected);
+    ASSERT_THAT(stem(L"мягкая"), expected);
+    ASSERT_THAT(stem(L"мягки"), expected);
+    ASSERT_THAT(stem(L"мягкие"), expected);
+    ASSERT_THAT(stem(L"мягкий"), expected);
+    ASSERT_THAT(stem(L"мягким"), expected);
+    ASSERT_THAT(stem(L"мягкими"), expected);
+    ASSERT_THAT(stem(L"мягких"), expected);
+    ASSERT_THAT(stem(L"мягко"), expected);
+    ASSERT_THAT(stem(L"мягкого"), expected);
+    ASSERT_THAT(stem(L"мягкое"), expected);
+    ASSERT_THAT(stem(L"мягкой"), expected);
+    ASSERT_THAT(stem(L"мягком"), expected);
+    ASSERT_THAT(stem(L"мягкому"), expected);
+    ASSERT_THAT(stem(L"мягкою"), expected);
+    ASSERT_THAT(stem(L"мягкую"), expected);
+    ASSERT_THAT(stem(L"мягкые"), expected);
+    ASSERT_THAT(stem(L"мягкый"), expected);
+    ASSERT_THAT(stem(L"мягок"), expected);
 }
 
 static vector<wstring> stem(const wstring_view wcs) {

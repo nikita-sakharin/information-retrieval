@@ -9,6 +9,7 @@
 #include <stdexcept> // logic_error
 #include <string> // wstring
 #include <string_view> // wstring_view
+#include <tuple> // tie
 #include <type_traits> // is_invocable_r_v, is_nothrow_*_v
 
 template<typename Invocable>
@@ -44,12 +45,14 @@ private:
         "Invocable must have signature void(wstring &)"
     );
 
-    static constexpr std::array<std::wstring_view, 30U> suffixes { // TODO
-        L"ing", L"s", L"es", L"ness", L"ly",
+    static constexpr std::size_t length_before_suffix = 2U; // TODO
 
-        L"а", L"ах", L"е", L"ое", L"ые", L"и", L"ами", L"ыми", L"ей", L"ой",
-        L"ый", L"ам", L"ем", L"ом", L"ым", L"о", L"ого", L"у", L"ому", L"их",
-        L"ых", L"ю", L"ою", L"ую", L"я", L"ая"
+    static constexpr std::array<std::wstring_view, 33U> suffixes { // TODO
+        L"ing", L"al", L"s", L"es", L"ness", L"ly",
+
+        L"а", L"е", L"ие", L"ое", L"ые", L"и", L"ами", L"ыми", L"ей", L"ой",
+        L"ый", L"ам", L"ем", L"ом", L"ым", L"о", L"ого", L"у", L"ому", L"ах",
+        L"их", L"ых", L"ю", L"ою", L"ую", L"я", L"ая"
     };
     static_assert(
         std::is_sorted(suffixes.cbegin(), suffixes.cend(),
@@ -82,15 +85,15 @@ constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
     std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>
 ) {
     using std::array, std::equal_range, std::logic_error, std::min, std::size_t,
-        std::wstring_view;
+        std::tie, std::wstring_view;
 
     if (wcs.empty()) [[unlikely]]
         throw logic_error("stemmer::operator(): empty token");
 
     const size_t size = wcs.size();
-    array::const_iterator first = suffixes.cbegin(), last = suffixes.cend();
+    auto first = suffixes.cbegin(), last = suffixes.cend();
     for (size_t i = 0; i < size; ++i) {
-        [first, last] = equal_range(first, last, wcs,
+        tie(first, last) = equal_range(first, last, wcs,
             [i](
                 const wstring_view wcs1,
                 const wstring_view wcs2
@@ -98,7 +101,7 @@ constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
                 assert(i <= wcs1.size() && i <= wcs2.size() &&
                     (i < wcs1.size() || i < wcs2.size())
                 );
-                assert(i == 0 ||
+                assert(i == 0U ||
                     wcs1[wcs1.size() - i] == wcs2[wcs2.size() - i]
                 );
 
@@ -109,9 +112,11 @@ constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
         );
         if (first == last)
             break;
-        if (first + 1 == last && i + 1U == first->size()) {
-            if (size >= first->size() + 1000U)
-                ;
+        if (const size_t suffix_size = first->size();
+            first + 1 == last && i + 1U == suffix_size
+        ) {
+            if (size >= suffix_size + length_before_suffix)
+                wcs.resize(size - suffix_size);
             break;
         }
     }

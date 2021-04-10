@@ -114,12 +114,14 @@ constexpr memmap::file &memmap::file::operator=(file &&rhs) {
 }
 
 constexpr memmap::file::~file() noexcept {
+    using std::cerr, std::endl, std::exception;
+
     if (is_open())
         try {
             close();
-        } catch (const std::exception &except) {
+        } catch (const exception &except) {
 #           ifndef NDEBUG
-            std::cerr << except.what() << std::endl;
+            cerr << except.what() << endl;
 #           endif
         }
     assert(fildes_ == -1);
@@ -142,7 +144,7 @@ constexpr bool memmap::file::is_open() const noexcept {
 constexpr void memmap::file::swap(file &rhs) noexcept {
     using std::swap;
 
-    std::swap(fildes_, rhs.fildes_);
+    swap(fildes_, rhs.fildes_);
 }
 
 #endif

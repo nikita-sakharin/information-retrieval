@@ -72,18 +72,24 @@ constexpr bool memmap::is_open() const noexcept {
 }
 
 inline memmap::operator std::string_view() const {
-    return std::string_view(data(), size_);
+    using std::string_view;
+
+    return string_view(data(), size_);
 }
 
 constexpr size_t memmap::size() const {
+    using std::logic_error;
+
     if (!is_open()) [[unlikely]]
-        throw std::logic_error("memmap::size: memory map is not open");
+        throw logic_error("memmap::size: memory map is not open");
     return size_;
 }
 
 constexpr void memmap::swap(memmap &rhs) noexcept {
-    std::swap(addr_, rhs.addr_);
-    std::swap(size_, rhs.size_);
+    using std::swap;
+
+    swap(addr_, rhs.addr_);
+    swap(size_, rhs.size_);
     file_.swap(rhs.file_);
 }
 
@@ -92,7 +98,9 @@ inline memmap::file::file(const char * const filename) {
 }
 
 constexpr memmap::file::file(file &&rhs) {
-    *this = std::move(rhs);
+    using std::move;
+
+    *this = move(rhs);
     assert(rhs.fildes_ == -1);
 }
 
@@ -118,8 +126,10 @@ constexpr memmap::file::~file() noexcept {
 }
 
 constexpr int memmap::file::fildes() const {
+    using std::logic_error;
+
     if (!is_open()) [[unlikely]]
-        throw std::logic_error("memmap::file::fildes: file is not open");
+        throw logic_error("memmap::file::fildes: file is not open");
     assert(fildes_ >= 0);
 
     return fildes_;
@@ -130,6 +140,8 @@ constexpr bool memmap::file::is_open() const noexcept {
 }
 
 constexpr void memmap::file::swap(file &rhs) noexcept {
+    using std::swap;
+
     std::swap(fildes_, rhs.fildes_);
 }
 

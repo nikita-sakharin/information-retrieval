@@ -74,12 +74,16 @@ TEST(StrParserTest, Throw) {
     ASSERT_THROW(parse_string("\"\\\""),      logic_error);
     ASSERT_THROW(parse_string("\"\\u0008\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u0009\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\u000A\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u000a\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\u000C\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u000c\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\u000D\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u000d\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u0020\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u007F\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u0080\""), logic_error);
+    ASSERT_THROW(parse_string("\"\\U00FF\""), logic_error);
     ASSERT_THROW(parse_string("\"\\u00ff\""), logic_error);
 }
 

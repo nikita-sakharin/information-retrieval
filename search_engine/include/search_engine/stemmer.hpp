@@ -47,12 +47,13 @@ private:
 
     static constexpr std::size_t length_before_suffix = 2U; // TODO
 
-    static constexpr std::array<std::wstring_view, 33U> suffixes { // TODO
+    static constexpr std::array<std::wstring_view, 37U> suffixes { // TODO
         L"ing", L"al", L"s", L"es", L"ness", L"ly",
 
-        L"а", L"е", L"ие", L"ое", L"ые", L"и", L"ами", L"ыми", L"ей", L"ой",
-        L"ый", L"ам", L"ем", L"ом", L"ым", L"о", L"ого", L"у", L"ому", L"ах",
-        L"их", L"ых", L"ю", L"ою", L"ую", L"я", L"ая"
+        L"а", L"е", L"ее", L"ие", L"ое", L"ые", L"и", L"ами", L"ими", L"ыми",
+        L"ей", L"ий", L"ой", L"ый", L"ам", L"ем", L"им", L"ом", L"ым", L"о",
+        L"ого", L"у", L"ому", L"ах", L"их", L"ых", L"ы", L"ю", L"ою", L"ую",
+        L"я", L"ая"
     };
     static_assert(
         std::is_sorted(suffixes.cbegin(), suffixes.cend(),
@@ -69,7 +70,7 @@ private:
         "suffixes must be unique and sorted"
     );
     static_assert(!suffixes.empty() && !suffixes.front().empty(),
-        "all suffix must not be empty"
+        "suffixes set and all of them must not be empty"
     );
 
     Invocable invocable_{};
@@ -91,8 +92,11 @@ constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
         throw logic_error("stemmer::operator(): empty token");
 
     const size_t size = wcs.size();
-    auto first = suffixes.cbegin(), last = suffixes.cend();
-    for (size_t i = 0; i < size; ++i) {
+    auto first = suffixes.cbegin(), last = suffixes.cend(),
+        match = suffixes.cend();
+    for (size_t i = 0; i < size && first != last; ++i) {
+        if (const size_t suffix_size = first->size(); i == suffix_size)
+            match = first;
         tie(first, last) = equal_range(first, last, wcs,
             [i](
                 const wstring_view wcs1,
@@ -110,16 +114,11 @@ constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
                 return wcs1[wcs1.size() - i - 1U] < wcs2[wcs2.size() - i - 1U];
             }
         );
-        if (first == last)
-            break;
-        if (const size_t suffix_size = first->size();
-            first + 1 == last && i + 1U == suffix_size
-        ) {
-            if (size >= suffix_size + length_before_suffix)
-                wcs.resize(size - suffix_size);
-            break;
-        }
     }
+    if (match != suffixes.cend())
+        if (const size_t suffix_size = match->size();
+            size >= suffix_size + length_before_suffix)
+            wcs.resize(size - suffix_size);
     invocable_(wcs);
 }
 

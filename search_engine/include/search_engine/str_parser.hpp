@@ -109,7 +109,7 @@ constexpr uint str_parser<Invocable>::hex_digit(const char c) {
 
     if (c >= '0' && c <= '9') [[likely]]
         return c - '0';
-    else if (c >= 'a' && c <= 'f') [[likely]] // upper hex not permitted
+    else if (c >= 'a' && c <= 'f') [[likely]]
         return c - 'a' + 10U;
     else [[unlikely]]
         throw logic_error("str_parser::hex_digit: invalid hex digit");

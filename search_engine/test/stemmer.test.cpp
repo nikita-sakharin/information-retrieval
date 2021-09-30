@@ -23,27 +23,30 @@ TEST(StemmerTest, English) {
 }
 
 TEST(StemmerTest, Russian) {
-    static const auto expected = ElementsAre(L"мягк");
+    static const auto soft = ElementsAre(L"мягк"), warm = ElementsAre(L"тёпл");
 
-    ASSERT_THAT(stem(L"мягка"), expected);
-    ASSERT_THAT(stem(L"мягкая"), expected);
-    ASSERT_THAT(stem(L"мягки"), expected);
-    ASSERT_THAT(stem(L"мягкие"), expected);
-    ASSERT_THAT(stem(L"мягкий"), expected);
-    ASSERT_THAT(stem(L"мягким"), expected);
-    ASSERT_THAT(stem(L"мягкими"), expected);
-    ASSERT_THAT(stem(L"мягких"), expected);
-    ASSERT_THAT(stem(L"мягко"), expected);
-    ASSERT_THAT(stem(L"мягкого"), expected);
-    ASSERT_THAT(stem(L"мягкое"), expected);
-    ASSERT_THAT(stem(L"мягкой"), expected);
-    ASSERT_THAT(stem(L"мягком"), expected);
-    ASSERT_THAT(stem(L"мягкому"), expected);
-    ASSERT_THAT(stem(L"мягкою"), expected);
-    ASSERT_THAT(stem(L"мягкую"), expected);
-    ASSERT_THAT(stem(L"мягкые"), expected);
-    ASSERT_THAT(stem(L"мягкый"), expected);
-    ASSERT_THAT(stem(L"мягок"), expected);
+    ASSERT_THAT(stem(L"мягка"), soft);
+    ASSERT_THAT(stem(L"мягкая"), soft);
+    ASSERT_THAT(stem(L"мягки"), soft);
+    ASSERT_THAT(stem(L"мягкие"), soft);
+    ASSERT_THAT(stem(L"мягкий"), soft);
+    ASSERT_THAT(stem(L"мягким"), soft);
+    ASSERT_THAT(stem(L"мягкими"), soft);
+    ASSERT_THAT(stem(L"мягких"), soft);
+    ASSERT_THAT(stem(L"мягко"), soft);
+    ASSERT_THAT(stem(L"мягкого"), soft);
+    ASSERT_THAT(stem(L"мягкое"), soft);
+    ASSERT_THAT(stem(L"мягкой"), soft);
+    ASSERT_THAT(stem(L"мягком"), soft);
+    ASSERT_THAT(stem(L"мягкому"), soft);
+    ASSERT_THAT(stem(L"мягкою"), soft);
+    ASSERT_THAT(stem(L"мягкую"), soft);
+    ASSERT_THAT(stem(L"тёплы"), warm);
+    ASSERT_THAT(stem(L"тёплые"), warm);
+    ASSERT_THAT(stem(L"тёплый"), warm);
+    ASSERT_THAT(stem(L"тёплым"), warm);
+    ASSERT_THAT(stem(L"тёплыми"), warm);
+    ASSERT_THAT(stem(L"тёплых"), warm);
 }
 
 static vector<wstring> stem(const wstring_view wcs) {

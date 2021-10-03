@@ -86,8 +86,9 @@ constexpr std::string_view::const_iterator str_parser<Invocable>::operator()(
     }
 
     assert(first <= last);
-    if (first == last) [[unlikely]]
-        throw logic_error("str_parser::operator(): string not properly ended");
+    if (first == last) [[unlikely]] throw logic_error(
+        "str_parser::operator(): string is not properly ended"
+    );
     assert(!is_escape && *first == '\"');
 
     return first + 1;

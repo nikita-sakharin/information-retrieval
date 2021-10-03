@@ -23,7 +23,8 @@ TEST(StemmerTest, English) {
 }
 
 TEST(StemmerTest, Russian) {
-    static const auto soft = ElementsAre(L"мягк"), warm = ElementsAre(L"тёпл");
+    static const auto soft = ElementsAre(L"мягк"), warm = ElementsAre(L"тёпл"),
+        tee = ElementsAre(L"ча");
 
     ASSERT_THAT(stem(L"мягка"), soft);
     ASSERT_THAT(stem(L"мягкая"), soft);
@@ -47,6 +48,9 @@ TEST(StemmerTest, Russian) {
     ASSERT_THAT(stem(L"тёплым"), warm);
     ASSERT_THAT(stem(L"тёплыми"), warm);
     ASSERT_THAT(stem(L"тёплых"), warm);
+    ASSERT_THAT(stem(L"чай"), tee);
+    ASSERT_THAT(stem(L"чаю"), tee);
+    ASSERT_THAT(stem(L"чая"), tee);
 }
 
 static vector<wstring> stem(const wstring_view wcs) {

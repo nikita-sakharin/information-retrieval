@@ -4,7 +4,7 @@
 #include <cassert> // assert
 #include <cstddef> // size_t
 
-#include <algorithm> // is_sorted, lexicographical_compare, min
+#include <algorithm> // adjacent_find, is_sorted, lexicographical_compare, min
 #include <array> // array
 #include <stdexcept> // logic_error
 #include <string> // wstring
@@ -39,20 +39,19 @@ private:
     static_assert(__STDC_ISO_10646__ >= 201103L,
         "Unicode version 2011 or later required"
     );
-    static_assert(
-        std::is_invocable_r_v<void, Invocable, std::wstring &>,
+    static_assert(std::is_invocable_r_v<void, Invocable, std::wstring &>,
         "Invocable must have signature void(wstring &)"
     );
 
-    static constexpr std::size_t length_before_suffix = 2U;
+    static constexpr std::size_t size_before_suffix = 2U;
 
-    static constexpr std::array<std::wstring_view, 40U> suffixes { // TODO
+    static constexpr std::array<std::wstring_view, 46U> suffixes { // TODO
         L"ing", L"al", L"s", L"es", L"ness", L"ly",
 
         L"а", L"е", L"ее", L"ие", L"ое", L"ые", L"и", L"ли", L"ами", L"ими",
-        L"ыми", L"й" L"ей", L"ий", L"ой", L"ый", L"л", L"ам", L"ем", L"им",
-        L"ом", L"ым", L"о", L"ого", L"у", L"ому", L"ах", L"их", L"ых", L"ы",
-        L"ю", L"ою", L"ую", L"я", L"ая"
+        L"ыми", L"ями", L"й", L"ей", L"ий", L"ой", L"ый", L"л", L"ам", L"ем",
+        L"им", L"ом", L"ым", L"ям", L"ём", L"о", L"ого", L"у", L"ому", L"ах",
+        L"их", L"ых", L"ях", L"ы", L"ь", L"ю", L"ою", L"ую", L"я", L"ая"
     };
     static_assert(
         std::is_sorted(suffixes.cbegin(), suffixes.cend(),
@@ -63,9 +62,12 @@ private:
                 return std::lexicographical_compare(
                     wcs1.crbegin(), wcs1.crend(),
                     wcs2.crbegin(), wcs2.crend()
-                ) || wcs1 == wcs2;
+                );
             }
-        ),
+        ) &&
+        std::adjacent_find(
+            suffixes.cbegin(), suffixes.cend()
+        ) == suffixes.cend(),
         "suffixes must be unique and sorted"
     );
     static_assert(!suffixes.empty() && !suffixes.front().empty(),
@@ -82,8 +84,8 @@ constexpr stemmer<Invocable>::stemmer(const Invocable &invocable) noexcept(
 
 template<typename Invocable>
 constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) {
-    using std::equal_range, std::logic_error, std::min, std::size_t,
-        std::tie, std::wstring_view;
+    using std::equal_range, std::logic_error, std::min, std::size_t, std::tie,
+        std::wstring_view;
 
     if (wcs.empty()) [[unlikely]]
         throw logic_error("stemmer::operator(): empty token");
@@ -92,29 +94,26 @@ constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) {
     auto first = suffixes.cbegin(), last = suffixes.cend(),
         match = suffixes.cend();
     for (size_t i = 0; i < size && first != last; ++i) {
-        if (const size_t suffix_size = first->size(); i == suffix_size)
-            match = first;
+        if (const size_t suffix_size = first->size();
+            i == suffix_size && size >= suffix_size + size_before_suffix
+        ) match = first;
         tie(first, last) = equal_range(first, last, wcs,
             [i](
                 const wstring_view wcs1,
                 const wstring_view wcs2
             ) constexpr noexcept -> bool {
-                assert(i <= wcs1.size() && i <= wcs2.size() &&
-                    (i < wcs1.size() || i < wcs2.size())
-                );
-                assert(i == 0U ||
-                    wcs1[wcs1.size() - i] == wcs2[wcs2.size() - i]
-                );
+                const size_t size1 = wcs1.size(), size2 = wcs2.size();
+                assert(i <= size1 && i <= size2 && (i < size1 || i < size2));
+                assert(i == 0U || wcs1[size1 - i] == wcs2[size2 - i]);
 
-                if (i >= min(wcs1.size(), wcs2.size()))
-                    return wcs1.size() < wcs2.size();
-                return wcs1[wcs1.size() - i - 1U] < wcs2[wcs2.size() - i - 1U];
+                if (i >= min(size1, size2))
+                    return size1 < size2;
+                return wcs1[size1 - i - 1U] < wcs2[size2 - i - 1U];
             }
         );
     }
     if (match != suffixes.cend())
-        if (const size_t suffix = match->size(); size >= suffix + before_suffix)
-            wcs.resize(size - suffix);
+        wcs.resize(size - match->size());
     invocable_(wcs);
 }
 

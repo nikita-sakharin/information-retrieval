@@ -92,7 +92,8 @@ static string parse_string(const string_view str) {
     str_parser invocable([&buffer](const char c) constexpr -> void {
         buffer.push_back(c);
     });
-    invocable(str.cbegin(), str.cend());
+    if (invocable(str.cbegin(), str.cend()) != str.cend())
+        throw logic_error("parse_string: string is not parsed completely");
 
     return buffer;
 }

@@ -109,7 +109,7 @@ static vector<wstring> tokenize(const wstring_view wcs) {
     using std::function, std::runtime_error, std::setlocale;
 
     if (setlocale(LC_ALL, "en_US.utf8") == nullptr) [[unlikely]]
-        throw runtime_error("convert: unable to set locale");
+        throw runtime_error("tokenize: unable to set locale");
 
     vector<wstring> tokens;
     tokenizer<function<void(const wstring &)>> invocable(

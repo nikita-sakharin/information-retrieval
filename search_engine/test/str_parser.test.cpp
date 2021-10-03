@@ -92,7 +92,7 @@ static string parse_string(const string_view str) {
     str_parser invocable([&buffer](const char c) constexpr -> void {
         buffer.push_back(c);
     });
-    ASSERT_EQ(invocable(str.cbegin(), str.cend()), str.cend());
+    invocable(str.cbegin(), str.cend());
 
     return buffer;
 }

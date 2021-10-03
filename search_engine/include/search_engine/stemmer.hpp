@@ -30,8 +30,7 @@ public:
     constexpr ~stemmer() noexcept(
         std::is_nothrow_destructible_v<Invocable>) = default;
 
-    constexpr void operator()(std::wstring &) noexcept(
-        std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>);
+    constexpr void operator()(std::wstring &);
 
     constexpr const Invocable &invocable() const noexcept;
     constexpr Invocable &invocable() noexcept;
@@ -45,15 +44,15 @@ private:
         "Invocable must have signature void(wstring &)"
     );
 
-    static constexpr std::size_t length_before_suffix = 2U; // TODO
+    static constexpr std::size_t length_before_suffix = 2U;
 
-    static constexpr std::array<std::wstring_view, 37U> suffixes { // TODO
+    static constexpr std::array<std::wstring_view, 40U> suffixes { // TODO
         L"ing", L"al", L"s", L"es", L"ness", L"ly",
 
-        L"а", L"е", L"ее", L"ие", L"ое", L"ые", L"и", L"ами", L"ими", L"ыми",
-        L"ей", L"ий", L"ой", L"ый", L"ам", L"ем", L"им", L"ом", L"ым", L"о",
-        L"ого", L"у", L"ому", L"ах", L"их", L"ых", L"ы", L"ю", L"ою", L"ую",
-        L"я", L"ая"
+        L"а", L"е", L"ее", L"ие", L"ое", L"ые", L"и", L"ли", L"ами", L"ими",
+        L"ыми", L"й" L"ей", L"ий", L"ой", L"ый", L"л", L"ам", L"ем", L"им",
+        L"ом", L"ым", L"о", L"ого", L"у", L"ому", L"ах", L"их", L"ых", L"ы",
+        L"ю", L"ою", L"ую", L"я", L"ая"
     };
     static_assert(
         std::is_sorted(suffixes.cbegin(), suffixes.cend(),
@@ -82,10 +81,8 @@ constexpr stemmer<Invocable>::stemmer(const Invocable &invocable) noexcept(
 ) : invocable_(invocable) {}
 
 template<typename Invocable>
-constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
-    std::is_nothrow_invocable_r_v<void, Invocable, std::wstring &>
-) {
-    using std::array, std::equal_range, std::logic_error, std::min, std::size_t,
+constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) {
+    using std::equal_range, std::logic_error, std::min, std::size_t,
         std::tie, std::wstring_view;
 
     if (wcs.empty()) [[unlikely]]
@@ -116,9 +113,8 @@ constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) noexcept(
         );
     }
     if (match != suffixes.cend())
-        if (const size_t suffix_size = match->size();
-            size >= suffix_size + length_before_suffix)
-            wcs.resize(size - suffix_size);
+        if (const size_t suffix = match->size(); size >= suffix + before_suffix)
+            wcs.resize(size - suffix);
     invocable_(wcs);
 }
 

@@ -47,8 +47,7 @@ private:
     static_assert(!std::is_same_v<From, To>,
         "template arguments From and To must have different types"
     );
-    static_assert(
-        std::is_invocable_r_v<void, Invocable, To>,
+    static_assert(std::is_invocable_r_v<void, Invocable, To>,
         "Invocable must have signature void(To)"
     );
 

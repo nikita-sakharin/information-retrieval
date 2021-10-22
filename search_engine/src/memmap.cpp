@@ -65,7 +65,7 @@ void memmap::close() {
 
     int errnum = 0;
     if (addr_ != MAP_FAILED && munmap(const_cast<void *>(addr_), size_) == -1)
-        errnum = errno;
+        [[unlikely]] errnum = errno;
     addr_ = MAP_FAILED;
     size_ = size_limits::max();
 

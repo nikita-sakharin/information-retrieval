@@ -45,13 +45,13 @@ private:
 
     static constexpr std::size_t size_before_suffix = 2U;
 
-    static constexpr std::array<std::wstring_view, 52U> suffixes { // TODO
+    static constexpr std::array<std::wstring_view, 53U> suffixes {
         L"ing", L"al", L"s", L"es", L"ness", L"ly",
 
-        L"а", L"ила", L"е", L"ее", L"ие", L"ое", L"ые", L"и", L"ли", L"или", L"ами",
-        L"ими", L"ыми", L"ями", L"й", L"ей", L"ий", L"ой", L"ый", L"л", L"ил",
-        L"ам", L"ем", L"им", L"ом", L"ым", L"ям", L"ём", L"о", L"ого", L"ло",
-        L"у", L"ому", L"ах", L"их", L"ых", L"ях", L"ы", L"ь", L"ившись",
+        L"а", L"ила", L"е", L"ее", L"ие", L"ое", L"ые", L"и", L"ли", L"или",
+        L"ами", L"ими", L"ыми", L"ями", L"й", L"ей", L"ий", L"ой", L"ый", L"л",
+        L"ил", L"ам", L"ем", L"им", L"ом", L"ым", L"ям", L"ём", L"о", L"ого",
+        L"ло", L"у", L"ому", L"ах", L"их", L"ых", L"ях", L"ы", L"ь", L"ившись",
         L"ывшись", L"ю", L"ою", L"ую", L"ью", L"я", L"ая"
     };
     static_assert(

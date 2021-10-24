@@ -23,9 +23,21 @@ TEST(StemmerTest, English) {
 }
 
 TEST(StemmerTest, Russian) {
-    static const auto soft = ElementsAre(L"мягк"), warm = ElementsAre(L"тёпл"),
-        tee = ElementsAre(L"ча");
-
+    static const auto drink = ElementsAre(L"вып"), soft = ElementsAre(L"мягк"),
+        warm = ElementsAre(L"тёпл"), tee = ElementsAre(L"ча");
+/*
+    ASSERT_THAT(stem(L"булочек"), bun);
+    ASSERT_THAT(stem(L"булочка"), bun);
+    ASSERT_THAT(stem(L"булочки"), bun);
+    ASSERT_THAT(stem(L"булочку"), bun);
+    ASSERT_THAT(stem(L"булочках"), bun);
+*/
+    ASSERT_THAT(stem(L"выпей"), drink);
+    ASSERT_THAT(stem(L"выпил"), drink);
+    ASSERT_THAT(stem(L"выпила"), drink);
+    ASSERT_THAT(stem(L"выпили"), drink);
+    ASSERT_THAT(stem(L"выпило"), drink);
+    ASSERT_THAT(stem(L"выпью"), drink);
     ASSERT_THAT(stem(L"мягка"), soft);
     ASSERT_THAT(stem(L"мягкая"), soft);
     ASSERT_THAT(stem(L"мягки"), soft);
@@ -42,15 +54,20 @@ TEST(StemmerTest, Russian) {
     ASSERT_THAT(stem(L"мягкому"), soft);
     ASSERT_THAT(stem(L"мягкою"), soft);
     ASSERT_THAT(stem(L"мягкую"), soft);
+    ASSERT_THAT(stem(L"тёплее"), warm);
     ASSERT_THAT(stem(L"тёплы"), warm);
     ASSERT_THAT(stem(L"тёплые"), warm);
     ASSERT_THAT(stem(L"тёплый"), warm);
     ASSERT_THAT(stem(L"тёплым"), warm);
     ASSERT_THAT(stem(L"тёплыми"), warm);
     ASSERT_THAT(stem(L"тёплых"), warm);
+    ASSERT_THAT(stem(L"чае"), tee);
+    ASSERT_THAT(stem(L"чаи"), tee); // +
     ASSERT_THAT(stem(L"чай"), tee);
     ASSERT_THAT(stem(L"чаю"), tee);
-    ASSERT_THAT(stem(L"чая"), tee);
+    ASSERT_THAT(stem(L"чаям"), tee);
+    ASSERT_THAT(stem(L"чаях"), tee);
+    ASSERT_THAT(stem(L"чаёв"), tee);
 }
 
 static vector<wstring> stem(const wstring_view wcs) {

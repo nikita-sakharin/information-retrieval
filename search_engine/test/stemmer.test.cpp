@@ -65,6 +65,7 @@ TEST(StemmerTest, Russian) {
     ASSERT_THAT(stem(L"чаи"), tee); // +
     ASSERT_THAT(stem(L"чай"), tee);
     ASSERT_THAT(stem(L"чаю"), tee);
+    ASSERT_THAT(stem(L"чая"), tee);
     ASSERT_THAT(stem(L"чаям"), tee);
     ASSERT_THAT(stem(L"чаях"), tee);
     ASSERT_THAT(stem(L"чаёв"), tee);

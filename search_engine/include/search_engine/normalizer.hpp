@@ -4,9 +4,8 @@
 #include <cstddef> // size_t
 #include <cwctype> // iswalpha, towlower
 
-#include <algorithm> // copy_if, is_sorted
+#include <algorithm> // adjacent_find, copy_if, is_sorted
 #include <array> // array
-#include <functional> // less_equal
 #include <stdexcept> // logic_error
 #include <string> // wstring
 #include <string_view> // wstring_view
@@ -53,7 +52,7 @@ private:
 
     static constexpr std::wstring_view possessive_affix = L"'s";
 
-    static constexpr std::array<std::wstring_view, 184U> stop_words {
+    static constexpr std::array<std::wstring_view, 184U> stop_words = {
         L"a", L"an", L"and", L"are", L"as", L"at", L"be", L"but", L"by", L"for",
         L"if", L"in", L"into", L"is", L"it", L"no", L"not", L"of", L"on", L"or",
         L"such", L"that", L"the", L"their", L"then", L"there", L"these",
@@ -80,9 +79,10 @@ private:
         L"этом", L"этот", L"эту", L"я"
     };
     static_assert(
-        std::is_sorted(stop_words.cbegin(), stop_words.cend(),
-            std::less_equal()
-        ),
+        std::is_sorted(stop_words.cbegin(), stop_words.cend()) &&
+        std::adjacent_find(
+            stop_words.cbegin(), stop_words.cend()
+        ) == stop_words.cend(),
         "stop words must be unique and sorted"
     );
     static_assert(!stop_words.empty() && !stop_words.front().empty(),

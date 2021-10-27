@@ -98,7 +98,7 @@ constexpr void stemmer<Invocable>::operator()(std::wstring &wcs) {
         match = suffixes.cend();
     for (size_t i = 0U; i < size && first != last; ++i) {
         if (const size_t suffix_size = first->size();
-            i == suffix_size && size >= suffix_size + size_before_suffix
+            i == suffix_size && size >= size_before_suffix + suffix_size
         ) match = first;
         tie(first, last) = equal_range(first, last, wcs,
             [i](

@@ -33,10 +33,13 @@ TEST(StemmerTest, Russian) {
     ASSERT_THAT(stem(L"булочках"), bun);
 */
     ASSERT_THAT(stem(L"выпей"), drink);
+    ASSERT_THAT(stem(L"выпивший"), drink);
     ASSERT_THAT(stem(L"выпил"), drink);
     ASSERT_THAT(stem(L"выпила"), drink);
     ASSERT_THAT(stem(L"выпили"), drink);
     ASSERT_THAT(stem(L"выпило"), drink);
+    ASSERT_THAT(stem(L"выпьет"), drink);
+    ASSERT_THAT(stem(L"выпьешь"), drink);
     ASSERT_THAT(stem(L"выпью"), drink);
     ASSERT_THAT(stem(L"мягка"), soft);
     ASSERT_THAT(stem(L"мягкая"), soft);

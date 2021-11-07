@@ -45,7 +45,7 @@ private:
 
     static constexpr std::size_t size_before_suffix = 2U;
 
-    static constexpr std::array<std::wstring_view, 65U> suffixes = {
+    static constexpr std::array<std::wstring_view, 67U> suffixes = {
         L"ing", L"al", L"s", L"es", L"ness", L"ly",
 
         L"а", L"ила", L"ьев", L"ов", L"ёв", L"е", L"ее", L"ие", L"ое", L"ые",

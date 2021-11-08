@@ -45,16 +45,16 @@ private:
 
     static constexpr std::size_t size_before_suffix = 2U;
 
-    static constexpr std::array<std::wstring_view, 67U> suffixes = {
-        L"ing", L"al", L"s", L"es", L"ness", L"ly",
+    static constexpr std::array<std::wstring_view, 73U> suffixes = {
+        L"ing", L"eing", L"al", L"s", L"es", L"ness", L"ly",
 
-        L"а", L"ила", L"ьев", L"ов", L"ёв", L"е", L"ее", L"ие", L"ое", L"ые",
-        L"ье", L"и", L"ии", L"ли", L"или", L"ами", L"ими", L"ыми", L"ями",
-        L"иями", L"ьями", L"й", L"ей", L"ий", L"ивший", L"ой", L"ый", L"л",
-        L"ил", L"ам", L"ем", L"им", L"ом", L"ым", L"ям", L"ьям", L"ём", L"о",
-        L"ого", L"ло", L"ило", L"у", L"ому", L"ах", L"их", L"ых", L"ях", L"иях",
-        L"ьях", L"ы", L"ь", L"ившись", L"ывшись", L"ясь", L"ю", L"ою", L"ую",
-        L"ью", L"я", L"ая", L"ья"
+        L"а", L"ила", L"ев", L"ьев", L"ив", L"ов", L"ёв", L"е", L"ее", L"ие",
+        L"ое", L"ые", L"ье", L"и", L"ии", L"ли", L"или", L"ами", L"ими", L"ыми",
+        L"ями", L"иями", L"ьями", L"й", L"ей", L"ий", L"ивший", L"ывший", L"ой",
+        L"ый", L"л", L"ил", L"ам", L"ем", L"им", L"ом", L"ым", L"ям", L"ьям",
+        L"ём", L"о", L"ого", L"ло", L"ило", L"у", L"ому", L"ах", L"их", L"ых",
+        L"ях", L"иях", L"ьях", L"ы", L"ь", L"ившись", L"ывшись", L"ясь", L"ть",
+        L"ишь", L"ю", L"ою", L"ую", L"ью", L"я", L"ая", L"ья"
     };
     static_assert(
         std::is_sorted(suffixes.cbegin(), suffixes.cend(),

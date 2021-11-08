@@ -41,7 +41,9 @@ TEST(StemmerTest, Russian) {
     ASSERT_THAT(stem(L"выпьет"), drink);
     ASSERT_THAT(stem(L"выпьешь"), drink);
     ASSERT_THAT(stem(L"впаяешь"), drink);
-    (L"ial", L"i")
+    L"ial" -> L"i"
+    L"аешь" -> L"а"
+    L"яешь" -> L"я"
 */
     ASSERT_THAT(stem(L"бежать"), ElementsAre(L"бежа"));
     ASSERT_THAT(stem(L"бежишь"), run);

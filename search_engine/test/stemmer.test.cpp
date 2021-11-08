@@ -1,7 +1,7 @@
 #include <clocale> // LC_ALL, setlocale
 
 #include <functional> // function
-#include <stdexcept> // runtime_error
+#include <stdexcept> // logic_error, runtime_error
 #include <string> // wstring
 #include <string_view> // wstring_view
 #include <vector> // vector
@@ -17,29 +17,42 @@ using testing::ElementsAre;
 
 static vector<wstring> stem(wstring_view);
 
+TEST(StemmerTest, Empty) {
+    using std::logic_error;
+
+    ASSERT_THROW(stem(L""), logic_error);
+}
+
 TEST(StemmerTest, English) {
     ASSERT_THAT(stem(L"traditional"), ElementsAre(L"tradit")); // ???
     ASSERT_THAT(stem(L"traditional"), ElementsAre(L"tradition")); // ???
 }
 
 TEST(StemmerTest, Russian) {
-    static const auto drink = ElementsAre(L"вып"), soft = ElementsAre(L"мягк"),
-        warm = ElementsAre(L"тёпл"), tee = ElementsAre(L"ча");
+    static const auto run = ElementsAre(L"беж"), drink = ElementsAre(L"вып"),
+        soft = ElementsAre(L"мягк"), warm = ElementsAre(L"тёпл"),
+        tee = ElementsAre(L"ча");
 /*
     ASSERT_THAT(stem(L"булочек"), bun);
     ASSERT_THAT(stem(L"булочка"), bun);
     ASSERT_THAT(stem(L"булочки"), bun);
     ASSERT_THAT(stem(L"булочку"), bun);
     ASSERT_THAT(stem(L"булочках"), bun);
+    ASSERT_THAT(stem(L"выпьет"), drink);
+    ASSERT_THAT(stem(L"выпьешь"), drink);
+    ASSERT_THAT(stem(L"впаяешь"), drink);
+    (L"ial", L"i")
 */
+    ASSERT_THAT(stem(L"бежать"), ElementsAre(L"бежа"));
+    ASSERT_THAT(stem(L"бежишь"), run);
     ASSERT_THAT(stem(L"выпей"), drink);
+    ASSERT_THAT(stem(L"выпив"), drink);
     ASSERT_THAT(stem(L"выпивший"), drink);
     ASSERT_THAT(stem(L"выпил"), drink);
     ASSERT_THAT(stem(L"выпила"), drink);
     ASSERT_THAT(stem(L"выпили"), drink);
     ASSERT_THAT(stem(L"выпило"), drink);
-    ASSERT_THAT(stem(L"выпьет"), drink);
-    ASSERT_THAT(stem(L"выпьешь"), drink);
+    ASSERT_THAT(stem(L"выпьешь"), ElementsAre(L"выпьеш"));
     ASSERT_THAT(stem(L"выпью"), drink);
     ASSERT_THAT(stem(L"мягка"), soft);
     ASSERT_THAT(stem(L"мягкая"), soft);

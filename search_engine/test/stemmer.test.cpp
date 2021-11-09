@@ -41,6 +41,7 @@ TEST(StemmerTest, Russian) {
     ASSERT_THAT(stem(L"выпьет"), drink);
     ASSERT_THAT(stem(L"выпьешь"), drink);
     ASSERT_THAT(stem(L"впаяешь"), drink);
+    at least one vowel must remain in the word after steaming
     L"ial" -> L"i"
     L"аешь" -> L"а"
     L"яешь" -> L"я"

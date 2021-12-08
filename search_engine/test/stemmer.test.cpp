@@ -42,6 +42,7 @@ TEST(StemmerTest, Russian) {
     ASSERT_THAT(stem(L"выпьешь"), drink);
     ASSERT_THAT(stem(L"впаяешь"), drink);
     at least one vowel must remain in the word after steaming
+    мужчина, мама, замок, конь, шило, крылья, учение
     L"ial" -> L"i"
     L"аешь" -> L"а"
     L"яешь" -> L"я"

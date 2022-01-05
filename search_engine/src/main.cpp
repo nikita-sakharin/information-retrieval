@@ -46,12 +46,10 @@ int main(const int argc, char ** const argv) {
             case 's':
                 if (command != 0) {
                     command = -1;
-                    cerr << argv[0]
-                        << ": You may not specify more than one "
+                    cerr << argv[0] << ": You may not specify more than one "
                         "'-i' or '-s' option\n";
-                    break;
-                }
-                command = opt;
+                } else
+                    command = opt;
                 break;
             case 't':
                 texts_file = optarg;

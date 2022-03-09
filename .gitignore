@@ -5,10 +5,17 @@ build
 *.dll
 *.dylib
 *.exe
+*.exp
+*.gch
+*.idb
+*.ilk
 *.lib
+*.map
 *.o
 *.obj
 *.out
+*.pch
+*.pdb
 *.so
 
 *.py[cod]

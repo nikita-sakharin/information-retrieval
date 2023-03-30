@@ -94,8 +94,8 @@ void sort_heap(
     const RandomAccessIter last,
     const Compare comp
 ) {
-    for (RandomAccessIter current = last; current != first; --current)
-        pop_heap(first, current, comp);
+    for (; last != first; --last)
+        pop_heap(first, last, comp);
 }
 
 template<class RandomAccessIter, class Compare>

@@ -5,7 +5,7 @@
 
 #include <functional> // less
 #include <iterator>
-#include <utility> // swap
+#include <utility> // iter_swap
 
 template<class ForwardIter, class T, class Compare>
 ForwardIter binary_search(
@@ -45,7 +45,7 @@ void pop_heap(
     RandomAccessIter last,
     const Compare comp
 ) {
-    using std::ptrdiff_t, std::swap;
+    using std::ptrdiff_t, std::iter_swap;
 
     swap(*first, *--last);
     const ptrdiff_t half = (last - first) / 2;
@@ -57,7 +57,7 @@ void pop_heap(
             ++child;
         if (!comp(*parent, *child))
             break;
-        swap(*child, *parent);
+        iter_swap(child, parent);
     }
 }
 
@@ -67,14 +67,14 @@ void push_heap(
     RandomAccessIter last,
     const Compare comp
 ) {
-    using std::swap;
+    using std::iter_swap;
 
     --last;
     for (RandomAccessIter parent; first != last; last = parent) {
         parent = first + (last - first - 1) / 2;
         if (!comp(*parent, *last))
             break;
-        swap(*parent, *last);
+        iter_swap(parent, last);
     }
 }
 

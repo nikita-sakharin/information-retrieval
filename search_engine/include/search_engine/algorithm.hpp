@@ -47,7 +47,7 @@ void pop_heap(
 ) {
     using std::ptrdiff_t, std::iter_swap;
 
-    swap(*first, *--last);
+    iter_swap(first, --last);
     const ptrdiff_t half = (last - first) / 2;
     for (RandomAccessIter parent = first, child = first;
         parent - first < half; parent = child

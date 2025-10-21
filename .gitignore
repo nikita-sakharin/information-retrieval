@@ -1,5 +1,3 @@
-build
-
 *.a
 *.app
 *.dll
@@ -9,14 +7,19 @@ build
 *.gch
 *.idb
 *.ilk
+*.la
 *.lib
+*.lo
+*.log
 *.map
 *.o
 *.obj
 *.out
 *.pch
 *.pdb
-*.so
-
 *.py[cod]
+*.so
+*.stackdump
+.DS_Store
 __pycache__
+build
